@@ -1,0 +1,56 @@
+{% extends "search/base.html" %}{% load search_ui %}
+{% block content %}
+<main class="site-shell page-main search-page" id="main">
+  <header class="page-heading search-heading">
+    <div><span class="section-kicker">YOUR RESEARCH, CONNECTED</span><h1>{% if query %}Search your collection.{% else %}Explore your literature.{% endif %}</h1><p>Find the evidence you need across your biomedical abstracts.</p></div>
+    <div class="collection-marker"><span class="status-dot"></span><strong>{{ collection_count }}</strong> articles in your collection</div>
+  </header>
+  <form class="search-panel" method="get" action="{% url 'search:home' %}">
+    {% if analysis_term %}<input type="hidden" name="analysis_term" value="{{ analysis_term }}"><input type="hidden" name="condition" value="{{ condition }}">{% endif %}
+    <div class="main-search">
+      <svg class="icon search-icon"><use href="#i-search"/></svg>
+      <input type="search" name="q" value="{{ query }}" placeholder="Search abstracts, e.g. GLP-1, cancer treatment…" aria-label="Search abstracts">
+      <select name="year" aria-label="Publication year"><option value="">All years</option>{% for option_year in available_years %}<option value="{{ option_year }}" {% if year == option_year %}selected{% endif %}>{{ option_year }}</option>{% endfor %}</select>
+      <button class="primary-button" type="submit">Search <svg class="icon"><use href="#i-arrow"/></svg></button>
+    </div>
+    {% for topic in selected_topics %}<input type="hidden" name="topic" value="{{ topic }}">{% endfor %}
+    <div class="search-panel-footer"><span>Searching <b>{{ scoped_count }}</b> article{{ scoped_count|pluralize }}{% if selected_topics %} across {{ selected_topic_count }} selected topic{{ selected_topic_count|pluralize }}{% endif %}</span><span>Abstracts + Keywords</span></div>
+  </form>
+  {% if search_variants %}
+  <aside class="search-variants" aria-label="Included search variants">
+    <strong>Also matching common punctuation variants:</strong>
+    {% for group in search_variants %}{% for variant in group.variants %}<span>{{ variant }}</span>{% endfor %}{% endfor %}
+  </aside>
+  {% endif %}
+  {% if spelling_suggestions %}
+  <aside class="spelling-suggestions" aria-label="Spelling suggestions">
+    <div class="spelling-intro"><svg class="icon"><use href="#i-search"/></svg><div><strong>Did you mean?</strong><p>Possible spelling corrections from your selected abstracts. Your original results are shown below.</p></div></div>
+    <div class="spelling-options">{% for suggestion in spelling_suggestions %}<a href="{% query_url q=suggestion.query page=None analysis_term=None condition=None %}" class="spelling-option" aria-label="Search for {{ suggestion.query }}"><span>{{ suggestion.query }}<small>Distance {{ suggestion.distance }}</small></span><b aria-hidden="true">↗</b></a>{% endfor %}</div>
+  </aside>
+  {% endif %}
+  {% if query %}
+  <section class="results-section">
+    <div class="section-heading-row"><div><span class="section-kicker">{% if analysis_term %}EXACT TERM · CONDITION {{ condition }}{% else %}SEARCH RESULTS{% endif %}</span><h2>“{{ query }}”{% if year %} <small>· {{ year }}</small>{% endif %}</h2></div><span class="count-label">{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }}</span></div>
+    <div class="results-list">
+      {% for r in page_obj %}
+      <article class="result-item">
+        <div class="result-eyebrow"><span class="record-id">{% if r.doc.pmid %}PMID {{ r.doc.pmid }}{% elif r.doc.arxiv_id %}arXiv {{ r.doc.arxiv_id }}{% else %}{{ r.doc.pmcid }}{% endif %}</span>{% include 'search/_badges.html' with doc=r.doc %}</div>
+        <h3><a href="{% url 'search:document_detail' r.doc.pk %}{% query_url page=page_obj.number %}">{{ r.highlighted_title }}</a></h3>
+        <p class="citation-line">{% if r.doc.authors %}{{ r.doc.authors|truncatechars:135 }} · {% endif %}{% if r.doc.journal %}<em>{{ r.doc.journal }}</em> · {% endif %}{{ r.doc.publication_year }}</p>
+        <p class="result-snippet">{{ r.highlighted_snippet }}</p>
+        <div class="result-footer"><div class="abstract-preview-stats"><span><b>{{ r.abstract_stats.sentences }}</b> sentences</span><span><b>{{ r.abstract_stats.words }}</b> words</span><span><b>{{ r.abstract_stats.characters }}</b> characters</span><span class="keyword-count">{{ r.keyword_count }} {% if analysis_term %}term occurrences{% else %}keyword matches{% endif %}</span></div><a class="view-article-link" href="{% url 'search:document_detail' r.doc.pk %}{% query_url page=page_obj.number %}">View abstract <span>↗</span></a></div>
+      </article>
+      {% empty %}<div class="empty-state"><svg class="icon"><use href="#i-search"/></svg><h3>No matching articles</h3><p>Try another keyword, clear a filter, or import more articles for this topic.</p><a class="secondary-button" href="{% url 'search:import' %}">Import a topic</a></div>{% endfor %}
+    </div>
+    {% include "search/_pagination.html" %}
+  </section>
+  {% else %}
+  <div class="home-grid">
+    <section class="panel recent-panel"><div class="section-heading-row"><div><span class="section-kicker">THE LATEST IN YOUR WORKSPACE</span><h2>Recently added</h2></div><a class="text-link" href="{% url 'search:articles' %}{% topic_query %}">View all →</a></div>
+      {% for doc in recent_docs %}<a class="recent-article" href="{% url 'search:document_detail' doc.pk %}{% topic_query %}"><span>{{ doc.publication_year|default:'ARTICLE' }} <span class="dot-divider">/</span> {{ doc.journal|truncatechars:55 }}</span><h3>{{ doc.title }}</h3><span class="recent-arrow">↗</span></a>{% empty %}<div class="empty-state compact"><h3>A new collection starts here.</h3><p>Import a topic or upload your first XML articles.</p></div>{% endfor %}
+    </section>
+    <aside class="workspace-actions"><a class="action-card accent-card" href="{% url 'search:import' %}"><svg class="icon"><use href="#i-plus"/></svg><span class="section-kicker">GROW YOUR COLLECTION</span><h2>One topic.<br>Up to 1,000 abstracts.</h2><p>Choose a subject and let PubMed bring the relevant literature to you.</p><span class="action-link">Import a topic <span>→</span></span></a><a class="action-card" href="{% url 'search:zipf' %}{% topic_query %}"><svg class="icon"><use href="#i-chart"/></svg><div><h3>Explore the language of your corpus</h3><p>Compare preprocessing, terms and Zipf distributions.</p></div><span>↗</span></a></aside>
+  </div>
+  {% endif %}
+</main>
+{% endblock %}

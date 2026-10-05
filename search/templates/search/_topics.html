@@ -1,0 +1,9 @@
+<div class="topic-filter" data-topic-filter>
+  <div class="topic-filter-heading"><span class="control-label">Topics</span><span class="filter-help">Select one or more</span></div>
+  <div class="topic-options" tabindex="0" aria-label="Available topics. Scroll for more topics.">
+    <button type="button" class="topic-all {% if not selected_topics %}is-selected{% endif %}" data-clear-topics>All articles</button>
+    {% for topic in topics %}
+    <label class="topic-chip" title="{{ topic.name }}"><input type="checkbox" name="topic" value="{{ topic.pk }}" aria-label="{{ topic.name }}" {% if topic.selected %}checked{% endif %}><span><b class="topic-chip-name">{{ topic.name }}</b><small>{{ topic.article_count }}</small></span></label>
+    {% empty %}<span class="no-topics">Your imported topics will appear here.</span>{% endfor %}
+  </div>
+</div>

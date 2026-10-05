@@ -1,0 +1,39 @@
+{% extends 'search/base.html' %}
+{% load search_ui %}
+{% block content %}
+<main class="site-shell page-main matching-page" id="main">
+  {% include 'search/_analysis_nav.html' %}
+  <header class="page-heading">
+    <span class="section-kicker">LEVENSHTEIN DISTANCE · DYNAMIC PROGRAMMING</span>
+    <h1>Text matching.</h1>
+    <p>Enter one word to find every similar term in the selected corpus at edit distances 1–4.</p>
+  </header>
+
+  <form method="get" class="panel matching-controls">
+    {% for topic in selected_topics %}<input type="hidden" name="topic" value="{{ topic }}">{% endfor %}
+    <div class="single-word-control">
+      <label for="matching-term">Word to compare</label>
+      <input id="matching-term" name="term" maxlength="32" value="{{ query }}" autocomplete="off" required>
+      <button class="primary-button" type="submit">Find similar words</button>
+    </div>
+  </form>
+
+  {% if normalized_query %}
+  <section class="distance-summary" aria-label="Candidate counts by edit distance">
+    {% for group in candidate_groups %}<a href="#distance-{{ group.distance }}"><span>Distance {{ group.distance }}</span><strong>{{ group.count }}</strong><small>possible terms</small></a>{% endfor %}
+  </section>
+
+  {% if selected_candidate and matrix %}
+  <section class="panel dp-panel">
+    <div class="section-heading-row"><div><span class="section-kicker">DP COMPARISON GRID</span><h2>{{ normalized_query }} → {{ selected_candidate.term }}</h2></div><span class="distance-badge">Distance {{ matrix.distance }}</span></div>
+    <p class="method-note">Each cell is the minimum edits needed for the two prefixes. Highlighted cells trace one optimal path.</p>
+    <div class="dp-scroll"><table class="dp-matrix"><thead><tr><th></th>{% for label in matrix.columns %}<th>{{ label }}</th>{% endfor %}</tr></thead><tbody>{% for row in matrix.rows %}<tr><th>{{ row.label }}</th>{% for cell in row.cells %}<td{% if cell.on_path %} class="on-path"{% endif %}>{{ cell.value }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+  </section>
+  {% endif %}
+
+  <section class="candidate-groups">
+    {% for group in candidate_groups %}<article class="panel candidate-group" id="distance-{{ group.distance }}"><div class="section-heading-row"><h2>Distance {{ group.distance }}</h2><span class="count-label">{{ group.count }} possible terms</span></div><div class="candidate-list">{% for row in group.rows %}<a href="{% query_url term=query candidate=row.term %}" {% if selected_candidate.term == row.term %}class="selected" aria-current="true"{% endif %}><strong>{{ row.term }}</strong><span>CF {{ row.cf }} · DF {{ row.df }}</span></a>{% empty %}<p>No terms at this distance.</p>{% endfor %}</div></article>{% endfor %}
+  </section>
+  {% endif %}
+</main>
+{% endblock %}

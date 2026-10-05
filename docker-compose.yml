@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    init: true
+    ports:
+      - "127.0.0.1:${BIOMEDIR_PORT:-8001}:8000"
+    volumes:
+      # A bind mount keeps the database and uploaded XML in this project even
+      # if containers or named volumes are recreated.
+      - ./data:/app/data
+      - ./certs:/app/certs:ro
+    environment:
+      BIOMEDIR_DB: /app/data/db.sqlite3
+      BIOMEDIR_CA_DIR: /app/certs
+      NCBI_EMAIL: ${NCBI_EMAIL:-}
+      NCBI_API_KEY: ${NCBI_API_KEY:-}
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=5).close()"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3

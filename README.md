@@ -74,7 +74,7 @@ Duplicate identity uses PMCID, PMID or DOI. Filename and title/year are fallback
 - One selected: that topic.
 - Multiple selected: the **union** of those topics. Overlapping articles are counted once.
 
-Select topic chips; the page updates automatically after a short pause; **Apply** remains available. All articles clears the selection; the page automatically shows everything. Search and the page's filter controls also use the visible topic selection. Navigation retains the applied topics. Changing topics resets pagination while retaining the current search, publication year, sorting and Zipf condition. Articles and Search Results display **20 records per page**. Term tables also display 20 rows per page, with the full Top 50 accessible over three pages.
+Select topic chips; the page updates automatically after a short pause; **Apply** remains available. All articles clears the selection; the page automatically shows everything. Search and the page's filter controls also use the visible topic selection. Navigation retains the applied topics. Changing topics resets pagination while retaining the current search, publication year, sorting and Zipf condition. Articles and Search Results display **20 records per page**. Term statistics display the Top 50 on one page in two compact columns of 25.
 
 Articles list metadata and Abstract Statistics (Sentences → Words → Characters). Search Results add abstract snippets and keyword matches. Article Detail preserves sentence segmentation and Previous / Next keyword navigation. Existing HW1 biomedical tokenization rules are retained: GLP-1, COVID-19, decimals, percentages, Unicode letters, abbreviations and apostrophes. The searchable corpus is **Abstract + Keywords**, excluding bibliographic titles and hidden full text. PMC body text remains stored for future work.
 
@@ -157,7 +157,7 @@ Text matching compares Unicode code points with Levenshtein distance, optional N
 
 ### 本版標點規則（依使用者最新要求）
 
-獨立的 . , ; 等標點不作Zipf terms，A–D全部排除。A用原HW1 word-token斷詞與casefold，B再次明確排除獨立標點；因A已排除，A/B相同是預期結果。詞內GLP-1、COVID-19、apostrophe、decimal與percent仍沿用HW1完整token，不刪掉生醫詞連接。不改HW1字數句數字元算法。
+獨立的 . , ; 等標點在 Zipf Condition A 中各自作為 term；Condition B 排除獨立標點，因此 A/B 有明確差異。詞內 GLP-1、COVID-19、apostrophe、decimal 與 percent 仍沿用 HW1 完整 token，不刪掉生醫詞連接。不改 HW1 字數、句數及字元算法。
 
 
 CS CSV備用：arXiv API可能回429限流。可上傳本機UTF-8 CSV（headers id,title,abstract；id保留真實arXiv ID），最多1,000rows/20MB。版本尾碼去重、單列invalid略過並提示、不捏造PMID、不抓正文，仍沿用HW1摘要索引及統計。API429則有界重試後顯示真正原因，已完成文章保留。
@@ -165,7 +165,9 @@ CS CSV備用：arXiv API可能回429限流。可上傳本機UTF-8 CSV（headers 
 
 ## Search spelling suggestions (2026-10-04)
 
-Search for `camcer`: if `cancer` occurs in your selected abstracts, **Did you mean?** appears below the search box with up to three clickable alternatives. Suggestions can also appear for partial matches such as `camcer treatment`. Your original query and results remain visible until you click a suggestion. The corrected search retains selected topics and publication year and resets pagination. Topic changes refresh both results and suggestions. Known corpus words, known stem variants, short abbreviations, stopwords and biomedical IDs are protected from replacement. Suggestions are spelling candidates, not semantic Word2Vec neighbors. Full distance, ranking, normalization and cache rules are in ALGORITHM_RULES.md.
+Search for `camcer`: if `cancer` occurs in your selected abstracts, **Did you mean?** appears below the search box with up to three clickable alternatives. Candidates up to Levenshtein distance 3 are considered, and every displayed suggestion includes its total edit distance. Suggestions can also appear for partial matches such as `camcer treatment`. Your original query and results remain visible until you click a suggestion. The corrected search retains selected topics and publication year and resets pagination. Topic changes refresh both results and suggestions. Known corpus words, known stem variants, short abbreviations, stopwords and biomedical IDs are protected from replacement. Suggestions are spelling candidates, not semantic Word2Vec neighbors. Full distance, ranking, normalization and cache rules are in ALGORITHM_RULES.md.
+
+The **Text matching** page accepts one word and lists every Condition B corpus term at Levenshtein distances 1, 2, 3 and 4. Selecting a candidate displays the full dynamic-programming matrix and highlights one optimal edit path.
 
 Hyphenated term variants are included automatically at query time. For example, `glp1` also retrieves documents indexed with `GLP-1`, and `GLP-1` also retrieves `GLP1`; the page shows which extra variants were included. Equivalent variants contribute as one BM25 query concept rather than being double-counted. This does not rebuild or alter the stored HW1 tokens.
 

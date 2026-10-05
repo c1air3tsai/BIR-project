@@ -1,0 +1,22 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+data/logs/
+data/fetched/
+db.sqlite3-journal
+db.sqlite3-wal
+db.sqlite3-shm
+output/
+
+# Local trusted root certificates exported from this computer
+certs/*.crt
+certs/*.pem
+certs/*.cer
+
+data/embeddings/
+data/corpus/*.xml
+data/*.sqlite3
+data/*.sqlite3-*

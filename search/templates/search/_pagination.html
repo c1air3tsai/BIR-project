@@ -1,0 +1,11 @@
+{% load search_ui %}
+{% if page_obj.paginator.count %}
+<nav class="pagination" aria-label="Article pages">
+  <span class="page-range">{{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }} <small>· 20 per page</small></span>
+  <div class="page-buttons">
+    {% if page_obj.has_previous %}<a class="page-step" href="{% query_url page=page_obj.previous_page_number %}" aria-label="Previous page">←</a>{% else %}<span class="page-step disabled" aria-disabled="true">←</span>{% endif %}
+    <span class="page-position">{{ page_obj.number }} <span>/ {{ page_obj.paginator.num_pages }}</span></span>
+    {% if page_obj.has_next %}<a class="page-step" href="{% query_url page=page_obj.next_page_number %}" aria-label="Next page">→</a>{% else %}<span class="page-step disabled" aria-disabled="true">→</span>{% endif %}
+  </div>
+</nav>
+{% endif %}

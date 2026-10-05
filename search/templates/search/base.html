@@ -1,0 +1,50 @@
+{% load static search_ui %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title|default:"BioMed IR" }}</title>
+  <link rel="stylesheet" href="{% static 'search/site.css' %}?v=20261005-layout-search-v11">
+  <script src="{% static 'search/i18n.js' %}?v=20261005-layout-search-v11" defer></script>
+  <script src="{% static 'search/site.js' %}?v=20261005-layout-search-v11" defer></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body{% if summary_only %} class="summary-print"{% endif %}>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5v15M3 4c3-1 6-1 9 1 3-2 6-2 9-1v15c-3-1-6-1-9 1-3-2-6-2-9-1Z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v17h17M7 7l4 6 5 3 5 1"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+  </svg>
+  <header class="site-header">
+    <div class="site-shell header-row">
+      <div class="brand-cluster"><a class="brand" href="{% url 'search:home' %}"><span class="brand-mark">B<span>·</span></span><span>BioMed <b>IR</b><small>LITERATURE WORKSPACE</small></span></a><div class="language-switcher" role="group" aria-label="Interface language"><button type="button" data-set-language="en" lang="en" aria-pressed="true">EN</button><button type="button" data-set-language="zh-Hant" lang="zh-Hant" aria-pressed="false">繁中</button></div></div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a {% if request.resolver_match.url_name == 'home' %}class="active" aria-current="page"{% endif %} href="{% url 'search:home' %}{% topic_query %}"><svg class="icon"><use href="#i-search"/></svg>Search</a>
+        <a {% if request.resolver_match.url_name == 'articles' or request.resolver_match.url_name == 'document_detail' %}class="active" aria-current="page"{% endif %} href="{% url 'search:articles' %}{% topic_query %}"><svg class="icon"><use href="#i-book"/></svg>Articles</a>
+        <a {% if request.resolver_match.url_name == 'zipf' or analysis_tab %}class="active" aria-current="page"{% endif %} href="{% url 'search:zipf' %}{% topic_query %}"><svg class="icon"><use href="#i-chart"/></svg><span class="nav-label-long">Analysis</span><span class="nav-label-short">Analysis</span></a>
+      </nav>
+      <a class="primary-button nav-upload {% if request.resolver_match.url_name == 'import' %}current{% endif %}" href="{% url 'search:import' %}"><svg class="icon"><use href="#i-plus"/></svg>Upload</a>
+    </div>
+    {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'articles' or request.resolver_match.url_name == 'zipf' or analysis_tab == 'word2vec' or analysis_tab == 'research' or analysis_tab == 'distance' %}
+      <div class="topic-toolbar">
+        <form method="get" class="site-shell topic-toolbar-form" aria-label="Filter by article topics">
+          {% for key, value in request.GET.items %}{% if key != 'topic' and key != 'page' and key != 'term_page' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}{% endfor %}
+          {% include 'search/_topics.html' %}
+          <button class="primary-button small-button" type="submit">Apply</button>
+        </form>
+      </div>
+    {% endif %}
+  </header>
+  {% if messages %}<div class="site-shell messages" role="status">{% for message in messages %}<div class="notice {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  <div id="scope-loading" class="scope-loading" hidden role="status">Updating articles and analysis…</div>
+  {% block content %}{% endblock %}
+  <footer class="site-footer"><div class="site-shell footer-row"><span><b>BioMed IR</b> <span class="footer-dot">/</span> Your local literature workspace</span><span>PubMed &amp; PMC · Abstract collection</span></div></footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

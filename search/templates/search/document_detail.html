@@ -1,0 +1,165 @@
+{% extends "search/base.html" %}
+{% block content %}
+<main class="site-shell page-main article-page abstract-only-page" id="main">
+  <div class="article-topbar">
+    {% if query %}
+      <a class="back-link" href="{% url 'search:home' %}?{{ return_params }}">← Back to search results</a>
+    {% else %}
+      <a class="back-link" href="{% url 'search:articles' %}?{{ return_params }}">← Back to articles</a>
+    {% endif %}
+    <div class="article-actions">
+      <a class="secondary-button" href="{% url 'search:download_xml' doc.pk %}">Download XML</a>
+      <button class="danger-button" type="button" id="open-delete-dialog">Delete Article</button>
+    </div>
+  </div>
+
+  <article class="article-card abstract-focused-card">
+    <header class="article-header">
+      {% include 'search/_badges.html' %}
+      <h1>{{ highlighted_title }}</h1>
+      {% if doc.authors %}<p class="authors">{{ doc.authors }}</p>{% endif %}
+      <p class="citation-line article-meta">
+        {% if doc.journal %}<em>{{ doc.journal }}</em>{% endif %}
+        {% if doc.publication_year %}{% if doc.journal %} · {% endif %}{{ doc.publication_year }}{% endif %}
+        {% if doc.pmcid %} · {{ doc.pmcid }}{% endif %}
+        {% if doc.pmid %} · PMID {{ doc.pmid }}{% endif %}
+        {% if doc.arxiv_id %} · <a href="https://arxiv.org/abs/{{ doc.arxiv_id }}" target="_blank" rel="noopener">arXiv {{ doc.arxiv_id }} ↗</a>{% endif %}
+        {% if doc.doi %} · DOI {{ doc.doi }}{% endif %}
+      </p>
+
+      <div class="article-stat-summary abstract-only-stats" aria-label="Abstract statistics">
+        {% if doc.abstract %}
+        <div class="stat-group primary-stat-group">
+          <span class="stat-group-label">Abstract</span>
+          <span><strong>{{ abstract_stats.sentences }}</strong> sentences</span>
+          <span><strong>{{ abstract_stats.words }}</strong> words</span>
+          <span><strong>{{ abstract_stats.characters }}</strong> characters</span>
+        </div>
+        {% endif %}
+        {% if query %}
+        <div class="stat-group keyword-stat-group">
+          <span class="stat-group-label">Current search · Abstract</span>
+          <span><strong>{{ keyword_count }}</strong> keyword match{{ keyword_count|pluralize:"es" }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if doc.abstract %}
+    <section class="article-section abstract-section segmented-abstract-section">
+      <div class="section-heading-row abstract-heading-row">
+        <div>
+          <span class="section-kicker">SENTENCE-SEGMENTED ABSTRACT</span>
+          <h2>Abstract</h2>
+        </div>
+        {% if query and abstract_match_count %}
+        <div class="match-navigation" aria-label="Abstract keyword match navigation">
+          <button type="button" id="previous-match" class="match-button">← Previous match</button>
+          <span id="match-status">1 of {{ abstract_match_count }} matches</span>
+          <button type="button" id="next-match" class="match-button">Next match →</button>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="abstract-sentence-list">
+        {% for sentence in abstract_sentences %}
+          <div class="sentence-segment abstract-sentence" data-sentence="{{ sentence.number }}">
+            <span class="sentence-number">Sentence {{ sentence.number }}</span>
+            <p class="article-copy sentence-text">{{ sentence.html }}</p>
+          </div>
+        {% empty %}
+          <p class="article-copy">No abstract is available.</p>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% comment %}
+    ========================================================================
+    FUTURE FULL TEXT DISPLAY — CURRENTLY DISABLED
+    To restore later:
+      1) Uncomment the FUTURE FULL-TEXT block in document_detail_view()
+         in search/views.py.
+      2) Remove this Django comment wrapper.
+      3) In search/indexer.py, switch search_text to full `text` and rebuild
+         the index with: python manage.py build_index
+    ========================================================================
+    <section class="article-section fulltext-section">
+      <div class="section-heading-row fulltext-heading-row">
+        <h2>Full Text</h2>
+      </div>
+      <div class="reading-content">
+        {% for block in reading_blocks %}
+          {% if block.type == 'section' %}
+            <h3 class="paper-section-title">{{ block.html }}</h3>
+          {% else %}
+            <div class="sentence-paragraph">
+              {% for sentence in block.sentences %}
+                <div class="sentence-segment" data-sentence="{{ sentence.number }}">
+                  <span class="sentence-number">Sentence {{ sentence.number }}</span>
+                  <p class="article-copy sentence-text">{{ sentence.html }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    {% endcomment %}
+  </article>
+</main>
+
+<div class="modal-backdrop delete-backdrop" id="delete-dialog" role="presentation" hidden>
+  <div class="success-modal delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="status-icon delete-icon">!</div>
+    <h2 id="delete-title">Delete this article?</h2>
+    <p>This removes the article and its search index from your local collection.</p>
+    <div class="modal-actions">
+      <form method="post" action="{% url 'search:delete_document' doc.pk %}">
+        {% csrf_token %}
+        <button class="danger-button solid-danger" type="submit">Delete Article</button>
+      </form>
+      <button class="secondary-button" type="button" id="cancel-delete">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const dialog = document.getElementById('delete-dialog');
+  const openButton = document.getElementById('open-delete-dialog');
+  const cancelButton = document.getElementById('cancel-delete');
+  if (!dialog || !openButton || !cancelButton) return;
+  openButton.addEventListener('click', () => { dialog.hidden = false; });
+  cancelButton.addEventListener('click', () => { dialog.hidden = true; });
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.hidden = true;
+  });
+})();
+</script>
+
+{% if query and abstract_match_count %}
+<script>
+(function () {
+  const matches = Array.from(document.querySelectorAll('.keyword-match'));
+  const prevButton = document.getElementById('previous-match');
+  const nextButton = document.getElementById('next-match');
+  const status = document.getElementById('match-status');
+  if (!matches.length || !prevButton || !nextButton || !status) return;
+
+  let current = 0;
+  function showMatch(index) {
+    current = (index + matches.length) % matches.length;
+    matches.forEach((node) => node.classList.remove('active-match'));
+    const target = matches[current];
+    target.classList.add('active-match');
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    status.textContent = `${current + 1} of ${matches.length} matches`;
+  }
+
+  prevButton.addEventListener('click', () => showMatch(current - 1));
+  nextButton.addEventListener('click', () => showMatch(current + 1));
+})();
+</script>
+{% endif %}
+{% endblock %}

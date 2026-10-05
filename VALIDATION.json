@@ -1,0 +1,490 @@
+{
+  "delivery": "BioMed IR Docker complete Project 2 with bilingual English/Traditional Chinese UI, Word2Vec overview and local PCA, high-contrast multi-series charts, domain comparison, Unicode/edit distance, word-only Zipf, spelling suggestions and punctuation-aware query expansion",
+  "based_on": "https://github.com/c1air3tsai/BIR/tree/main",
+  "source_commit": "fdd2df638b1993b7eeed314351b120f4ff56858f",
+  "date": "2026-10-05",
+  "tests": {
+    "passed": 74,
+    "failed": 0,
+    "includes": "HW1 parsing/tokenization, topic union, duplicate identities, repeat import, cancellation, partial failures, shared Zipf export, real TLS private-CA trust/hostname validation, container restart recovery, read-only progress polling, rollback-safe article retry, bounded lock retries, cancellation flag retained during progress retry, recovery after transient failure beyond 100 articles, malformed record skip, cancellation during cooldown, truncated JSON/XML recovery, empty/book-only batch handling, actual Gensim training and cosine verification, deterministic same-environment retraining, scope/parameter invalidation, 40-term model PCA and query-neighbor local PCA, bilingual UI persistence and bidirectional switching, 390px responsive layout, selectable blue-vermilion-green-purple multi-series rendering, simultaneous rank-frequency and log-log charts, balanced domain overlap handling, CSV version dedup, Unicode NFC/NFKC/casefold and Levenshtein, bounded Levenshtein equivalence, search spelling zero/partial results, scope and year retention, protected known words and identifiers, vocabulary cache invalidation, symmetric hyphen/no-hyphen query expansion, scoped variant display and equivalent-term score deduplication"
+  },
+  "configuration_checks": {
+    "django_system_check": {
+      "passed": true,
+      "output": "System check identified no issues (0 silenced).",
+      "error": ""
+    },
+    "migration_consistency": {
+      "passed": true,
+      "output": "No changes detected",
+      "error": ""
+    },
+    "entrypoint_syntax": {
+      "passed": true,
+      "output": "",
+      "error": ""
+    },
+    "git_whitespace": {
+      "passed": true,
+      "output": "",
+      "error": ""
+    },
+    "site_js_syntax": {
+      "passed": true,
+      "output": "",
+      "error": ""
+    },
+    "zipf_js_syntax": {
+      "passed": true,
+      "output": "",
+      "error": ""
+    },
+    "compose_static_configuration": {
+      "passed": true,
+      "host_port": 8001,
+      "persistent_data_volume": true,
+      "ca_mount_readonly": true,
+      "original_xml": 14
+    },
+      "docker_engine_available": true
+  },
+  "same_container_application_commands": {
+    "fresh_database_original_articles": 14,
+    "same_commands_as_container": true,
+    "actual_docker_build": true,
+    "restart_recovery_kept_articles": true,
+    "documents_in_disposable_browser_fixture": 58,
+    "server_http_status": 200,
+    "collection_retained": true
+  },
+  "verified_live_pubmed_worker": {
+    "first_import": {
+      "status": "completed",
+      "requested": 5,
+      "added": 5,
+      "new": 5,
+      "reused": 0
+    },
+    "same_topic_additional_import": {
+      "status": "completed",
+      "requested": 2,
+      "added": 2,
+      "duplicates_skipped": 5
+    },
+    "collection_documents": 21,
+    "background_subprocess": true,
+    "native_verified_https": true,
+    "seconds": 31.9,
+    "sqlite_integrity": "ok"
+  },
+  "browser": {
+    "issues": [],
+    "checks": [
+      {
+        "name": "search",
+        "width": 1440,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 80,
+          "topicTop": 80,
+          "topicBottom": 159
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 16,
+          "topic": 14
+        }
+      },
+      {
+        "name": "articles",
+        "width": 1440,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 80,
+          "topicTop": 80,
+          "topicBottom": 159
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 16,
+          "topic": 14
+        }
+      },
+      {
+        "name": "upload",
+        "width": 1440,
+        "overflow": false,
+        "sticky": null,
+        "fonts": {
+          "body": 16,
+          "navigation": 16,
+          "topic": null
+        }
+      },
+      {
+        "name": "zipf",
+        "width": 1440,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 80,
+          "topicTop": 80,
+          "topicBottom": 159
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 16,
+          "topic": 14
+        }
+      },
+      {
+        "name": "compare",
+        "width": 1440,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 80,
+          "topicTop": 80,
+          "topicBottom": 159
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 16,
+          "topic": 14
+        }
+      },
+      {
+        "name": "search",
+        "width": 390,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 122.25,
+          "topicTop": 122.25,
+          "topicBottom": 191.25
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 15,
+          "topic": 14
+        }
+      },
+      {
+        "name": "articles",
+        "width": 390,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 122.25,
+          "topicTop": 122.25,
+          "topicBottom": 191.25
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 15,
+          "topic": 14
+        }
+      },
+      {
+        "name": "upload",
+        "width": 390,
+        "overflow": false,
+        "sticky": null,
+        "fonts": {
+          "body": 16,
+          "navigation": 15,
+          "topic": null
+        }
+      },
+      {
+        "name": "zipf",
+        "width": 390,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 122.25,
+          "topicTop": 122.25,
+          "topicBottom": 191.25
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 15,
+          "topic": 14
+        }
+      },
+      {
+        "name": "compare",
+        "width": 390,
+        "overflow": false,
+        "sticky": {
+          "navTop": 0,
+          "navBottom": 122.25,
+          "topicTop": 122.25,
+          "topicBottom": 191.25
+        },
+        "fonts": {
+          "body": 16,
+          "navigation": 15,
+          "topic": 14
+        }
+      }
+    ],
+    "interactions": "auto topic selection after search, clearing, synchronized corpus/chart recalculation, preserved A-D series selection/regression toggle, simultaneous rank-frequency and log-log rendering, automatic term sorting, condition changes and 20-row pages passed",
+    "primary_button_color": "rgb(42, 106, 164)"
+  },
+  "earlier_shared_import_engine_1000_article_check": {
+    "status": "completed",
+    "added": 1000,
+    "documents": 1000,
+    "seconds": 324.9
+  },
+  "earlier_shared_import_engine_1000_article_persistence_check": {
+    "documents": 1000,
+    "index_terms": 10606,
+    "integrity": "ok",
+    "article_status": 200,
+    "articles_per_page": 20,
+    "zipf_status": 200,
+    "seconds": 8.9
+  },
+  "certificate_verification": {
+    "verified_private_ca_succeeds": true,
+    "untrusted_private_ca_rejected": true,
+    "hostname_mismatch_rejected": true,
+    "verification_disabled": false
+  },
+  "limits": {
+    "actual_docker_build_run": true,
+    "reason": "The Docker image was rebuilt, all search tests ran in the image, and the healthy Compose service served a live glp1 query.",
+    "windows_certificate_export_executed": false,
+    "windows_reason": "The export helper is intended for the Windows certificate store; verification ran on Linux.",
+    "arxiv_live_import_verified": false,
+    "arxiv_reason": "The actual API returned HTTP 429 in this environment. Atom adapter, retry pacing, genuine ID preservation, duplicate linking and CSV fallback were tested; no successful live arXiv download is claimed."
+  },
+  "archive_data": {
+    "original_xml_articles": 14,
+    "user_database_included": false,
+    "qa_articles_included": false,
+    "public_ca_files_included": false
+  },
+  "revision": "20261005-dual-zipf-v8",
+  "database_contention_regression": {
+    "old_deferred_upgrade_failure_reproduced": {
+      "error": "database is locked",
+      "elapsed_seconds": 0.0,
+      "timeout_seconds": 30
+    },
+    "new_mode": "WAL + IMMEDIATE",
+    "added": 1000,
+    "status": "completed",
+    "concurrent_operations": {
+      "status_requests": 4042,
+      "article_requests": 810,
+      "other_writes": 210
+    },
+    "errors": [],
+    "seconds": 30.2,
+    "integrity": "ok",
+    "network": "NCBI responses substituted with real cached abstracts and test-only distinct IDs to isolate database concurrency."
+  },
+  "sqlite_options": {
+    "timeout": 30,
+    "transaction_mode": "IMMEDIATE",
+    "init_command": "PRAGMA journal_mode=WAL;"
+  },
+  "update_preserves_volume": true,
+  "update_instructions": "Overwrite source files in the same existing Compose project folder; keep certificates, .env and persistent data. Rebuild without deleting the volume. Repeating a topic import requests additional articles.",
+  "verified_live_two_topics": {
+    "live_ncbi": true,
+    "background_worker": true,
+    "topics": [
+      {
+        "topic": "GLP-1",
+        "requested": 180,
+        "status": "completed",
+        "added": 180,
+        "new": 180,
+        "reused": 0,
+        "skipped": 0,
+        "seconds": 51.8
+      },
+      {
+        "topic": "diabetes",
+        "requested": 180,
+        "status": "completed",
+        "added": 180,
+        "new": 180,
+        "reused": 0,
+        "skipped": 0,
+        "seconds": 51.6
+      }
+    ],
+    "documents": 374,
+    "integrity": "ok"
+  },
+  "algorithm_compatibility": {
+    "text_processing_byte_identical_to_previous_delivered_version": true,
+    "sha256": "903161219dbacced77115ec7928e6ecac98d55a4ff32e4d1a0827271e410ae5e",
+    "algorithm_document": "ALGORITHM_RULES.md",
+    "stopwords_file": "STOPWORDS.txt",
+    "stopword_count": 72
+  },
+  "research_browser": {
+    "checks": [
+      {
+        "name": "domains",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "name": "word2vec",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "name": "research",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "name": "matching",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "name": "zipf",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "name": "domains",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "name": "word2vec",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "name": "research",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "name": "matching",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "name": "zipf",
+        "width": 390,
+        "overflow": false
+      }
+    ],
+    "issues": [],
+    "interactions": "domain balancing and automatic condition refresh, preserved selected domain series and regression toggle, true POST Word2Vec training and cosine/PCA display, vectors download, settings GET without auto-training, NFC edit distance and summary print passed"
+  },
+  "word2vec_1000_performance": {
+    "metadata": {
+      "parameters": {
+        "architecture": "skipgram",
+        "condition": "C",
+        "dimensions": 100,
+        "window": 5,
+        "min_count": 2,
+        "epochs": 20
+      },
+      "documents": 1000,
+      "sentences": 8530,
+      "input_tokens": 131000,
+      "training_vocabulary": 3478,
+      "seconds": 7.381,
+      "seed": 42,
+      "workers": 1,
+      "negative": 5,
+      "sample": 0.001,
+      "implementation": "gensim Word2Vec",
+      "scope": "Extracted abstract + Keywords only; sentence boundaries preserved"
+    },
+    "query": "patients",
+    "neighbors": 10,
+    "test_scope": "Performance check: 1,000 test IDs with cached real PubMed abstracts repeated; not a new live import or 1,000 distinct papers."
+  },
+  "arxiv_live_attempt": {
+    "status": "failed",
+    "error": "arXiv request failed (HTTP 429). Please try again."
+  },
+  "executive_summary_print": {
+    "pages": 1,
+    "verified_with": "Chromium A4 print plus PDF page count and rendered visual review",
+    "fixture": "Disposable 12-abstract QA CS subset; no QA articles included in delivery"
+  },
+  "zipf_punctuation": {
+    "standalone_punctuation_included": false,
+    "A_equals_B_expected": true,
+    "biomedical_tokens_preserved": true
+  },
+  "requirement_checklist": "REQUIREMENTS_CHECKLIST.md",
+  "search_spelling_browser": {
+    "checks": [
+      {
+        "width": 1440,
+        "overflow": false,
+        "zero_results": true,
+        "partial_results": true,
+        "click_preserves_scope_and_year": true,
+        "topic_change_refresh": true
+      },
+      {
+        "width": 390,
+        "overflow": false,
+        "zero_results": true,
+        "partial_results": true,
+        "click_preserves_scope_and_year": true,
+        "topic_change_refresh": true
+      }
+    ],
+    "issues": []
+  },
+  "bilingual_pca_browser": {
+    "english_to_traditional_chinese": true,
+    "traditional_chinese_to_english": true,
+    "selection_persisted_in_browser": true,
+    "mobile_width": 390,
+    "horizontal_overflow": false,
+    "language_switch_visible_on_mobile": true,
+    "overview_pca_data_points": 40,
+    "overview_pca_rendered_points": 40,
+    "local_neighbor_rows": 10,
+    "local_pca_rendered_points": 11,
+    "overview_and_local_pca_visible_together": true,
+    "multi_series_line_colors": ["#0072B2", "#D55E00", "#009E73", "#CC79A7"],
+    "legend_colors_match_lines": true,
+    "issues": []
+  },
+  "dual_zipf_browser": {
+    "desktop_width": 1280,
+    "desktop_horizontal_overflow": false,
+    "desktop_columns": 2,
+    "tablet_width": 780,
+    "tablet_horizontal_overflow": false,
+    "tablet_columns": 1,
+    "mobile_width": 390,
+    "mobile_horizontal_overflow": false,
+    "mobile_columns": 1,
+    "rank_frequency_and_log_log_visible_together": true,
+    "residual_control_present": false,
+    "initial_series": ["A", "B", "C", "D"],
+    "toggle_test_series": ["A", "C"],
+    "toggle_updated_both_charts": true,
+    "selection_persisted_in_url": true,
+    "regression_lines_rendered_on_log_log": true,
+    "domain_chart_series": ["A", "B"],
+    "domain_dual_charts_rendered": true,
+    "traditional_chinese_controls_verified": true,
+    "issues": []
+  }
+}
