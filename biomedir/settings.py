@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-c44zem1i#*f(nhxzij(e#0z)l*@$7&h0o%)u+y*-@5n=5yf6^6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'testserver']
 
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -129,6 +129,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = 'static/'
 
+# Persistent Word2Vec models, manifests, losses, and projection artifacts.
+# Docker bind-mounts /app/data, so these survive container replacement.
+EMBEDDING_CACHE_DIR = Path(os.environ.get(
+    'BIOMEDIR_EMBEDDING_CACHE', str(BASE_DIR / 'data' / 'embedding_cache')
+))
+
 NCBI_EMAIL = os.environ.get('NCBI_EMAIL', '')
 NCBI_API_KEY = os.environ.get('NCBI_API_KEY', '')
 NCBI_CA_DIR = os.environ.get('BIOMEDIR_CA_DIR', str(BASE_DIR / 'certs'))
@@ -136,4 +142,4 @@ NCBI_CA_BUNDLE = os.environ.get('BIOMEDIR_CA_BUNDLE', '')
 # A local application; its import worker runs in the same Python environment.
 TOPIC_IMPORT_BATCH_SIZE = 50
 
-APP_REVISION = '20261005-layout-search-v11'
+APP_REVISION = '20261012-word-embedding-v4'

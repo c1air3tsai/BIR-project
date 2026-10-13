@@ -8,6 +8,7 @@ from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 from django.http import QueryDict
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
 from .csv_import import import_abstract_csv
 from .models import Document
 from .forms import get_or_create_topic
@@ -36,7 +37,7 @@ class UnicodeTests(SimpleTestCase):
 class ResearchFeaturesTests(TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.directory=Path(self.temp.name)
-        override=self.settings(BASE_DIR=self.directory);override.enable();self.addCleanup(override.disable);self.addCleanup(self.temp.cleanup)
+        override=self.settings(BASE_DIR=self.directory,EMBEDDING_CACHE_DIR=self.directory/'data'/'embedding_cache');override.enable();self.addCleanup(override.disable);self.addCleanup(self.temp.cleanup)
         self.med=get_or_create_topic('Medical');self.cs=get_or_create_topic('CS')
         self.docs=[]
         for i in range(6):
@@ -76,6 +77,100 @@ class ResearchFeaturesTests(TestCase):
         self.assertGreater(overview['points'][0]['count'],0)
         with self.assertRaisesRegex(ValueError,'outside'):embeddings.neighbors(first,'unknownzz','C')
 
+    def test_part2_dual_models_loss_tsne_and_parameter_experiment(self):
+        records=embeddings.corpus_records(Document.objects.all());params=self.params(window=2)
+        models=embeddings.train_both(records,params)
+        self.assertEqual(set(models),{'cbow','skipgram'})
+        for model in models.values():
+            metadata=model.bir_metadata
+            self.assertEqual(len(metadata['losses']),params['epochs'])
+            self.assertTrue(all(row['loss']>=0 for row in metadata['losses']))
+            self.assertEqual(metadata['parameters']['seed'],42)
+            self.assertEqual(metadata['parameters']['workers'],1)
+            self.assertTrue(metadata['sample_preview']['context'])
+        targets=embeddings.default_targets(models)
+        self.assertEqual(embeddings.parse_targets('',models,params['condition']),targets)
+        self.assertEqual(embeddings.parse_targets(targets[0],models,params['condition']),[targets[0]])
+        self.assertEqual(embeddings.parse_targets('not-in-the-vocabulary',models,params['condition']),[])
+        comparison=embeddings.neighbor_comparison(models,targets[:2])
+        self.assertEqual(len(comparison),2)
+        self.assertIn('jaccard',comparison[0])
+        stats=embeddings.corpus_statistics(records,params['condition'])
+        self.assertTrue(embeddings.semantic_pairs(models))
+        self.assertTrue(embeddings.rare_word_analysis(models,stats['frequencies']))
+        visualizations={name:embeddings.semantic_visualizations(model,targets) for name,model in models.items()}
+        for data in visualizations.values():
+            self.assertEqual([row['term'] for row in data['pca']['points']],[row['term'] for row in data['tsne']['points']])
+            self.assertLess(data['tsne']['perplexity'],len(targets))
+        kind,label,configs,experiment_models=embeddings.train_experiment(records,params,'dimensions')
+        experiment=embeddings.experiment_result(label,kind,configs,experiment_models,targets[0])
+        self.assertIsNotNone(embeddings.load_experiment_result(records,params,'dimensions'))
+        self.assertEqual([row['value'] for row in experiment['rows']],[50,50,100,100])
+        self.assertEqual([row['architecture'] for row in experiment['rows']],['cbow','skipgram','cbow','skipgram'])
+        self.assertIn('Only Embedding dimension changed',experiment['description'])
+        differing=[key for key in configs[0] if configs[0][key]!=configs[1][key]]
+        self.assertEqual(differing,['dimensions'])
+        custom={**params,'compare_window_a':1,'compare_window_b':4,'compare_dimensions_a':25,'compare_dimensions_b':75,'compare_min_count_a':1,'compare_min_count_b':3}
+        self.assertEqual([config['window'] for config in embeddings.experiment_config(custom,'window')[2]],[1,4])
+        self.assertEqual([config['dimensions'] for config in embeddings.experiment_config(custom,'dimensions')[2]],[25,75])
+        self.assertEqual([config['min_count'] for config in embeddings.experiment_config(custom,'min_count')[2]],[1,3])
+
+    def test_persistent_pair_cache_manifest_artifacts_and_cache_hit(self):
+        selection=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'custom','medical_count':3,'cs_count':3})
+        records=selection['records'];params=self.params()
+        key=embeddings.shared_cache_key(records,params)
+        self.assertEqual(key,embeddings.shared_cache_key(list(reversed(records)),params))
+        changed=[*records[:-1],(records[-1][0],records[-1][1]+' changed',records[-1][2])]
+        self.assertNotEqual(key,embeddings.shared_cache_key(changed,params))
+        models=embeddings.train_both(records,params)
+        artifacts=embeddings.build_global_artifacts(records,params,models)
+        directory=embeddings.cache_directory(records,params)
+        for name in ['manifest.json','cbow.model','skipgram.model','cbow_loss.json','skipgram_loss.json','semantic_metadata.json','rare_word_metadata.json','cbow_global_pca.json','cbow_global_tsne.json','skipgram_global_pca.json','skipgram_global_tsne.json']:
+            self.assertTrue((directory/name).exists(),name)
+        manifest=json.loads((directory/'manifest.json').read_text(encoding='utf-8'))
+        for field in ['created_at','document_count','document_ids','document_ids_hash','content_hash','model_settings','software','cache_version']:
+            self.assertIn(field,manifest)
+        self.assertEqual(set(manifest['models']),{'cbow','skipgram'})
+        reloaded=embeddings.load_both(records,params)
+        self.assertTrue(all(reloaded.values()))
+        self.assertEqual(reloaded['cbow'].bir_metadata['document_ids'],reloaded['skipgram'].bir_metadata['document_ids'])
+        self.assertEqual([p['term'] for p in artifacts['visualizations']['cbow']['pca']['points']],[p['term'] for p in artifacts['visualizations']['skipgram']['tsne']['points']])
+        import numpy as np
+        norms=np.linalg.norm(embeddings.normalized_vectors(reloaded['cbow'],artifacts['words']),axis=1)
+        np.testing.assert_allclose(norms,1,atol=1e-6)
+        for visual in artifacts['visualizations'].values():
+            self.assertLess(visual['tsne']['perplexity'],visual['tsne']['number_of_points'])
+
+    def test_pretrained_preset_hit_and_export_never_retrain(self):
+        first=embeddings.precompute_preset(Document.objects.all(),'medical')
+        self.assertFalse(first['cache_hit'])
+        with patch('search.embeddings.train_both') as train_both:
+            second=embeddings.precompute_preset(Document.objects.all(),'medical')
+            self.assertTrue(second['cache_hit']);train_both.assert_not_called()
+        params=embeddings.DEFAULTS
+        page=self.client.get(reverse('search:word2vec'),{**params,'corpus_preset':'medical'})
+        self.assertEqual(page.status_code,200)
+        self.assertEqual(page.context['cache_status']['state'],'pretrained')
+        self.assertNotIn('local_visualizations',page.context)
+        self.assertNotContains(page,'id="local-map"')
+        target=page.context['targets'][0]
+        local_page=self.client.get(reverse('search:word2vec'),{**params,'corpus_preset':'medical','local_word':target})
+        self.assertEqual(set(local_page.context['global_visualizations']),{'cbow','skipgram'})
+        for visual in local_page.context['global_visualizations'].values():
+            for method in ['pca','tsne']:
+                chart=visual[method]
+                self.assertNotIn('label_mode',chart)
+                highlights=[point['highlight'] for point in chart['points']]
+                self.assertEqual(highlights.count('target'),1)
+                self.assertIn('neighbor',highlights)
+                self.assertLessEqual(highlights.count('neighbor'),10)
+        with patch('search.embeddings.train_both') as train_both:
+            response=self.client.get(reverse('search:word2vec_export'),{**params,'corpus_preset':'medical'})
+            self.assertEqual(response.status_code,200);train_both.assert_not_called()
+        manifest=second['manifest']
+        self.assertEqual(manifest['preset_name'],'glp1_1000')
+        self.assertEqual(manifest['domain_counts'],{'medical':3,'cs':0})
+
     def test_pages_reports_exports_and_train_post(self):
         for name in ['domains','word2vec','research','distance']:
             response=self.client.get(reverse('search:'+name));self.assertEqual(response.status_code,200,name)
@@ -98,14 +193,24 @@ class ResearchFeaturesTests(TestCase):
         self.assertEqual(response.context['tfidf_page'][0]['tf'],2)
         self.assertEqual(response.context['tfidf_page'][0]['idf'],0)
         words=response.context['discussion_words'];self.assertTrue(300<=words<=500,words)
-        response=self.client.post(reverse('search:word2vec')+'?topic='+str(self.cs.pk),{**self.params(),'topic':self.cs.pk,'word':'learning'})
+        response=self.client.post(reverse('search:word2vec'),{**self.params(),'corpus_preset':'custom','medical_count':3,'cs_count':3,'local_word':'learning','action':'train_models'})
         self.assertEqual(response.status_code,302)
-        response=self.client.get(response.url);self.assertEqual(response.context['model_metadata']['documents'],3);self.assertTrue(response.context['neighbors']);self.assertTrue(response.context['overview_projection']['points'])
-        self.assertContains(response,'id="vocabulary-pca-chart"')
-        self.assertContains(response,'id="vocabulary-pca-data"')
-        exported=self.client.get(reverse('search:word2vec_export'),{**self.params(),'topic':self.cs.pk,'word':'learning'})
+        self.assertTrue(response.url.endswith('#training-setup'))
+        response=self.client.get(response.url);self.assertTrue(response.context['both_ready']);self.assertEqual(response.context['corpus_stats']['documents'],6)
+        self.assertContains(response,'id="global-cbow-pca"');self.assertContains(response,'id="global-skipgram-tsne"')
+        self.assertContains(response,'class="panel embedding-setup-panel"')
+        self.assertContains(response,'action="/analysis/word2vec/#global-map"')
+        self.assertNotContains(response,'id="local-map"')
+        self.assertEqual(response.content.count(b'class="parameter-result-card"'),3)
+        comparison=self.client.post(reverse('search:word2vec'),{**self.params(),'corpus_preset':'custom','medical_count':3,'cs_count':3,'targets':'learning','experiment':'all','action':'experiment','compare_window_a':1,'compare_window_b':3,'compare_dimensions_a':25,'compare_dimensions_b':50,'compare_min_count_a':1,'compare_min_count_b':2})
+        self.assertTrue(comparison.url.endswith('#parameter-comparison'))
+        comparison_page=self.client.get(comparison.url)
+        self.assertEqual([card['values'] for card in comparison_page.context['experiment_cards']],[[1,3],[25,50],[1,2]])
+        self.assertTrue(all(card['result'] for card in comparison_page.context['experiment_cards']))
+        self.assertContains(comparison_page,'name="compare_window_a"')
+        exported=self.client.get(reverse('search:word2vec_export'),{**self.params(),'corpus_preset':'custom','medical_count':3,'cs_count':3})
         with zipfile.ZipFile(io.BytesIO(exported.content)) as z:
-            self.assertIn('similar_words.csv',z.namelist());self.assertIn('vocabulary_pca.json',z.namelist());self.assertTrue(z.read('vectors.txt').startswith(b'8 50') or z.read('vectors.txt').splitlines()[0].endswith(b' 50'))
+            self.assertIn('cbow_vectors.txt',z.namelist());self.assertIn('skipgram_tsne.json',z.namelist());self.assertTrue(z.read('cbow_vectors.txt').splitlines()[0].endswith(b' 50'))
         for name,required in [('domains_export','domains_summary.csv'),('research_export','tfidf.csv')]:
             response=self.client.get(reverse('search:'+name));self.assertEqual(response.status_code,200)
             with zipfile.ZipFile(io.BytesIO(response.content)) as z:self.assertIn(required,z.namelist())
@@ -114,6 +219,54 @@ class ResearchFeaturesTests(TestCase):
         with patch('search.embeddings.train') as train:
             self.client.get(reverse('search:word2vec'));train.assert_not_called()
         with self.assertRaises(ValueError):embeddings.train([(1,'X.')],self.params(min_count=5))
+
+    def test_corpus_presets_preprocessing_and_shared_document_ids(self):
+        default=embeddings.select_corpus(Document.objects.all(),{})
+        balanced=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'balanced'})
+        self.assertEqual(default['actual'],{'medical':3,'cs':0})
+        self.assertEqual(balanced['requested'],{'medical':3,'cs':3})
+        medical=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'medical'})
+        cs=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'cs'})
+        all_docs=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'all'})
+        self.assertEqual((len(medical['records']),len(cs['records']),len(all_docs['records'])),(3,3,6))
+        custom=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'custom','medical_count':'2','cs_count':'2'})
+        repeated=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'custom','medical_count':'2','cs_count':'2'})
+        self.assertEqual(custom['document_ids'],repeated['document_ids'])
+        models=embeddings.train_both(custom['records'],self.params())
+        self.assertEqual(models['cbow'].bir_metadata['document_ids'],models['skipgram'].bir_metadata['document_ids'])
+        self.assertEqual(models['cbow'].vector_size,50);self.assertEqual(models['skipgram'].vector_size,50)
+        self.assertIn('studies',embeddings.condition_tokens('Studies computing effects')['C'])
+        self.assertIn('studi',embeddings.condition_tokens('Studies computing effects')['D'])
+
+    def test_keyed_bilingual_word_embedding_ui(self):
+        response=self.client.get(reverse('search:word2vec'))
+        self.assertContains(response,'data-i18n-key="we.corpus.title"')
+        template=(Path(__file__).parent/'templates'/'search'/'word2vec.html').read_text(encoding='utf-8')
+        javascript=(Path(__file__).parent/'static'/'search'/'i18n.js').read_text(encoding='utf-8')
+        import re
+        keys=set(re.findall(r'data-i18n(?:-aria)?-key="([^"]+)"',template))
+        self.assertFalse([key for key in keys if '{' not in key and f"'{key}'" not in javascript])
+        for key in ['we.field.condition','we.field.dimensions','we.field.window','we.field.min_count','we.field.epochs','we.condition.B','we.condition.C','we.condition.D']:
+            self.assertIn(f"'{key}'",javascript)
+        self.assertNotContains(response,'RQ1');self.assertNotContains(response,'Change exactly one setting')
+        self.assertIn('1–5 ·',template);self.assertIn('class="step-label"',template)
+        for marker in ['setup-grid','setup-group','fixed-settings-details','parameter-input-grid','compare_{{ card.kind }}_a','id="parameter-comparison"']:
+            self.assertIn(marker,template)
+        for marker in ['map-neighbor-results','we.global.neighbor.list','Top-10']:
+            self.assertIn(marker,template)
+        projection=(Path(__file__).parent/'static'/'search'/'research.js').read_text(encoding='utf-8')
+        for marker in ['projection-label','projection-tooltip','labelBudget','requestAnimationFrame','cellSize','safelyRender','finally','data-local-form','data-local-status']:
+            self.assertIn(marker,projection)
+        self.assertIn("url.hash='training-setup'",projection)
+        for marker in ["point.highlight==='target'","point.highlight==='neighbor'","Math.max(10,rawRadius*1.6)","is-target","is-neighbor","#2e9d68"]:
+            self.assertIn(marker,projection)
+        self.assertNotIn('leader:add',projection)
+        for marker in ['IntersectionObserver','requestIdleCallback','createDocumentFragment','dataset.renderState']:
+            self.assertIn(marker,projection)
+        self.assertNotIn('getBBox(',projection);self.assertNotIn('getBoundingClientRect()',projection.split('placeLabels=')[1].split('};',1)[0])
+        self.assertIn('observer.disconnect()',javascript)
+        self.assertIn('root.nodeType!==Node.ELEMENT_NODE&&root.nodeType!==Node.DOCUMENT_NODE',javascript)
+        self.assertNotIn('const scope=root.querySelectorAll?root:document',javascript)
 
     def test_arxiv_metadata_import_has_real_id_no_invented_pmid_and_reuses_versions(self):
         with patch('search.arxiv_client._get',return_value=ATOM) as fetch, patch('search.arxiv_client.time.sleep'):
@@ -138,3 +291,27 @@ class ResearchFeaturesTests(TestCase):
         result=compare_domains(q)
         self.assertFalse(result['comparison_ready'])
         self.assertEqual([g['data']['documents'] for g in result['domain_groups']],[0,0])
+
+
+class WordEmbeddingCorpusScaleTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        documents=[]
+        for i in range(1000):
+            documents.append(Document(title=f'Medical {i}',source_file=f'med-{i}.xml',abstract='Medical treatment studies effects.',raw_text='',pmid=str(100000+i)))
+        for i in range(500):
+            documents.append(Document(title=f'CS {i}',source_file=f'cs-{i}.xml',abstract='Computer retrieval algorithms compute results.',raw_text='',arxiv_id=f'2601.{i:05d}'))
+        Document.objects.bulk_create(documents,batch_size=500)
+
+    def test_balanced_custom_medical_cs_and_all_1500(self):
+        medical_default=embeddings.select_corpus(Document.objects.all(),{})
+        balanced=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'balanced'})
+        custom=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'custom','medical_count':500,'cs_count':500})
+        medical=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'medical'})
+        cs=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'cs'})
+        all_docs=embeddings.select_corpus(Document.objects.all(),{'corpus_preset':'all'})
+        self.assertEqual(medical_default['actual'],{'medical':1000,'cs':0})
+        self.assertEqual(balanced['actual'],{'medical':500,'cs':500})
+        self.assertEqual(custom['document_ids'],balanced['document_ids'])
+        self.assertEqual((len(medical['records']),len(cs['records']),len(all_docs['records'])),(1000,500,1500))
+        self.assertEqual(len(set(all_docs['document_ids'])),1500)

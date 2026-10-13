@@ -74,7 +74,7 @@ BM25 每詞分數：
 
 `ln(1 + (N - DF + 0.5)/(DF + 0.5)) × TF × (k1+1) / (TF + k1 × (1-b + b × doc_len/avg_doc_len))`
 
-N、DF、avg_doc_len 都在目前 topic／年份範圍內計算。此 BM25 的平滑 IDF 和 Zipf 表的 `ln(N/DF)` 不相同。一般搜尋分數顯示四位小數；排序先用原始分數。
+N、DF、avg_doc_len 都在目前 topic／年份範圍內計算。此 BM25 的自然對數平滑 IDF 和 Zipf 表的 `log10(N/DF)` 不相同。一般搜尋分數顯示四位小數；排序先用原始分數。
 
 若查詢只有停用詞而 preprocess 變成空列表，使用原始 tokenize 的 fallback：需每個查詢 token 都出現（AND），依命中數排序。Zipf 點擊詞彙的查詢則依該 A–D 條件做 exact token 匹配，依次數排序；不是一般 BM25 或 substring。
 
@@ -90,9 +90,9 @@ Articles 與 Search results 一頁最多 20 筆；term table 一頁 50 筆，分
 
 四種條件累積：A＝HW1 word tokens 加獨立標點符號並 casefold；B＝排除完全不含 alphanumeric 字元的 token，保留 GLP-1／小數等完整 token。因此 A/B 會有明確差異。C＝B 去固定 stopwords；D＝C Porter stemming。
 
-只使用非空白摘要；N 是不同摘要文件數。CF 為跨文件出現次數；DF 為含該 term 的不同文件數；IDF = `ln(N/DF)`，沒有 smoothing；coverage = `100*DF/N`。依 CF 降序、同頻 term 字母序決定 rank，從 1 開始。
+只使用非空白摘要；N 是不同摘要文件數。CF 為跨文件出現次數；DF 為含該 term 的不同文件數；IDF = `log10(N/DF)`，沒有 smoothing；coverage = `100*DF/N`。依 CF 降序、同頻 term 字母序決定 rank，從 1 開始。
 
-以所有 vocabulary entries 做不加權 OLS：`ln(CF) = intercept + slope*ln(rank)`；Zipf exponent k = `-slope`。R² = `1-SSE/SST`；RMSE = `sqrt(SSE/V)`，在 natural-log frequency 空間。少於二個詞無擬合；CF 全相同時 R² 未定義。
+以所有 vocabulary entries 做不加權 OLS：`log10(CF) = intercept + slope*log10(rank)`；Zipf exponent k = `-slope`。R² = `1-SSE/SST`；RMSE = `sqrt(SSE/V)`，在 base-10-log frequency 空間。少於二個詞無擬合；CF 全相同時 R² 未定義。
 
 Head 前 5%、Middle 5–50%、Tail 最後 50%，切點使用 ceil 並以實際 vocabulary 長度截斷。各區另外算 local fit；global RMSE 用整體擬合在該區的誤差。高 R² 本身不證明符合 Zipf's Law。
 
@@ -169,7 +169,7 @@ HW1 document_stats/tokenization仍完全不變，Text matching的normalization�
 
 Report以當下topic union与所選condition重新計算，對RQ1–RQ5、R²限制與head/middle/tail提供數值連結的草稿；不以R²門檻自動宣告power law成立。最佳region按global fitted-line RMSE最小選，至少2terms。CF/DF示例從當前資料選，不用虛構教科書數值。IR discussion固定300–500 English words，畫面顯示split()詞數；學生仍需核對、加入課堂引用與自己的interpretation。
 
-另算per-document TF-IDF：TF為該condition的原始occurrence count，IDF=ln(N/DF)，乘積TF×IDF。空abstract排除N；DF文件只算一次。與BM25的IDF不同，沒有改搜尋ranking。完整tfidf.csv包含所有document-term非零TF組合。CSV公式開頭字串以前置apostrophe防spreadsheet公式執行。Executive Summary可開專屬列印view，A4樣式排成一頁，包含四個findings；亦匯出Markdown，不把draft當已完成學生個人報告。
+另算per-document TF-IDF：TF為該condition的原始occurrence count，IDF=log10(N/DF)，乘積TF×IDF。空abstract排除N；DF文件只算一次。與BM25的IDF不同，沒有改搜尋ranking。完整tfidf.csv包含所有document-term非零TF組合。CSV公式開頭字串以前置apostrophe防spreadsheet公式執行。Executive Summary可開專屬列印view，A4樣式排成一頁，包含四個findings；亦匯出Markdown，不把draft當已完成學生個人報告。
 
 ## 官方參考
 
@@ -195,6 +195,6 @@ CS CSV備用：arXiv API可能回429限流。可上傳本機UTF-8 CSV（headers 
 
 候選字典只來自當前主題與年份範圍的 Abstract + Keywords（沿用 Document.abstract），使用原 HW1 tokenize，另為建議做 NFC + casefold；不改原始文章字数、句數、字元數、索引或 BM25。已存在的詞、Porter 詞幹已存在的詞、72 個 stopwords、數字、含數字/連字符的 biomedical identifiers、少於 4 字元與超過 32 字元的詞均不建議替換。未知詞不是必然錯字，畫面只提供可能的修正。
 
-候選使用有界 Levenshtein（Unicode codepoints；插入、刪除、替換各 1；相鄰交換需 2），搜尋建議允許距離 1–3。先依編輯距離升序，再依當前範圍 DF 降序、CF 降序、字母順序排序。多個疑似錯詞使用寬度 3 的 beam 合成完整查詢；總距離最小優先，再依 DF/CF 加總排序，最多 3 個不同查詢，且每個建議顯示總編輯距離。保留查詢中未替換的詞、標點、空格，以及替換詞原有的全大寫/首字大寫形式。
+候選使用有界 Levenshtein（Unicode codepoints；插入、刪除、替換各 1；相鄰交換需 2），搜尋建議列出距離 1–2 的候選；即使原查詢已有結果也照樣顯示。先依編輯距離升序，再依當前範圍 DF 降序、CF 降序、字母順序排序，每個建議顯示實際距離。候選包含一般字詞及至少含一個字母的生醫識別詞，因此 `glp11` 可建議 `glp1`／`glp-1`。多詞查詢一次替換一個詞，保留其餘詞、標點、空格，以及替換詞原有的全大寫／首字大寫形式。
 
 查詢長度超過 512 字元或 12 個 tokens 時跳過建議，限制計算成本。字典快取 300 秒，以範圍內全部文章 ID 與 abstract 的 SHA-256 為鍵；文章新增、修改或範圍改變會使用不同快取鍵。這是拼字修正，不是 Word2Vec 語意推薦；Word2Vec 保留於原專用分析頁。

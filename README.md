@@ -95,11 +95,11 @@ Calculations:
 
 - **CF**: occurrences across all abstracts.
 - **DF**: number of distinct abstracts containing the term.
-- **IDF**: `ln(N / DF)`, without smoothing; N excludes blank abstracts.
+- **IDF**: `log10(N / DF)`, without smoothing; N excludes blank abstracts.
 - **Rank**: descending CF, alphabetical tie-breaking.
-- **Fit**: unweighted ordinary least squares, `ln(CF) = intercept + slope × ln(rank)` over every vocabulary entry.
+- **Fit**: unweighted ordinary least squares, `log10(CF) = intercept + slope × log10(rank)` over every vocabulary entry.
 - **Zipf exponent k**: negative slope.
-- **RMSE**: error in natural-log frequency space.
+- **RMSE**: error in base-10-log frequency space.
 - **Regions**: head first 5%, middle 5–50%, tail last 50% of vocabulary ranks; recalculated per condition. Local R² is undefined for a constant-frequency segment. Regional error against the overall fit and local fits are reported separately.
 
 Small / empty corpora remain usable; unavailable regression values show a dash. A high R² is not a proof of Zipf's Law. Charts sample log-spaced points for responsiveness; regression and exports always use all vocabulary rows. The interface shows rank–frequency and log–log together and does not include a residual chart. Each chart can be downloaded as SVG; all application CSS / JavaScript is local, without CDN dependencies.
@@ -108,14 +108,15 @@ Small / empty corpora remain usable; unavailable regression values show a dash. 
 
 ## Persistent data and updates
 
-The Docker named volume `biomedir_data` stores:
+The Compose bind mount `./data:/app/data` stores:
 
 - `/app/data/db.sqlite3`: documents, topics, postings and import jobs.
 - `/app/data/corpus/`: original and collected XML.
 - `/app/data/fetched/`: staged article files.
 - `/app/data/logs/`: worker logs.
+- `/app/data/embedding_cache/`: persistent CBOW/Skip-Gram models, manifests, losses, semantic metadata, and PCA/t-SNE artifacts.
 
-The archive does not include a prepopulated database. A fresh volume is seeded from the original 14 GitHub XML articles. Updating or rebuilding the same Compose project retains the existing collection and topic memberships. Keep the extracted folder name/location stable so Compose uses the same project volume. Do not use `docker compose down -v` for normal shutdown: `-v` deletes the data volume.
+The archive does not include a prepopulated database. A fresh data directory is seeded from the original 14 GitHub XML articles. Updating, rebuilding, or running `docker compose down` retains the host `data/` directory, including embedding caches.
 
 This new project does not automatically import a separate old Windows installation. Keep that old folder and its database as a backup. Back up **the SQLite database and corpus together** while imports are stopped. `initialize_local` only seeds an empty collection; `build_index` preserves document IDs and topic links when rebuilding postings.
 
@@ -129,9 +130,15 @@ docker compose exec web python manage.py makemigrations --check --dry-run
 docker compose exec web python manage.py test search
 ```
 
-`VALIDATION.json` records checks performed on this delivery. The verification environment has no Docker daemon, so it can validate the configuration, entrypoint syntax and application code but cannot claim an actual Docker image build. TLS trust is additionally checked against a local HTTPS server with a private test CA: an untrusted certificate fails, explicitly trusted certificates work, and the wrong hostname still fails.
+Build the three baseline embedding presets once after importing the 1,000 Medical and 500 CS abstracts:
 
-This package covers the requested topic collection, shared filters, pagination and Zipf analysis. It does not include separate Word2Vec, edit-distance or assignment-report tasks.
+```powershell
+docker compose exec web python manage.py precompute_word2vec_presets
+# Rebuild after an intentional algorithm/data change:
+docker compose exec web python manage.py precompute_word2vec_presets --force
+```
+
+The normal container entrypoint never retrains these presets. Re-running the command reports `CACHE HIT / SKIP` when manifests are valid.
 
 References: [NCBI E-utilities](https://www.ncbi.nlm.nih.gov/books/NBK25499/), [PubMed search help](https://pubmed.ncbi.nlm.nih.gov/help/), [truststore documentation](https://truststore.readthedocs.io/en/latest/), [Django SQLite transactions](https://docs.djangoproject.com/en/5.2/ref/databases/#database-is-locked-errors), and [SQLite WAL](https://sqlite.org/wal.html).
 
@@ -148,7 +155,7 @@ Open **Analysis** to switch between Zipf distribution, **Compare domains**, **Wo
 
 For the Optional Challenge, import 500 medical abstracts with **PubMed** and 500 CS abstracts with **arXiv** (e.g. `cat:cs.IR` or `cat:cs.LG`). Assign them to the two independent topic groups in Compare domains. The default balances counts and removes shared documents. arXiv provides its own identifiers, not PMID; the report explicitly records that distinction. No PDF/full body is downloaded.
 
-Word2Vec trains Gensim Skip-gram or CBOW on your selected abstract sentences; models and metadata persist under `data/embeddings/`. Choose preprocessing and model settings, press Train, enter a word, inspect cosine neighbors and a local PCA plot, then export vectors. Changing settings or topics selects the appropriate model rather than showing stale vectors. A changed corpus requires training again. Small corpora may have unreliable neighbors.
+Word2Vec always compares Gensim CBOW and Skip-Gram using identical selected abstracts, processed sentences and shared settings. Baseline GLP-1 (1000+0), Balanced (500+500), and CS (0+500) presets load from `data/embedding_cache/` without GET-time training. Custom settings train on demand and are cached by deterministic document-content and settings hashes. Both architectures include loss, full-vector cosine evaluation, shared-word PCA/t-SNE, trustworthiness, local projections, and export artifacts. Small corpora may still produce unreliable neighbors.
 
 Research report includes RQ1–RQ5, regional-fit interpretation, CF/DF/IDF evidence, true per-document TF-IDF, a 300–500 word IR discussion, and a printable one-page Executive Summary. It is an evidence-linked draft, not a fabricated 1,000-document result. Review its wording and add your own plot observations and course references before submission.
 
@@ -165,7 +172,7 @@ CS CSV備用：arXiv API可能回429限流。可上傳本機UTF-8 CSV（headers 
 
 ## Search spelling suggestions (2026-10-04)
 
-Search for `camcer`: if `cancer` occurs in your selected abstracts, **Did you mean?** appears below the search box with up to three clickable alternatives. Candidates up to Levenshtein distance 3 are considered, and every displayed suggestion includes its total edit distance. Suggestions can also appear for partial matches such as `camcer treatment`. Your original query and results remain visible until you click a suggestion. The corrected search retains selected topics and publication year and resets pagination. Topic changes refresh both results and suggestions. Known corpus words, known stem variants, short abbreviations, stopwords and biomedical IDs are protected from replacement. Suggestions are spelling candidates, not semantic Word2Vec neighbors. Full distance, ranking, normalization and cache rules are in ALGORITHM_RULES.md.
+Search for `camcer`: if `cancer` occurs in your selected abstracts, **Did you mean?** appears below the search box. Every corpus alternative at Levenshtein distance 1 or 2 is listed with its actual distance, even when the original query already has results. Biomedical identifiers participate too, so `glp11` can suggest `glp1` and `glp-1`. Suggestions can also appear for partial matches such as `camcer treatment`. Your original query and results remain visible until you click a suggestion. The corrected search retains selected topics and publication year and resets pagination. Topic changes refresh both results and suggestions. Suggestions are spelling candidates, not semantic Word2Vec neighbors. Full distance, ranking, normalization and cache rules are in ALGORITHM_RULES.md.
 
 The **Text matching** page accepts one word and lists every Condition B corpus term at Levenshtein distances 1, 2, 3 and 4. Selecting a candidate displays the full dynamic-programming matrix and highlights one optimal edit path.
 

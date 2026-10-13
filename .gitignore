@@ -17,6 +17,7 @@ certs/*.pem
 certs/*.cer
 
 data/embeddings/
+data/embedding_cache/
 data/corpus/*.xml
 data/*.sqlite3
 data/*.sqlite3-*

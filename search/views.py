@@ -949,7 +949,7 @@ def zipf_export_view(request):
             ([k,d['documents'],d['tokens'],d['vocabulary'],d['avg_tokens'],*[d['fit'][name] for name in ['slope','intercept','exponent','r2','rmse']]] for k,d in analyses.items()),
         ))
         for key,data in analyses.items():
-            z.writestr(f'{key}_terms.csv',csv_text(['rank','term','CF','DF','IDF_ln','coverage_percent'],
+            z.writestr(f'{key}_terms.csv',csv_text(['rank','term','CF','DF','IDF_log10','coverage_percent'],
                 ([r[name] for name in ['rank','term','cf','df','idf','coverage']] for r in data['rows'])))
             z.writestr(f'{key}_regions.csv',csv_text(['region','start_rank','end_rank','terms','slope','exponent','R2','RMSE_local','RMSE_global'],
                 ([r[name] for name in ['name','start','end','terms','slope','exponent','r2','rmse','global_rmse']] for r in data['regions'])))
@@ -959,7 +959,7 @@ def zipf_export_view(request):
             'scope':'HW1 extracted abstract + Keywords; no article title or body',
             'conditions':CONDITIONS, 'selected_topics':[t.name for t in filters['topics'] if t.selected],
             'selection':'Union of selected topics, globally unique document rows; empty selection = all',
-            'idf':'ln(N/DF), without smoothing', 'regression':'Unweighted OLS over all vocabulary ranks; natural logs',
+            'idf':'log10(N/DF), without smoothing', 'regression':'Unweighted OLS over all vocabulary ranks; base-10 logarithms',
             'regions':'Head first 5%, middle 5–50%, tail last 50% by rank; bounds recomputed per condition',
             'ties':'CF descending, then term alphabetically ascending',
             'csv_text':'Text beginning with = + - @ is prefixed with an apostrophe for spreadsheet safety; remove that prefix when programmatically reading those cells.',

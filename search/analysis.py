@@ -1,4 +1,4 @@
-"""Abstract-only, deterministic A–D comparisons and unsmoothed natural-log IDF."""
+"""Abstract-only, deterministic A–D comparisons and unsmoothed base-10 IDF."""
 import hashlib
 import math
 import re
@@ -50,8 +50,8 @@ def condition_tokens(text):
 def fit_log_log(rows):
     if len(rows) < 2:
         return {'slope': None, 'intercept': None, 'exponent': None, 'r2': None, 'rmse': None}
-    xs = [math.log(row['rank']) for row in rows]
-    ys = [math.log(row['cf']) for row in rows]
+    xs = [math.log10(row['rank']) for row in rows]
+    ys = [math.log10(row['cf']) for row in rows]
     mx, my = sum(xs)/len(xs), sum(ys)/len(ys)
     sxx = sum((x-mx)**2 for x in xs)
     slope = sum((x-mx)*(y-my) for x,y in zip(xs,ys))/sxx
@@ -75,7 +75,7 @@ def _region_rows(rows, fit):
         local = fit_log_log(subset)
         residuals = []
         if fit['slope'] is not None:
-            residuals = [math.log(row['cf']) - (fit['intercept']+fit['slope']*math.log(row['rank'])) for row in subset]
+            residuals = [math.log10(row['cf']) - (fit['intercept']+fit['slope']*math.log10(row['rank'])) for row in subset]
         regions.append({
             'name': name, 'start': subset[0]['rank'] if subset else None,
             'end': subset[-1]['rank'] if subset else None, 'terms': len(subset),
@@ -105,7 +105,7 @@ def analyze(abstracts):
         cf, df = cfs[key], dfs[key]
         rows = [
             {'rank': rank, 'term': term, 'cf': frequency, 'df': df[term],
-             'idf': math.log(count/df[term]), 'coverage': 100*df[term]/count}
+             'idf': math.log10(count/df[term]), 'coverage': 100*df[term]/count}
             for rank, (term, frequency) in enumerate(sorted(cf.items(), key=lambda item: (-item[1],item[0])), 1)
         ]
         fit = fit_log_log(rows)

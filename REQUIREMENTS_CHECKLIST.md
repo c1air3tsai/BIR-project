@@ -10,7 +10,7 @@
 | Part III CF 排序、Top 50 | Zipf → Term statistics | 一頁兩欄、每欄 25 筆，直接顯示 Top 50；完整 CSV 匯出。 |
 | Part IV DF | Zipf term table | 每篇文章至多為每個 term 的 DF 貢獻 1。 |
 | Part V Rank–frequency / log–log | Zipf 圖表模式 | 完整 rank 範圍；可儲存 SVG。 |
-| Regression slope/intercept/k/R²/RMSE | Zipf regression strip / export | 全 vocabulary ranks 的 natural-log OLS。 |
+| Regression slope/intercept/k/R²/RMSE | Zipf regression strip / export | 全 vocabulary ranks 的 base-10-log OLS。 |
 | Q1–Q4: Zipf、exponent、R² 限制、最佳區段 | Research report；Zipf regional fit | 實際數值＋有界解釋；不把 R² 當 power-law 證明。 |
 | Part VI 比較 A/B/C/D vocabulary / leading terms / exponent / shape | Zipf → Compare all；Research report RQ3 | 疊圖與摘要指標；保留 shape 觀察及 residuals。 |
 | Part VII 至少 20 terms CF vs DF＋三個問題 | Research report CF/DF evidence & RQ4 | vocabulary 足夠時列出 20；例子取自本次選取集合。 |
@@ -21,7 +21,7 @@
 | Final challenge empirical approximate law usefulness | Research report RQ5 | 連結當前數據、索引設計、retrieval concepts；仍需學生加入課堂／教科書參考。 |
 | One-page Executive Summary 四項 finding | Research report → Open print summary | 可直接 Print/Save PDF；獨立 summary.md 匯出。 |
 | Final RQ1–RQ5 | Research report | 全部列出；數值隨目前主題／condition 重算。 |
-| 使用者要求：Word2Vec | Analysis → Word2Vec | 真正 Gensim Skip-gram/CBOW；參數、neighbors cosine、PCA、vectors.txt export。 |
+| 使用者要求：Word2Vec | Analysis → Word2Vec | 同語料與設定的 Gensim CBOW/Skip-Gram；三組永久 preset cache、逐 epoch loss、完整向量 cosine、PCA/t-SNE、trustworthiness、局部圖與成對 export。 |
 | 使用者要求：編輯距離 | Analysis → Text matching | Levenshtein，插入／刪除／替換=1；Unicode code points。 |
 | 使用者要求：Unicode／大小寫 | Text matching；ALGORITHM_RULES.md | UTF-8 解碼 vs NFC/NFKC vs casefold 分開說明；不改 HW1 統計。 |
 | CS 摘要來源 | Upload → arXiv CS | Atom API，cat:cs.*；保留 arXiv ID，不捏造 PMID；Medical 用 PubMed。 |

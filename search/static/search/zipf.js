@@ -42,12 +42,12 @@
     return add('text', {x,y,fill:'#687985','font-size':13,'font-family':'Segoe UI, Arial, sans-serif',...extra},text);
   }
   function predicted(d,rank) {
-    return d.fit.slope === null ? 0 : d.fit.intercept+d.fit.slope*Math.log(rank);
+    return d.fit.slope === null ? 0 : d.fit.intercept+d.fit.slope*Math.log10(rank);
   }
   function value(d,p) {
     if (mode === 'frequency') return p.cf;
-    if (mode === 'residual') return Math.log(p.cf)-predicted(d,p.rank);
-    return Math.log(p.cf);
+    if (mode === 'residual') return Math.log10(p.cf)-predicted(d,p.rank);
+    return Math.log10(p.cf);
   }
   function compact(n) {
     if (mode !== 'frequency') return n.toFixed(1);
@@ -60,7 +60,7 @@
     canvasH=narrow?310:390; L=narrow?53:74; W=canvasW-L-20; H=canvasH-T-65;
     svg.setAttribute('viewBox',`0 0 ${canvasW} ${canvasH}`);
     const count = sets.reduce((n,d)=>Math.max(n,d.vocabulary),1);
-    const xmax=mode==='frequency'?Math.max(count,1):Math.max(Math.log(count),1);
+    const xmax=mode==='frequency'?Math.max(count,1):Math.max(Math.log10(count),1);
     const values = sets.flatMap(d=>d.points.map(p=>value(d,p)));
     let ymin=0,ymax=Math.max(1,...values);
     const fitChecked=panel.querySelector('[data-show-fit]').checked;
@@ -70,7 +70,7 @@
     }
     if (mode==='residual') { const absolute=Math.max(.5,...values.map(Math.abs)); ymin=-absolute; ymax=absolute; }
     const ypad=(ymax-ymin)*.06; ymax+=ypad; if (mode==='residual') ymin-=ypad;
-    const x = r=> L+(mode==='frequency'?r:Math.log(r))/xmax*W;
+    const x = r=> L+(mode==='frequency'?r:Math.log10(r))/xmax*W;
     const y = v=> T+H-(v-ymin)/(ymax-ymin)*H;
     add('title',{},`Zipf analysis: ${keys.join(', ')}. ${mode}. ${sets[0].documents} distinct abstracts.`);
     add('desc',{},'Terms ranked by collection frequency. Regression uses all vocabulary entries; display points are sampled.');
@@ -96,8 +96,8 @@
     }
     add('line',{x1:L,y1:T,x2:L,y2:T+H,stroke:'#c7d3dc'});
     add('line',{x1:L,y1:T+H,x2:L+W,y2:T+H,stroke:'#c7d3dc'});
-    label(L+W/2,canvasH-7,mode==='frequency'?'Term rank':'ln(Term rank)',{'text-anchor':'middle',fill:'#496277','font-size':14});
-    label(17,T+H/2,mode==='frequency'?'Collection frequency (CF)':mode==='residual'?'Residual in ln(CF)':'ln(Collection frequency)',{transform:`rotate(-90 17 ${T+H/2})`,'text-anchor':'middle',fill:'#496277','font-size':14});
+    label(L+W/2,canvasH-7,mode==='frequency'?'Term rank':'log10(Term rank)',{'text-anchor':'middle',fill:'#496277','font-size':14});
+    label(17,T+H/2,mode==='frequency'?'Collection frequency (CF)':mode==='residual'?'Residual in log10(CF)':'log10(Collection frequency)',{transform:`rotate(-90 17 ${T+H/2})`,'text-anchor':'middle',fill:'#496277','font-size':14});
     if (mode==='residual') add('line',{x1:L,y1:y(0),x2:L+W,y2:y(0),stroke:'#8ca8bd','stroke-dasharray':'5 4'});
     for(const d of sets) {
       const points=d.points.map(p=>({x:x(p.rank),y:y(value(d,p)),p,d})); coords.push(...points);
@@ -108,7 +108,7 @@
     }
     label(L,18,narrow?`Condition ${keys.join(' / ')}`:sets.map(d=>`${d.key} · ${d.label}`).join('    /    '),{'font-size':10,fill:'#496277'});
     hoverDot=add('circle',{r:5,fill:'#fff',stroke:'#2a6aa4','stroke-width':2,visibility:'hidden'});
-    panel.querySelector('[data-chart-caption]').textContent = mode==='frequency'?'Linear axes · full rank range':mode==='residual'?'Observed ln(CF) − fitted ln(CF) · zero means on the regression line':'Natural log of rank and CF · dashed lines show the fitted regression';
+    panel.querySelector('[data-chart-caption]').textContent = mode==='frequency'?'Linear axes · full rank range':mode==='residual'?'Observed log10(CF) − fitted log10(CF) · zero means on the regression line':'Base-10 log of rank and CF · dashed lines show the fitted regression';
     panel.querySelector('.fit-toggle').hidden=mode!=='log';
     panel.querySelectorAll('[data-chart-mode]').forEach(b=>{const selected=b.dataset.chartMode===mode;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});
   }

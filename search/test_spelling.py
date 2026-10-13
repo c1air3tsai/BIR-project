@@ -67,9 +67,10 @@ class SpellingSearchTests(TestCase):
         response=self.client.get(reverse('search:home'),{'q':'caner','topic':self.med.pk,'year':'2024'})
         self.assertEqual([r['query'] for r in response.context['spelling_suggestions']],['canker'])
 
-    def test_existing_rare_words_inflections_stopwords_and_ids_are_not_changed(self):
-        for query in ['patients','treatments','the','GLP-1','zzzzzz','cat','p53']:
+    def test_stopwords_unrelated_words_and_ids_without_neighbors_have_no_suggestion(self):
+        for query in ['patients','the','GLP-1','zzzzzz','cat','p53']:
             self.assertEqual(suggest_query(query,Document.objects.all()),[],query)
+        self.assertEqual(suggest_query('treatments',Document.objects.all())[0]['query'],'treatment')
 
     def test_search_always_suggests_words_one_and_two_edits_away_with_distance(self):
         two=suggest_query('canr',Document.objects.filter(topics=self.med))
@@ -77,8 +78,8 @@ class SpellingSearchTests(TestCase):
         successful=self.client.get(reverse('search:home'),{'q':'canker','topic':self.med.pk})
         self.assertGreater(successful.context['page_obj'].paginator.count,0)
         suggestion=next(row for row in successful.context['spelling_suggestions'] if row['query']=='cancer')
-        self.assertEqual(suggestion['distance'],2)
-        self.assertContains(successful,'Distance 2')
+        self.assertEqual(suggestion['distance'],1)
+        self.assertContains(successful,'Distance 1')
 
     def test_vocabulary_refreshes_after_new_article_and_multiple_typo_correction(self):
         before=suggest_query('neoplasmm',Document.objects.all());self.assertEqual(before,[])

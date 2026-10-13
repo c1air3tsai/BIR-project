@@ -26,7 +26,7 @@ class ZipfMathTests(SimpleTestCase):
         rows=[{'rank':i,'cf':120/i} for i in range(1,31)]
         fit=fit_log_log(rows)
         self.assertAlmostEqual(fit['exponent'],1)
-        self.assertAlmostEqual(fit['intercept'],math.log(120))
+        self.assertAlmostEqual(fit['intercept'],math.log10(120))
         self.assertAlmostEqual(fit['r2'],1)
         self.assertAlmostEqual(fit['rmse'],0)
 
@@ -41,6 +41,7 @@ class ZipfMathTests(SimpleTestCase):
         self.assertEqual(rows['improv']['df'],2)
         self.assertEqual(rows['improv']['idf'],0)
         self.assertEqual(rows['patient']['cf'],2)
+        self.assertAlmostEqual(analyze(['alpha beta','alpha gamma'])['D']['rows'][1]['idf'], math.log10(2))
         self.assertNotIn('the',rows)
         self.assertEqual(result['C']['tokens'],result['D']['tokens'])
         self.assertGreater(result['C']['vocabulary'],result['D']['vocabulary'])
