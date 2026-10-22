@@ -135,6 +135,10 @@ EMBEDDING_CACHE_DIR = Path(os.environ.get(
     'BIOMEDIR_EMBEDDING_CACHE', str(BASE_DIR / 'data' / 'embedding_cache')
 ))
 
+RETRIEVAL_CACHE_DIR = Path(os.environ.get(
+    'BIOMEDIR_RETRIEVAL_CACHE', str(BASE_DIR / 'data' / 'retrieval_cache')
+))
+
 NCBI_EMAIL = os.environ.get('NCBI_EMAIL', '')
 NCBI_API_KEY = os.environ.get('NCBI_API_KEY', '')
 NCBI_CA_DIR = os.environ.get('BIOMEDIR_CA_DIR', str(BASE_DIR / 'certs'))

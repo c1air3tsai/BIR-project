@@ -12,6 +12,7 @@ services:
     environment:
       BIOMEDIR_DB: /app/data/db.sqlite3
       BIOMEDIR_EMBEDDING_CACHE: /app/data/embedding_cache
+      BIOMEDIR_RETRIEVAL_CACHE: /app/data/retrieval_cache
       BIOMEDIR_CA_DIR: /app/certs
       NCBI_EMAIL: ${NCBI_EMAIL:-}
       NCBI_API_KEY: ${NCBI_API_KEY:-}

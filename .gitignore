@@ -18,6 +18,7 @@ certs/*.cer
 
 data/embeddings/
 data/embedding_cache/
+data/retrieval_cache/
 data/corpus/*.xml
 data/*.sqlite3
 data/*.sqlite3-*

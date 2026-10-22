@@ -143,6 +143,7 @@ class SpellingSearchTests(TestCase):
         self.assertIn('cancer',[row['term'] for row in groups[2]['rows']])
         self.assertEqual(response.context['selected_candidate']['term'],'cancer')
         self.assertEqual(response.context['matrix']['distance'],2)
+        self.assertContains(response,reverse('search:term_weighting'))
         self.assertNotContains(response,'What the algorithm compares')
 
     def test_dp_matrix_matches_rolling_distance(self):

@@ -3,7 +3,7 @@ set -eu
 cd /app
 
 if [ "${1:-}" = "python" ] && [ "${2:-}" = "manage.py" ] && [ "${3:-}" = "runserver" ]; then
-    mkdir -p /app/data/corpus /app/data/logs /app/data/fetched /app/data/embedding_cache
+    mkdir -p /app/data/corpus /app/data/logs /app/data/fetched /app/data/embedding_cache /app/data/retrieval_cache
     python manage.py migrate --noinput
     python manage.py prepare_container
 fi

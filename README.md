@@ -1,5 +1,21 @@
 # BioMed IR — Docker Literature Workspace
 
+## Project #3 · Term Weighting Lab
+
+Open `/analysis/term-weighting/` for the Term Weighting Lab. The original Text Matching edit-distance page remains at `/analysis/matching/`. Select Medical (the default), Computer Science, or all available abstracts. The default uses every available Medical abstract, with Condition C for both documents and queries. Scientific hyphen variants are folded to the same token. The existing Search, Articles, Zipf, Domain Comparison, and Word2Vec pages retain their routes.
+
+Build the persistent index once after importing or editing documents:
+
+```powershell
+docker compose exec web python manage.py precompute_retrieval_index
+```
+
+Use `--corpus cs` or `--corpus all` for other scopes, and `--force` to rebuild. The page's Build index button does the same for the selected scope. A normal page load or search does not tokenize the corpus. A content/version key and a lightweight database signature invalidate stale artifacts. Docker stores the cache under the bind-mounted `data/retrieval_cache/` directory; database judgments remain in `data/db.sqlite3`.
+
+The four controlled methods are Raw TF = count, Log TF = 1 + ln(count) for positive count, IDF only = ln(N/DF) for present terms, and TF-IDF = Raw TF × IDF. Both query and document use the same method, vocabulary, and IDF. Scoring uses cosine with sparse postings and precomputed document norms. The L2 panel independently compares raw-vector cosine with explicit unit-vector dot product.
+
+Ten candidate evaluation queries are seeded without relevance labels. In Evaluate, open each query and judge the union of all four Top-10 result sets. A query contributes to aggregate metrics only after every pooled candidate is judged. Recall uses relevant documents within that judged pool; relevance outside the pool is unknown. Export produces JSON with the configuration, pooled judgments, Top-10 rankings, per-query metrics, and aggregate metrics. No metric winner is declared before judgments are complete.
+
 Based on [c1air3tsai/BIR main](https://github.com/c1air3tsai/BIR/tree/main), commit `fdd2df638b1993b7eeed314351b120f4ff56858f`. The original HW1 abstract processing and blue palette are retained.
 
 ## Start on Windows

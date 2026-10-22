@@ -1,0 +1,55 @@
+{% extends 'search/base.html' %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'search/term_weighting.css' %}">{% endblock %}
+{% block content %}
+<main class="site-shell page-main tw-page" id="main" data-csrf="{{ csrf_token }}" data-scope="{{ scope }}"
+  data-status-url="{% url 'search:term_weighting_status' %}" data-build-url="{% url 'search:term_weighting_build' %}"
+  data-search-url="{% url 'search:term_weighting_search' %}" data-explain-url="{% url 'search:term_weighting_explain' %}"
+  data-compare-url="{% url 'search:term_weighting_compare' %}" data-terms-url="{% url 'search:term_weighting_terms' %}"
+  data-evaluation-url="{% url 'search:term_weighting_evaluation' %}" data-pool-url="/analysis/term-weighting/pool/"
+  data-queries-url="{% url 'search:term_weighting_queries' %}" data-judgment-url="{% url 'search:term_weighting_judgment' %}"
+  data-export-url="{% url 'search:term_weighting_export' %}">
+  {% include 'search/_analysis_nav.html' %}
+  <header class="tw-header"><div><span class="section-kicker" data-i18n="tw.kicker">PROJECT #3 · VECTOR SPACE RETRIEVAL</span><h1 data-i18n="tw.title">Term Weighting Lab</h1></div><p data-i18n="tw.subtitle">Search → explain → compare → evaluate.</p></header>
+
+  <div class="tw-experiment panel" aria-label="Experiment settings">
+    <label><span data-i18n="tw.corpus">Corpus</span><select id="tw-corpus"><option value="medical" data-i18n="tw.medical">GLP-1 / Medical</option><option value="cs" data-i18n="tw.cs">Computer Science</option><option value="all" data-i18n="tw.all">All Available</option></select></label>
+    <div><span data-i18n="tw.preprocess">Preprocessing</span><strong>Condition C</strong></div>
+    <div><span data-i18n="tw.available">Available documents</span><strong id="tw-available">{{ index_status.available }}</strong></div>
+    <div><span data-i18n="tw.indexed">Indexed documents</span><strong id="tw-indexed">{{ index_status.indexed }}</strong></div>
+    <div><span data-i18n="tw.vocabulary">Vocabulary</span><strong id="tw-vocabulary">{{ index_status.vocabulary }}</strong></div>
+    <div><span data-i18n="tw.index">Index</span><strong id="tw-index-state">{% if index_status.ready %}Ready{% else %}Missing{% endif %}</strong></div>
+    <button class="secondary-button small-button" id="tw-build" type="button" data-i18n="tw.build">Build index</button>
+  </div>
+
+  <nav class="tw-tabs" aria-label="Term Weighting sections"><button type="button" class="active" data-tab="search" aria-selected="true" data-i18n="tw.search">Search</button><button type="button" data-tab="compare" aria-selected="false" data-i18n="tw.compare">Compare</button><button type="button" data-tab="evaluate" aria-selected="false" data-i18n="tw.evaluate">Evaluate</button></nav>
+
+  <section id="tw-search-panel" class="tw-tab-panel" aria-labelledby="tw-search-heading">
+    <div class="section-heading-row"><h2 id="tw-search-heading" data-i18n="tw.search">Search</h2><span id="tw-search-status" role="status"></span></div>
+    <form id="tw-search-form" class="tw-query-form"><label for="tw-query" data-i18n="tw.query">Query</label><div><input id="tw-query" maxlength="300" value="GLP-1 obesity" required><button class="primary-button" type="submit" data-i18n="tw.search">Search</button></div></form>
+    <div class="tw-control-row"><fieldset id="tw-method"><legend data-i18n="tw.weighting">Weighting</legend><label><input type="radio" name="method" value="tfidf" checked> TF-IDF</label><label><input type="radio" name="method" value="tf"> Raw TF</label><label><input type="radio" name="method" value="log_tf"> Log TF</label><label><input type="radio" name="method" value="idf"> IDF</label></fieldset></div>
+    <div class="tw-chips" aria-label="Demo queries"><button type="button" data-query="GLP-1 obesity">GLP-1 obesity</button><button type="button" data-query="semaglutide weight loss">semaglutide weight loss</button><button type="button" data-query="GLP-1 cardiovascular">GLP-1 cardiovascular</button><button type="button" data-query="insulin secretion">insulin secretion</button><button type="button" data-query="glucose control">glucose control</button></div>
+    <p id="tw-oov" class="tw-muted" hidden></p>
+    <div id="tw-search-results" class="tw-output" aria-live="polite"><p class="tw-muted" data-i18n="tw.search.prompt">Run a query to see Top-10 documents.</p></div>
+    <section class="tw-inspector panel"><div class="section-heading-row"><h3 data-i18n="tw.inspector">Corpus Term Inspector</h3><span data-i18n="tw.inspector.hint">CF · DF · IDF</span></div><form id="tw-terms-form" class="tw-inline-form"><label for="tw-terms" data-i18n="tw.terms">Terms</label><input id="tw-terms" value="patient semaglutide glp-1" maxlength="300"><button class="secondary-button small-button" type="submit" data-i18n="tw.inspect">Inspect</button></form><div id="tw-terms-results"></div></section>
+  </section>
+
+  <section id="tw-compare-panel" class="tw-tab-panel" hidden aria-labelledby="tw-compare-heading">
+    <div class="section-heading-row"><h2 id="tw-compare-heading" data-i18n="tw.compare.methods">Compare methods</h2><span id="tw-compare-status" role="status"></span></div>
+    <form id="tw-compare-form" class="tw-inline-form"><label for="tw-compare-query" data-i18n="tw.query">Query</label><input id="tw-compare-query" maxlength="300" value="GLP-1 obesity" required><button class="primary-button" type="submit" data-i18n="tw.compare">Compare</button></form>
+    <p class="tw-muted" data-i18n="tw.controlled">Same corpus, query, preprocessing, vocabulary and cosine; only term weighting changes.</p>
+    <div id="tw-compare-results" class="tw-output"><p class="tw-muted" data-i18n="tw.compare.prompt">Run a comparison to see rank changes.</p></div>
+  </section>
+
+  <section id="tw-evaluate-panel" class="tw-tab-panel" hidden aria-labelledby="tw-evaluate-heading">
+    <div class="section-heading-row"><h2 id="tw-evaluate-heading" data-i18n="tw.evaluation">Evaluation</h2><span id="tw-evaluate-status" role="status"></span></div>
+    <div class="tw-eval-actions"><button type="button" class="secondary-button small-button" id="tw-refresh-evaluation" data-i18n="tw.refresh">Refresh metrics</button><a id="tw-export" class="secondary-button small-button" href="#" data-i18n="tw.export">Export Experiment Results · JSON</a></div>
+    <div id="tw-evaluation-results" class="tw-output"><p class="tw-muted" data-i18n="tw.evaluate.prompt">Open evaluation to load candidate queries and judgments.</p></div>
+    <form id="tw-add-query" class="tw-inline-form panel"><label for="tw-new-query" data-i18n="tw.newquery">Add evaluation query</label><input id="tw-new-query" maxlength="300" required><button class="secondary-button small-button" type="submit" data-i18n="tw.add">Add</button></form>
+    <div id="tw-query-detail" class="tw-output" hidden></div>
+  </section>
+
+  <details class="tw-method-details panel"><summary data-i18n="tw.methods">Method details</summary><div class="tw-formulas"><p data-i18n="tw.formula.tf">Raw TF · TF(t,d) = count(t,d).</p><p data-i18n="tw.formula.log">Log TF · 1 + ln(TF), TF &gt; 0; otherwise 0.</p><p data-i18n="tw.formula.idf">IDF · ln(N / DF(t)), N = indexed document count.</p><p data-i18n="tw.formula.tfidf">TF-IDF · Raw TF × IDF.</p><p data-i18n="tw.formula.cosine">cosine · (q · d) / (||q||₂ ||d||₂).</p><p data-i18n="tw.formula.l2">L2 · Unit vectors plus dot product give the same cosine ranking.</p></div><p class="tw-muted" data-i18n="tw.pool.limit">Recall uses relevant documents in the judged pool; relevance outside that pool is unknown.</p></details>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{% static 'search/term_weighting.js' %}" defer></script>{% endblock %}
