@@ -1,4 +1,6 @@
-"""Initialize a persistent container database without clearing existing articles."""
+# search/management/commands/prepare_container.py
+# Docker 啟動時自動執行：保留既有文章、把中斷的匯入工作標成 Interrupted。
+
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.utils import timezone

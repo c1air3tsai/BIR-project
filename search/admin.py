@@ -1,3 +1,6 @@
+# search/admin.py
+# Django admin 後台的模型註冊（/admin/）。
+
 from django.contrib import admin
 from .models import Document, Posting, Term
 

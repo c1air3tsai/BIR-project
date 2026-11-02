@@ -1,8 +1,10 @@
-"""A small end-to-end network check using the same trusted HTTPS client as imports."""
+# search/management/commands/ncbi_check.py
+# python manage.py ncbi_check：測試 NCBI 連線與憑證是否正常。
+
 from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from search.pmc_client import search_pubmed, fetch_pubmed_batch
+from search.importing.pmc_client import search_pubmed, fetch_pubmed_batch
 
 
 class Command(BaseCommand):

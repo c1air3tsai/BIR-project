@@ -1,0 +1,288 @@
+{
+  "preprocessing": "tokenize + lowercase + remove punctuation → remove stopwords → no stemming",
+  "summary": {
+    "documents": 3000,
+    "tokens": 429590,
+    "vocabulary": 25865,
+    "avg_length": 143.19666666666666,
+    "median_length": 145.0,
+    "min_length": 4,
+    "max_length": 506,
+    "hapax": 10958
+  },
+  "means": [
+    {
+      "method": "raw_tf",
+      "use_l2": false,
+      "label": "Raw TF (no L2)",
+      "p5": 0.8000000000000002,
+      "p10": 0.7999999999999999,
+      "r10": 0.05582304106908437,
+      "mrr": 0.8784722222222223,
+      "ndcg10": 0.7294297564257288
+    },
+    {
+      "method": "raw_tf",
+      "use_l2": true,
+      "label": "Raw TF + L2",
+      "p5": 0.7833333333333335,
+      "p10": 0.8250000000000001,
+      "r10": 0.0607740702102637,
+      "mrr": 0.878968253968254,
+      "ndcg10": 0.7305635102350864
+    },
+    {
+      "method": "log_tf",
+      "use_l2": false,
+      "label": "Log TF (no L2)",
+      "p5": 0.85,
+      "p10": 0.8916666666666667,
+      "r10": 0.06721574118663924,
+      "mrr": 0.9305555555555557,
+      "ndcg10": 0.814499344531037
+    },
+    {
+      "method": "log_tf",
+      "use_l2": true,
+      "label": "Log TF + L2",
+      "p5": 0.8666666666666668,
+      "p10": 0.8333333333333334,
+      "r10": 0.06250733239908005,
+      "mrr": 1.0,
+      "ndcg10": 0.7337883639712106
+    },
+    {
+      "method": "idf",
+      "use_l2": false,
+      "label": "IDF (no L2)",
+      "p5": 0.6,
+      "p10": 0.6000000000000001,
+      "r10": 0.047640328537517984,
+      "mrr": 0.826388888888889,
+      "ndcg10": 0.5309451983548071
+    },
+    {
+      "method": "idf",
+      "use_l2": true,
+      "label": "IDF + L2",
+      "p5": 0.7666666666666667,
+      "p10": 0.6833333333333332,
+      "r10": 0.048133050584693506,
+      "mrr": 1.0,
+      "ndcg10": 0.6302013439172717
+    },
+    {
+      "method": "tfidf",
+      "use_l2": false,
+      "label": "TF-IDF (no L2)",
+      "p5": 0.9333333333333332,
+      "p10": 0.9083333333333333,
+      "r10": 0.06490710616744935,
+      "mrr": 0.9583333333333334,
+      "ndcg10": 0.8293869395424354
+    },
+    {
+      "method": "tfidf",
+      "use_l2": true,
+      "label": "TF-IDF + L2",
+      "p5": 0.9166666666666666,
+      "p10": 0.8833333333333333,
+      "r10": 0.0640149447771068,
+      "mrr": 0.9166666666666666,
+      "ndcg10": 0.7847702265669287
+    },
+    {
+      "method": "logtfidf",
+      "use_l2": false,
+      "label": "Log TF-IDF (no L2)",
+      "p5": 0.9166666666666666,
+      "p10": 0.9,
+      "r10": 0.06643371933058731,
+      "mrr": 1.0,
+      "ndcg10": 0.8423765974998997
+    },
+    {
+      "method": "logtfidf",
+      "use_l2": true,
+      "label": "Log TF-IDF + L2",
+      "p5": 0.8500000000000001,
+      "p10": 0.8083333333333332,
+      "r10": 0.05626088146918475,
+      "mrr": 0.9583333333333334,
+      "ndcg10": 0.7122904992226867
+    },
+    {
+      "method": "bm25",
+      "use_l2": false,
+      "label": "BM25 (modified) (no L2)",
+      "p5": 0.9,
+      "p10": 0.8666666666666667,
+      "r10": 0.06496110036715848,
+      "mrr": 0.9583333333333334,
+      "ndcg10": 0.7965874553541816
+    },
+    {
+      "method": "bm25",
+      "use_l2": true,
+      "label": "BM25 (modified) + L2",
+      "p5": 0.8333333333333335,
+      "p10": 0.8166666666666668,
+      "r10": 0.05915143370936666,
+      "mrr": 0.9583333333333334,
+      "ndcg10": 0.7194649996878701
+    }
+  ],
+  "queries": [
+    {
+      "id": "Q01",
+      "text": "GLP-1 receptor agonists for obesity and weight loss",
+      "rule": "Obesity, Obesity, Morbid, Weight Loss, Anti-Obesity Agents",
+      "relevant": 648,
+      "highly_relevant": 400
+    },
+    {
+      "id": "Q02",
+      "text": "semaglutide",
+      "rule": "Semaglutide",
+      "relevant": 143,
+      "highly_relevant": 0
+    },
+    {
+      "id": "Q03",
+      "text": "liraglutide treatment",
+      "rule": "Liraglutide",
+      "relevant": 266,
+      "highly_relevant": 56
+    },
+    {
+      "id": "Q04",
+      "text": "cardiovascular outcomes and heart failure",
+      "rule": "Cardiovascular Diseases, Heart Failure, Cardiovascular System, Myocardium",
+      "relevant": 148,
+      "highly_relevant": 120
+    },
+    {
+      "id": "Q05",
+      "text": "side effects and safety of GLP-1 drugs",
+      "rule": "[qualifier] adverse effects",
+      "relevant": 293,
+      "highly_relevant": 208
+    },
+    {
+      "id": "Q06",
+      "text": "insulin secretion from pancreatic beta cells",
+      "rule": "Insulin-Secreting Cells, Insulin Secretion, Islets of Langerhans",
+      "relevant": 336,
+      "highly_relevant": 164
+    },
+    {
+      "id": "Q07",
+      "text": "appetite and food intake regulation",
+      "rule": "Appetite, Appetite Regulation, Eating, Satiation, Satiety Response, Feeding Behavior",
+      "relevant": 283,
+      "highly_relevant": 140
+    },
+    {
+      "id": "Q08",
+      "text": "DPP-4 inhibitors",
+      "rule": "Dipeptidyl-Peptidase IV Inhibitors, Dipeptidyl Peptidase 4",
+      "relevant": 213,
+      "highly_relevant": 118
+    },
+    {
+      "id": "Q09",
+      "text": "bariatric surgery gastric bypass",
+      "rule": "Bariatric Surgery, Gastric Bypass, Gastrectomy",
+      "relevant": 117,
+      "highly_relevant": 94
+    },
+    {
+      "id": "Q10",
+      "text": "neuroprotection in Alzheimer and Parkinson disease",
+      "rule": "Alzheimer Disease, Parkinson Disease, Neurodegenerative Diseases, Neuroprotective Agents",
+      "relevant": 97,
+      "highly_relevant": 89
+    },
+    {
+      "id": "Q11",
+      "text": "nonalcoholic fatty liver disease",
+      "rule": "Non-alcoholic Fatty Liver Disease, Fatty Liver",
+      "relevant": 47,
+      "highly_relevant": 39
+    },
+    {
+      "id": "Q12",
+      "text": "gut microbiota",
+      "rule": "Gastrointestinal Microbiome",
+      "relevant": 77,
+      "highly_relevant": 54
+    }
+  ],
+  "length_bias": [
+    {
+      "method": "raw_tf",
+      "label": "Raw TF",
+      "mean_top10_length_no_l2": 180.61666666666667,
+      "mean_top10_length_l2": 137.20833333333334,
+      "mean_top10_overlap": 5.5
+    },
+    {
+      "method": "log_tf",
+      "label": "Log TF",
+      "mean_top10_length_no_l2": 171.76666666666668,
+      "mean_top10_length_l2": 97.70833333333333,
+      "mean_top10_overlap": 3.5833333333333335
+    },
+    {
+      "method": "idf",
+      "label": "IDF",
+      "mean_top10_length_no_l2": 139.09166666666667,
+      "mean_top10_length_l2": 89.475,
+      "mean_top10_overlap": 3.25
+    },
+    {
+      "method": "tfidf",
+      "label": "TF-IDF",
+      "mean_top10_length_no_l2": 176.08333333333334,
+      "mean_top10_length_l2": 127.18333333333334,
+      "mean_top10_overlap": 5.166666666666667
+    },
+    {
+      "method": "logtfidf",
+      "label": "Log TF-IDF",
+      "mean_top10_length_no_l2": 171.575,
+      "mean_top10_length_l2": 98.28333333333333,
+      "mean_top10_overlap": 3.0
+    },
+    {
+      "method": "bm25",
+      "label": "BM25 (modified)",
+      "mean_top10_length_no_l2": 143.275,
+      "mean_top10_length_l2": 105.79166666666667,
+      "mean_top10_overlap": 5.25
+    }
+  ],
+  "length_demo": {
+    "query": "GLP-1 obesity weight loss",
+    "method": "tfidf",
+    "mean_length_no_l2": 203.3,
+    "mean_length_l2": 110.9,
+    "corpus_mean_length": 143.19666666666666,
+    "overlap": 2
+  },
+  "required_methods": [
+    "raw_tf",
+    "log_tf",
+    "idf",
+    "tfidf",
+    "logtfidf"
+  ],
+  "formulas": {
+    "raw_tf": "w = tf(t,d)",
+    "log_tf": "w = 1 + log10(tf) if tf > 0, else 0",
+    "idf": "w = log10(N / df) if tf > 0, else 0",
+    "tfidf": "w = tf × log10(N / df)",
+    "logtfidf": "w = (1 + log10(tf)) × log10(N / df)",
+    "bm25": "w = idf_BM25 × tf·(k1+1) / (tf + k1·(1 − b + b·|d|/avgdl))"
+  }
+}

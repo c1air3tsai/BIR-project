@@ -1,3 +1,6 @@
+# search/forms.py
+# 匯入頁面的表單：依主題匯入、上傳 XML、輸入 PMID/PMCID 抓取。
+
 import re
 from pathlib import Path
 

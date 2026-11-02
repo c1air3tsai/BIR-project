@@ -1,3 +1,6 @@
+# search/indexer.py
+# 解析 PubMed / PMC XML（標題、摘要、作者、年份…），寫入 Document 與 HW1 倒排索引（Term / Posting）。
+
 import os
 import re
 from collections import Counter

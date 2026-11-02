@@ -1,3 +1,4 @@
+/* search/static/search/research.js：Word2Vec 頁的互動：語料預設、訓練／參數實驗表單狀態、loss 圖、局部鄰域探索 */
 'use strict';
 (() => {
   const markStart=name=>{try{performance.mark(`${name}-start`);}catch(_){}};

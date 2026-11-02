@@ -1,6 +1,9 @@
+# search/management/commands/download_pmc.py
+# python manage.py download_pmc：用關鍵字搜尋並下載 PMC XML 到 data/corpus/。
+
 from django.core.management.base import BaseCommand, CommandError
 from search.indexer import index_file
-from search.pmc_client import download_pmc_xml, search_pmc
+from search.importing.pmc_client import download_pmc_xml, search_pmc
 
 
 class Command(BaseCommand):

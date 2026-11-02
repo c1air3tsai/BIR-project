@@ -1,0 +1,145 @@
+﻿query_id,method,use_l2,label,p5,p10,r10,mrr,ndcg10
+Q01,raw_tf,False,Raw TF (no L2),0.8,0.9,0.013889,1.0,0.782592
+Q01,raw_tf,True,Raw TF + L2,1.0,0.9,0.013889,1.0,0.794013
+Q01,log_tf,False,Log TF (no L2),1.0,1.0,0.015432,1.0,0.877727
+Q01,log_tf,True,Log TF + L2,1.0,0.9,0.013889,1.0,0.631251
+Q01,idf,False,IDF (no L2),1.0,0.9,0.013889,1.0,0.740742
+Q01,idf,True,IDF + L2,1.0,0.8,0.012346,1.0,0.694443
+Q01,tfidf,False,TF-IDF (no L2),1.0,1.0,0.015432,1.0,0.904803
+Q01,tfidf,True,TF-IDF + L2,1.0,1.0,0.015432,1.0,0.823587
+Q01,logtfidf,False,Log TF-IDF (no L2),1.0,1.0,0.015432,1.0,0.911299
+Q01,logtfidf,True,Log TF-IDF + L2,1.0,1.0,0.015432,1.0,0.743792
+Q01,bm25,False,BM25 (modified) (no L2),1.0,1.0,0.015432,1.0,0.810858
+Q01,bm25,True,BM25 (modified) + L2,1.0,1.0,0.015432,1.0,0.770869
+Q02,raw_tf,False,Raw TF (no L2),1.0,1.0,0.06993,1.0,1.0
+Q02,raw_tf,True,Raw TF + L2,1.0,1.0,0.06993,1.0,1.0
+Q02,log_tf,False,Log TF (no L2),1.0,1.0,0.06993,1.0,1.0
+Q02,log_tf,True,Log TF + L2,0.8,0.9,0.062937,1.0,0.861138
+Q02,idf,False,IDF (no L2),0.4,0.3,0.020979,0.25,0.253295
+Q02,idf,True,IDF + L2,0.8,0.6,0.041958,1.0,0.706584
+Q02,tfidf,False,TF-IDF (no L2),1.0,1.0,0.06993,1.0,1.0
+Q02,tfidf,True,TF-IDF + L2,1.0,1.0,0.06993,1.0,1.0
+Q02,logtfidf,False,Log TF-IDF (no L2),1.0,1.0,0.06993,1.0,1.0
+Q02,logtfidf,True,Log TF-IDF + L2,0.8,0.9,0.062937,1.0,0.905212
+Q02,bm25,False,BM25 (modified) (no L2),1.0,1.0,0.06993,1.0,1.0
+Q02,bm25,True,BM25 (modified) + L2,0.8,0.8,0.055944,1.0,0.845426
+Q03,raw_tf,False,Raw TF (no L2),1.0,1.0,0.037594,1.0,0.649113
+Q03,raw_tf,True,Raw TF + L2,1.0,0.9,0.033835,1.0,0.453719
+Q03,log_tf,False,Log TF (no L2),1.0,1.0,0.037594,1.0,0.573994
+Q03,log_tf,True,Log TF + L2,1.0,0.9,0.033835,1.0,0.366952
+Q03,idf,False,IDF (no L2),0.4,0.5,0.018797,0.5,0.189722
+Q03,idf,True,IDF + L2,0.8,0.9,0.033835,1.0,0.354003
+Q03,tfidf,False,TF-IDF (no L2),1.0,1.0,0.037594,1.0,0.642298
+Q03,tfidf,True,TF-IDF + L2,1.0,0.9,0.033835,1.0,0.419302
+Q03,logtfidf,False,Log TF-IDF (no L2),1.0,1.0,0.037594,1.0,0.602322
+Q03,logtfidf,True,Log TF-IDF + L2,1.0,0.9,0.033835,1.0,0.402765
+Q03,bm25,False,BM25 (modified) (no L2),1.0,0.9,0.033835,1.0,0.469569
+Q03,bm25,True,BM25 (modified) + L2,1.0,0.9,0.033835,1.0,0.365641
+Q04,raw_tf,False,Raw TF (no L2),0.8,0.9,0.060811,0.5,0.779908
+Q04,raw_tf,True,Raw TF + L2,0.8,0.9,0.060811,1.0,0.905212
+Q04,log_tf,False,Log TF (no L2),0.8,0.9,0.060811,1.0,0.889954
+Q04,log_tf,True,Log TF + L2,1.0,1.0,0.067568,1.0,1.0
+Q04,idf,False,IDF (no L2),0.8,0.8,0.054054,1.0,0.820523
+Q04,idf,True,IDF + L2,1.0,1.0,0.067568,1.0,1.0
+Q04,tfidf,False,TF-IDF (no L2),0.8,0.9,0.060811,1.0,0.889954
+Q04,tfidf,True,TF-IDF + L2,1.0,0.9,0.060811,1.0,0.933746
+Q04,logtfidf,False,Log TF-IDF (no L2),1.0,0.8,0.054054,1.0,0.855348
+Q04,logtfidf,True,Log TF-IDF + L2,1.0,1.0,0.067568,1.0,1.0
+Q04,bm25,False,BM25 (modified) (no L2),1.0,0.9,0.060811,1.0,0.930569
+Q04,bm25,True,BM25 (modified) + L2,1.0,1.0,0.067568,1.0,1.0
+Q05,raw_tf,False,Raw TF (no L2),0.0,0.0,0.0,0.041667,0.0
+Q05,raw_tf,True,Raw TF + L2,0.0,0.0,0.0,0.047619,0.0
+Q05,log_tf,False,Log TF (no L2),0.0,0.3,0.010239,0.166667,0.221193
+Q05,log_tf,True,Log TF + L2,0.4,0.2,0.006826,1.0,0.330138
+Q05,idf,False,IDF (no L2),0.0,0.2,0.006826,0.166667,0.147829
+Q05,idf,True,IDF + L2,0.2,0.2,0.006826,1.0,0.242177
+Q05,tfidf,False,TF-IDF (no L2),0.8,0.5,0.017065,1.0,0.471213
+Q05,tfidf,True,TF-IDF + L2,0.6,0.4,0.013652,1.0,0.535254
+Q05,logtfidf,False,Log TF-IDF (no L2),0.4,0.5,0.017065,1.0,0.405365
+Q05,logtfidf,True,Log TF-IDF + L2,0.4,0.4,0.013652,1.0,0.447254
+Q05,bm25,False,BM25 (modified) (no L2),0.4,0.3,0.010239,0.5,0.243822
+Q05,bm25,True,BM25 (modified) + L2,0.4,0.2,0.006826,1.0,0.305235
+Q06,raw_tf,False,Raw TF (no L2),0.8,0.8,0.02381,1.0,0.740325
+Q06,raw_tf,True,Raw TF + L2,0.6,0.8,0.02381,1.0,0.604268
+Q06,log_tf,False,Log TF (no L2),0.8,0.9,0.026786,1.0,0.682916
+Q06,log_tf,True,Log TF + L2,0.8,0.8,0.02381,1.0,0.666267
+Q06,idf,False,IDF (no L2),1.0,0.6,0.017857,1.0,0.509766
+Q06,idf,True,IDF + L2,0.8,0.7,0.020833,1.0,0.640125
+Q06,tfidf,False,TF-IDF (no L2),1.0,1.0,0.029762,1.0,0.833557
+Q06,tfidf,True,TF-IDF + L2,1.0,1.0,0.029762,1.0,0.695335
+Q06,logtfidf,False,Log TF-IDF (no L2),1.0,0.9,0.026786,1.0,0.79719
+Q06,logtfidf,True,Log TF-IDF + L2,1.0,0.7,0.020833,1.0,0.593647
+Q06,bm25,False,BM25 (modified) (no L2),1.0,0.9,0.026786,1.0,0.683551
+Q06,bm25,True,BM25 (modified) + L2,0.8,0.9,0.026786,1.0,0.716676
+Q07,raw_tf,False,Raw TF (no L2),1.0,1.0,0.035336,1.0,0.723146
+Q07,raw_tf,True,Raw TF + L2,1.0,1.0,0.035336,1.0,0.853272
+Q07,log_tf,False,Log TF (no L2),1.0,0.8,0.028269,1.0,0.809072
+Q07,log_tf,True,Log TF + L2,1.0,0.8,0.028269,1.0,0.80362
+Q07,idf,False,IDF (no L2),0.8,0.5,0.017668,1.0,0.510498
+Q07,idf,True,IDF + L2,0.8,0.5,0.017668,1.0,0.5795
+Q07,tfidf,False,TF-IDF (no L2),1.0,1.0,0.035336,1.0,0.764268
+Q07,tfidf,True,TF-IDF + L2,1.0,0.9,0.031802,1.0,0.769643
+Q07,logtfidf,False,Log TF-IDF (no L2),1.0,0.9,0.031802,1.0,0.88148
+Q07,logtfidf,True,Log TF-IDF + L2,0.8,0.7,0.024735,1.0,0.676892
+Q07,bm25,False,BM25 (modified) (no L2),1.0,0.8,0.028269,1.0,0.848238
+Q07,bm25,True,BM25 (modified) + L2,0.8,0.7,0.024735,1.0,0.672287
+Q08,raw_tf,False,Raw TF (no L2),1.0,1.0,0.046948,1.0,0.955831
+Q08,raw_tf,True,Raw TF + L2,1.0,1.0,0.046948,1.0,0.955831
+Q08,log_tf,False,Log TF (no L2),1.0,1.0,0.046948,1.0,0.955831
+Q08,log_tf,True,Log TF + L2,1.0,1.0,0.046948,1.0,0.823587
+Q08,idf,False,IDF (no L2),0.2,0.4,0.018779,1.0,0.142788
+Q08,idf,True,IDF + L2,1.0,0.8,0.037559,1.0,0.605509
+Q08,tfidf,False,TF-IDF (no L2),1.0,1.0,0.046948,1.0,1.0
+Q08,tfidf,True,TF-IDF + L2,1.0,1.0,0.046948,1.0,0.905321
+Q08,logtfidf,False,Log TF-IDF (no L2),1.0,1.0,0.046948,1.0,0.955831
+Q08,logtfidf,True,Log TF-IDF + L2,1.0,1.0,0.046948,1.0,0.700644
+Q08,bm25,False,BM25 (modified) (no L2),1.0,1.0,0.046948,1.0,0.955831
+Q08,bm25,True,BM25 (modified) + L2,1.0,1.0,0.046948,1.0,0.749036
+Q09,raw_tf,False,Raw TF (no L2),1.0,1.0,0.08547,1.0,0.951091
+Q09,raw_tf,True,Raw TF + L2,1.0,1.0,0.08547,1.0,1.0
+Q09,log_tf,False,Log TF (no L2),1.0,1.0,0.08547,1.0,0.943238
+Q09,log_tf,True,Log TF + L2,1.0,1.0,0.08547,1.0,0.957586
+Q09,idf,False,IDF (no L2),0.8,0.9,0.076923,1.0,0.870687
+Q09,idf,True,IDF + L2,1.0,0.9,0.076923,1.0,0.863444
+Q09,tfidf,False,TF-IDF (no L2),1.0,1.0,0.08547,1.0,0.951091
+Q09,tfidf,True,TF-IDF + L2,1.0,1.0,0.08547,1.0,1.0
+Q09,logtfidf,False,Log TF-IDF (no L2),1.0,1.0,0.08547,1.0,0.943238
+Q09,logtfidf,True,Log TF-IDF + L2,1.0,1.0,0.08547,1.0,0.913417
+Q09,bm25,False,BM25 (modified) (no L2),1.0,1.0,0.08547,1.0,0.957586
+Q09,bm25,True,BM25 (modified) + L2,1.0,1.0,0.08547,1.0,0.953713
+Q10,raw_tf,False,Raw TF (no L2),0.4,0.5,0.051546,1.0,0.528964
+Q10,raw_tf,True,Raw TF + L2,0.4,0.7,0.072165,0.5,0.538432
+Q10,log_tf,False,Log TF (no L2),0.6,0.8,0.082474,1.0,0.820069
+Q10,log_tf,True,Log TF + L2,0.8,0.7,0.072165,1.0,0.716485
+Q10,idf,False,IDF (no L2),0.6,0.8,0.082474,1.0,0.804811
+Q10,idf,True,IDF + L2,0.8,0.8,0.082474,1.0,0.826813
+Q10,tfidf,False,TF-IDF (no L2),0.6,0.7,0.072165,0.5,0.631144
+Q10,tfidf,True,TF-IDF + L2,0.6,0.7,0.072165,0.5,0.621401
+Q10,logtfidf,False,Log TF-IDF (no L2),0.6,0.8,0.082474,1.0,0.820069
+Q10,logtfidf,True,Log TF-IDF + L2,0.6,0.7,0.072165,1.0,0.750637
+Q10,bm25,False,BM25 (modified) (no L2),0.6,0.7,0.072165,1.0,0.753814
+Q10,bm25,True,BM25 (modified) + L2,0.6,0.7,0.072165,1.0,0.746705
+Q11,raw_tf,False,Raw TF (no L2),1.0,0.6,0.12766,1.0,0.72733
+Q11,raw_tf,True,Raw TF + L2,0.8,0.8,0.170213,1.0,0.772062
+Q11,log_tf,False,Log TF (no L2),1.0,1.0,0.212766,1.0,1.0
+Q11,log_tf,True,Log TF + L2,0.8,0.9,0.191489,1.0,0.743226
+Q11,idf,False,IDF (no L2),0.8,0.9,0.191489,1.0,0.914857
+Q11,idf,True,IDF + L2,0.4,0.6,0.12766,1.0,0.602808
+Q11,tfidf,False,TF-IDF (no L2),1.0,0.9,0.191489,1.0,0.933746
+Q11,tfidf,True,TF-IDF + L2,1.0,0.9,0.191489,1.0,0.933746
+Q11,logtfidf,False,Log TF-IDF (no L2),1.0,1.0,0.212766,1.0,1.0
+Q11,logtfidf,True,Log TF-IDF + L2,0.8,0.6,0.12766,1.0,0.696938
+Q11,bm25,False,BM25 (modified) (no L2),1.0,1.0,0.212766,1.0,1.0
+Q11,bm25,True,BM25 (modified) + L2,0.8,0.8,0.170213,1.0,0.791706
+Q12,raw_tf,False,Raw TF (no L2),0.8,0.9,0.116883,1.0,0.914857
+Q12,raw_tf,True,Raw TF + L2,0.8,0.9,0.116883,1.0,0.889954
+Q12,log_tf,False,Log TF (no L2),1.0,1.0,0.12987,1.0,1.0
+Q12,log_tf,True,Log TF + L2,0.8,0.9,0.116883,1.0,0.905212
+Q12,idf,False,IDF (no L2),0.4,0.4,0.051948,1.0,0.465823
+Q12,idf,True,IDF + L2,0.6,0.4,0.051948,1.0,0.447011
+Q12,tfidf,False,TF-IDF (no L2),1.0,0.9,0.116883,1.0,0.930569
+Q12,tfidf,True,TF-IDF + L2,0.8,0.9,0.116883,0.5,0.779908
+Q12,logtfidf,False,Log TF-IDF (no L2),1.0,0.9,0.116883,1.0,0.936379
+Q12,logtfidf,True,Log TF-IDF + L2,0.8,0.8,0.103896,0.5,0.716287
+Q12,bm25,False,BM25 (modified) (no L2),0.8,0.9,0.116883,1.0,0.905212
+Q12,bm25,True,BM25 (modified) + L2,0.8,0.8,0.103896,0.5,0.716287

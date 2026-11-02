@@ -1,3 +1,6 @@
+# search/topic_filters.py
+# 主題篩選工具：依網址 ?topic= 篩選文章（Search / Articles / Zipf 共用）。
+
 from django.db.models import Count
 from .models import Document, Topic
 

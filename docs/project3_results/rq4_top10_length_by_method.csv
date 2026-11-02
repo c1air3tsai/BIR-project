@@ -1,0 +1,7 @@
+﻿method,label,mean_top10_length_no_l2,mean_top10_length_l2,mean_top10_overlap
+raw_tf,Raw TF,180.616667,137.208333,5.5
+log_tf,Log TF,171.766667,97.708333,3.583333
+idf,IDF,139.091667,89.475,3.25
+tfidf,TF-IDF,176.083333,127.183333,5.166667
+logtfidf,Log TF-IDF,171.575,98.283333,3.0
+bm25,BM25 (modified),143.275,105.791667,5.25

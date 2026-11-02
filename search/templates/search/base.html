@@ -1,3 +1,4 @@
+{# search/templates/search/base.html：全站外框：頁首（品牌、語言切換、主選單）、主題篩選列、頁尾；其他頁面都 extends 這個檔案 #}
 {% load static search_ui %}
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page_title|default:"BioMed IR" }}</title>
   <link rel="stylesheet" href="{% static 'search/site.css' %}?v=20261013-ui-v13">
-  <script src="{% static 'search/i18n.js' %}?v=20261013-ui-v13" defer></script>
+  <script src="{% static 'search/i18n.js' %}?v=20261027-p3b" defer></script>
   <script src="{% static 'search/site.js' %}?v=20261006-log10-zipf-v12" defer></script>
   {% block extra_head %}{% endblock %}
 </head>

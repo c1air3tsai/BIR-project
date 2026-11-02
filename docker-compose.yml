@@ -1,13 +1,18 @@
+# Docker 執行設定：docker compose up --build 後開 http://127.0.0.1:8001/
+# data/ 與 docs/ 掛載到容器，資料庫、文章 XML、快取與 Project 3 實驗結果都會留在本機資料夾。
 services:
   web:
     build: .
     init: true
     ports:
-      - "0.0.0.0:8001:8000"
+      # 預設 8001；要換 port 就在 .env 設定 BIOMEDIR_PORT
+      - "0.0.0.0:${BIOMEDIR_PORT:-8001}:8000"
     volumes:
       # A bind mount keeps the database and uploaded XML in this project even
       # if containers or named volumes are recreated.
       - ./data:/app/data
+      # Project 3 實驗輸出（docs/project3_results）直接寫回本機
+      - ./docs:/app/docs
       - ./certs:/app/certs:ro
     environment:
       BIOMEDIR_DB: /app/data/db.sqlite3

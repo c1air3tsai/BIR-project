@@ -1,4 +1,6 @@
-"""Independent topic groups; explicit overlap exclusion and deterministic balancing."""
+# search/domain_analysis.py
+# Project 2 選擇性挑戰：兩個領域（Medical vs CS）的 Zipf 比較，含交集排除與篇數平衡。
+
 from .analysis import analyze_queryset, chart_data
 from .topic_filters import filter_documents
 from .models import Document, Topic

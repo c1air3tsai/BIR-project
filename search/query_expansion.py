@@ -1,4 +1,6 @@
-"""Conservative query-time expansion for punctuation variants."""
+# search/query_expansion.py
+# 查詢時的連字號變體擴充：glp1 ↔ GLP-1 視為同一查詢概念（搜尋頁使用）。
+
 import unicodedata
 
 from django.core.cache import cache

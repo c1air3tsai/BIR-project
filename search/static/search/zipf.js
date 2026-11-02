@@ -1,3 +1,4 @@
+/* search/static/search/zipf.js：Zipf 頁的 rank–frequency / log–log 圖表 */
 'use strict';
 (() => {
   const panel = document.querySelector('[data-zipf-chart]');

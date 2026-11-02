@@ -1,0 +1,21 @@
+﻿setting,rank,pmid,score,title,length,other_rank
+no_l2,1,41790422,12.267751,Eating disorder psychopathology relates to weight loss medication and supplement use 6 months later in women.,192,6
+no_l2,2,40552446,9.140267,The Impact and Safety of GLP-1 Agents and Breast Cancer.,294,
+no_l2,3,25282191,8.933004,Preoperative assessment of gut hormones does not correlate to weight loss after Roux-en-Y gastric bypass surgery.,208,
+no_l2,4,40865274,7.550496,Treatment of obesity with GLP-1 receptor agonist after bariatric surgery: Real-world evidence.,190,
+no_l2,5,40088135,7.546789,Patients With Severe Obesity Are Made Eligible for Complex Abdominal Wall Repair After Preoptimization With GLP-1 Agonists: Results of a Bicentric Pilot Study.,211,
+no_l2,6,38339186,7.496175,Infertility Improvement after Medical Weight Loss in Women and Men: A Review of the Literature.,184,
+no_l2,7,39157881,7.29702,Opportunities to optimize lifestyle interventions in combination with glucagon-like peptide-1-based therapy.,164,2
+no_l2,8,40685589,7.211945,"Efficacy and Safety of GLP-1 Receptor Agonists, Dual Agonists, and Retatrutide for Weight Loss in Adults With Overweight or Obesity: A Bayesian NMA.",167,
+no_l2,9,42290594,7.161806,Efficacy of glucagon-like-peptide-1 agonists for weight loss in adults with CHD.,173,
+no_l2,10,41686318,7.111623,Does Preoperative GLP-1 Therapy Improve Postoperative Bariatric Surgery Outcomes? A Single-Centre Retrospective Observational Study.,250,
+l2,1,40975571,0.295745,New directions in childhood obesity treatment - A path forward or wishful thinking?,98,
+l2,2,39157881,0.290285,Opportunities to optimize lifestyle interventions in combination with glucagon-like peptide-1-based therapy.,164,7
+l2,3,37460364,0.289705,Are GLP-1R agonists the long-sought-after panacea for obesity?,50,
+l2,4,28501906,0.278881,Medication use for the treatment of diabetes in obese individuals.,134,
+l2,5,38225284,0.271063,Post metabolic bariatric surgery weight regain: the importance of GLP-1 levels.,117,
+l2,6,41790422,0.266258,Eating disorder psychopathology relates to weight loss medication and supplement use 6 months later in women.,192,1
+l2,7,35536590,0.25823,Slow and Steady Wins the Race: 25 Years Developing the GLP-1 Receptor as an Effective Target for Weight Loss.,71,
+l2,8,31124035,0.25309,Mechanism of Glucagon-Like Peptide 1 Improvements in Type 2 Diabetes Mellitus and Obesity.,86,
+l2,9,26072135,0.244797,Incretin-based therapies for obesity treatment.,74,
+l2,10,21401851,0.228304,Obesity - an indication for GLP-1 treatment? Obesity pathophysiology and GLP-1 treatment potential.,123,

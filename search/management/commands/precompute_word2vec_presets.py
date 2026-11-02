@@ -1,3 +1,6 @@
+# search/management/commands/precompute_word2vec_presets.py
+# python manage.py precompute_word2vec_presets：預先訓練 Word2Vec 三組預設模型並快取。
+
 from django.core.management.base import BaseCommand, CommandError
 
 from search import embeddings

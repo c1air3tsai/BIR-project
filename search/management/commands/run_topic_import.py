@@ -1,5 +1,8 @@
+# search/management/commands/run_topic_import.py
+# python manage.py run_topic_import <job_id>：背景 worker 執行一個匯入工作（由網站自動呼叫）。
+
 from django.core.management.base import BaseCommand
-from search.topic_import import run_job
+from search.importing.topic_import import run_job
 
 
 class Command(BaseCommand):

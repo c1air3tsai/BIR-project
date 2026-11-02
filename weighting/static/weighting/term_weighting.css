@@ -1,0 +1,132 @@
+/* =============================================================================
+   weighting/static/weighting/term_weighting.css
+   Project 3 Term Weighting 頁面專用的少量樣式。
+   顏色、字型、panel、data-table 等都沿用 search/static/search/site.css 的變數與樣式，
+   這裡只補頁面特有的版面（直方圖、搜尋結果、比較欄位、評估表的長條）。
+   ============================================================================= */
+.tw-page { --no-l2: #D55E00; --l2: #0072B2; }
+.tw-muted { color: var(--muted); font-size: 14px; }
+.tw-section { margin-top: 56px; scroll-margin-top: 24px; }
+.tw-block { margin-top: 22px; }
+.tw-block > h3 { margin-bottom: 12px; }
+.tw-flush { padding: 0; overflow: hidden; }
+.tw-table-wrap { overflow-x: auto; }
+.tw-page h3 small, .tw-page h4 { font-size: 14px; font-weight: 500; color: var(--muted); }
+.tw-page h4 { margin: 24px 0 10px; }
+.tw-page code { font-size: 13px; background: var(--wash); border-radius: 4px; padding: 1px 6px; color: var(--ink); }
+
+/* 前處理設定列 */
+.tw-settings { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding: 20px 27px; }
+.tw-settings-text p { margin: 0; font-size: 15px; }
+.tw-settings-text .section-kicker { margin-bottom: 4px; }
+.tw-settings-controls { margin: 0; }
+
+/* 段落導覽 */
+.tw-steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.tw-steps a { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border: 1px solid var(--line); border-radius: 20px; font-size: 14px; color: var(--ink); background: #fff; }
+.tw-steps a:hover { background: var(--wash); }
+.tw-steps b { display: inline-grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; background: var(--deep); color: #fff; font-size: 12px; }
+
+.tw-two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.tw-two-col h3 { margin-bottom: 4px; }
+.tw-metrics { margin-bottom: 22px; }
+.tw-compact th, .tw-compact td { padding: 8px 12px; }
+
+/* 文件長度直方圖（純 CSS 長條） */
+.tw-histogram { display: flex; align-items: flex-end; gap: 2px; height: 190px; padding-top: 18px; border-bottom: 1px solid var(--line); }
+.tw-bar { flex: 1; height: var(--h); min-height: 2px; background: var(--l2); border-radius: 4px 4px 0 0; position: relative; }
+.tw-bar span { position: absolute; top: -17px; left: 0; right: 0; text-align: center; font-size: 10px; color: var(--muted); }
+.tw-bar:hover { background: var(--deep); }
+.tw-histogram-axis { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* 詞項查詢 */
+.tw-inline-form { display: flex; gap: 10px; margin: 12px 0 16px; }
+.tw-inline-form input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid #cbdce9; border-radius: 7px; }
+.tw-term-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.tw-term-facts span { display: block; font-size: 12px; color: var(--muted); }
+.tw-term-facts strong { font-size: 20px; color: var(--ink); font-variant-numeric: tabular-nums; word-break: break-all; }
+
+.tw-tag { font-size: 12px; color: var(--blue); background: var(--wash); border-radius: 12px; padding: 2px 9px; white-space: nowrap; }
+
+/* 搜尋 */
+.tw-search-form { padding: 18px 27px; }
+.tw-search-form .research-controls { margin: 0; }
+.tw-grow { flex: 1 1 280px; }
+.tw-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.tw-chips a { border: 1px solid var(--line); border-radius: 16px; padding: 3px 11px; color: var(--ink); background: #f8fbfd; }
+.tw-chips a:hover { background: var(--wash); }
+.tw-query-info { font-size: 14px; color: var(--muted); margin: 16px 0 6px; }
+.tw-results { list-style: none; padding: 0; margin: 0; }
+.tw-results li { display: grid; grid-template-columns: 44px minmax(0, 1fr) 96px; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.tw-rank { font: 28px/1 var(--serif); color: var(--blue); }
+.tw-result-title { font-weight: 600; color: var(--ink); }
+.tw-result-title:hover { text-decoration: underline; }
+.tw-result-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.tw-snippet { font-size: 14px; line-height: 1.7; margin-top: 7px; }
+.tw-snippet mark { background: #fff0b8; color: var(--ink); border-radius: 2px; padding: 0 1px; }
+.tw-score { text-align: right; }
+.tw-score span { display: block; font-size: 12px; color: var(--muted); }
+.tw-score strong { font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* 比較模式：六個方法並排 */
+.tw-compare-scroll { overflow-x: auto; padding-bottom: 6px; }
+.tw-compare-grid { display: grid; grid-template-columns: repeat(6, minmax(180px, 1fr)); gap: 12px; min-width: 1100px; }
+.tw-compare-col { border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+.tw-compare-col.is-baseline { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue) inset; }
+.tw-compare-col header { padding: 10px 12px; background: #f6f9fb; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.tw-compare-col header strong { font-size: 14px; color: var(--ink); }
+.tw-compare-col header small { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.tw-compare-col ol { list-style: none; margin: 0; padding: 0; }
+.tw-compare-col li { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 6px; padding: 7px 10px; border-bottom: 1px solid #edf1f4; font-size: 13px; line-height: 1.35; }
+.tw-compare-col li:last-child { border-bottom: 0; }
+.tw-crank { color: var(--muted); font-variant-numeric: tabular-nums; }
+.tw-cbody a { color: var(--blue); font-weight: 600; }
+.tw-cbody small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 11.5px; color: var(--muted); }
+.tw-change { font-size: 12px; font-weight: 700; white-space: nowrap; }
+.tw-up { color: #0b7a4b; font-weight: 700; }
+.tw-down { color: #b0412e; font-weight: 700; }
+.tw-new { color: var(--blue); font-weight: 700; font-size: 11px; text-transform: uppercase; }
+.tw-same { color: var(--muted); }
+
+/* 對照實驗 */
+.tw-idf-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 12px; }
+.tw-subtle-row td { color: var(--muted); }
+
+/* 評估表：每格底下一條淡色長條，長度 = 指標值 */
+.tw-eval-table td { position: relative; min-width: 96px; }
+.tw-eval-table td:first-child { min-width: 180px; }
+.tw-cell-bar { position: absolute; left: 12px; bottom: 6px; height: 4px; width: calc((100% - 24px) * var(--w) / 100); background: var(--no-l2); border-radius: 2px; opacity: .75; }
+.tw-cell-bar.is-l2 { background: var(--l2); }
+.tw-l2-row td { background: #fbfdff; }
+.tw-best { font-weight: 700; color: var(--ink); }
+.tw-legend { font-size: 13px; color: var(--muted); margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+.tw-swatch { display: inline-block; width: 14px; height: 4px; border-radius: 2px; background: var(--no-l2); }
+.tw-swatch.is-l2 { background: var(--l2); margin-left: 12px; }
+.tw-figure img { display: block; width: 100%; max-width: 980px; height: auto; margin: 0 auto; }
+.tw-figure figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+@media (max-width: 860px) {
+  .tw-two-col, .tw-idf-pair { grid-template-columns: 1fr; }
+  .tw-term-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tw-results li { grid-template-columns: 34px minmax(0, 1fr); }
+  .tw-score { grid-column: 2; text-align: left; }
+  .tw-score span { display: inline; margin-right: 6px; }
+}
+
+/* 逐查詢 nDCG 表：依分數上底色（同一列內比較），最佳方法加框 */
+.tw-heat-table td, .tw-heat-table th { white-space: nowrap; }
+.tw-num { text-align: right; font-variant-numeric: tabular-nums; }
+.tw-query-cell { max-width: 340px; overflow: hidden; text-overflow: ellipsis; cursor: help; }
+.tw-query-cell b { color: var(--blue); margin-right: 4px; }
+.tw-heat { background: rgb(0 114 178 / var(--a)); color: var(--ink); font-size: 14px; border-left: 2px solid #fff; }
+.tw-heat.is-dark { color: #fff; }
+.tw-heat.is-best { font-weight: 700; box-shadow: inset 0 0 0 2px var(--deep); }
+.tw-heat-table tbody tr:hover td { filter: brightness(.97); }
+
+/* 指標說明（可展開） */
+.tw-glossary { margin: 6px 0 18px; padding: 14px 20px; }
+.tw-glossary summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.tw-glossary dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 28px; margin: 14px 0 4px; }
+.tw-glossary dt { font-weight: 700; color: var(--blue); font-size: 14px; }
+.tw-glossary dd { margin: 2px 0 0; font-size: 14px; line-height: 1.65; color: var(--text); }
+@media (max-width: 860px) { .tw-glossary dl { grid-template-columns: 1fr; } }

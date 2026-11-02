@@ -1,4 +1,5 @@
 {% extends "search/base.html" %}{% load search_ui %}
+{# search/templates/search/articles.html：Articles 頁：文章列表、篩選、排序、分頁、批次刪除 #}
 {% block content %}
 <main class="site-shell page-main articles-page" id="main">
   <header class="page-heading split-heading"><div><span class="section-kicker">YOUR LOCAL COLLECTION</span><h1>Articles.</h1><p>{{ filtered_count }} article{{ filtered_count|pluralize }} in view <span class="dot-divider">/</span> {{ total_docs }} in your collection</p></div><a class="primary-button" href="{% url 'search:import' %}"><svg class="icon"><use href="#i-plus"/></svg>Add articles</a></header>

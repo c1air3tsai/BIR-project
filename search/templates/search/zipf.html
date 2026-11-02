@@ -1,4 +1,5 @@
 {% extends 'search/base.html' %}{% load static search_ui %}
+{# search/templates/search/zipf.html：Analysis → Zipf 分布（Project 2）：A–D 條件、雙圖、迴歸、詞表 #}
 {% block content %}
 <main class="site-shell page-main zipf-page" id="main">
   {% include 'search/_analysis_nav.html' %}<header class="page-heading split-heading"><div><span class="section-kicker">THE LANGUAGE OF YOUR CORPUS</span><h1>Zipf Analysis.</h1><p>One collection. Four preprocessing conditions. See what changes.</p></div><a class="secondary-button" href="{% url 'search:zipf_export' %}{% topic_query %}"><svg class="icon"><use href="#i-download"/></svg>Export results</a></header>

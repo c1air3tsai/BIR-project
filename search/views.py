@@ -1,3 +1,6 @@
+# search/views.py
+# HW1 主要頁面：搜尋（BM25）、文章列表／內文、Zipf 分析與匯出、上傳／匯入、刪除文章。
+
 import re
 import csv
 import io
@@ -31,9 +34,9 @@ from .indexer import (
 from .models import Document, Term, Topic, ImportJob
 from .analysis import CONDITIONS, analyze_queryset, chart_data, condition_tokens, iter_basic_spans
 from .topic_filters import topic_context, filter_documents
-from .topic_import import create_job, launch_job, recover_stale_jobs
-from .pmc_client import download_article_xml
-from .csv_import import import_abstract_csv
+from .importing.topic_import import create_job, launch_job, recover_stale_jobs
+from .importing.pmc_client import download_article_xml
+from .importing.csv_import import import_abstract_csv
 from .spelling import suggest_query
 from .query_expansion import expand_index_terms, variant_key
 from .text_processing import (

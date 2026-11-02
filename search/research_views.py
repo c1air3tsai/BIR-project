@@ -1,3 +1,6 @@
+# search/research_views.py
+# Project 2 Analysis 頁面：比較領域、Word2Vec、研究報告、文字比對（Levenshtein）。
+
 import csv
 import io
 import json
@@ -6,7 +9,6 @@ import time
 import zipfile
 from collections import Counter
 from urllib.parse import urlencode
-from types import SimpleNamespace
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404
@@ -19,7 +21,7 @@ from .analysis import CONDITIONS, analyze_queryset, condition_tokens
 from . import embeddings
 from .domain_analysis import compare_domains
 from .research_report import report, markdown
-from .distance import normalize, edit_matrix
+from .spelling import normalize, edit_matrix
 from .spelling import bounded_distance
 
 logger = logging.getLogger(__name__)
@@ -56,121 +58,6 @@ def domains_export(request):
     a,b=groups
     files['domain_observations.md']=f"# Domain comparison\n\n{a['name']}: {a['data']['documents']} abstracts; k={a['data']['fit']['exponent']}; R²={a['data']['fit']['r2']}.\n\n{b['name']}: {b['data']['documents']} abstracts; k={b['data']['fit']['exponent']}; R²={b['data']['fit']['r2']}.\n\nTop-10 Jaccard overlap={result['top10_jaccard']}. Compare vocabulary, top terms, and curve shape under identical preprocessing. Domain specificity may affect these descriptive results, but differences also reflect corpus size, source, sampling date and abstract style; this comparison does not isolate a causal domain effect."
     return download_zip(files,'domain_comparison')
-
-@require_http_methods(['GET','POST'])
-def _legacy_word2vec_view(request):
-    filters=topic_context(SimpleNamespace(GET=request.POST) if request.method=='POST' else request)
-    documents=filter_documents(Document.objects.all(),filters['selected_topics'])
-    records=embeddings.corpus_records(documents)
-    params=embeddings.parameters(request.POST if request.method=='POST' else request.GET)
-    if request.method=='POST':
-        try:
-            action=request.POST.get('action','train')
-            if action=='train_both':
-                embeddings.train_both(records,params)
-                messages.success(request,'CBOW and Skip-Gram were trained on the identical corpus and settings.')
-            elif action=='experiment':
-                embeddings.train_experiment(records,params,request.POST.get('experiment','window'))
-                messages.success(request,'Parameter experiment completed. Only the selected parameter was changed.')
-            else:
-                embeddings.train(records,params)
-                messages.success(request,'Word2Vec trained on your current abstracts. Explore similar words below.')
-        except ValueError as exc:messages.error(request,str(exc))
-        query=[(k,str(v)) for k,v in params.items()]+[('topic',t) for t in filters['selected_topics']]
-        if request.POST.get('word'): query.append(('word',request.POST['word'][:120]))
-        if request.POST.get('targets'): query.append(('targets',request.POST['targets'][:1000]))
-        if request.POST.get('experiment'): query.append(('experiment',request.POST['experiment']))
-        return redirect(reverse('search:word2vec')+'?'+urlencode(query))
-    model=embeddings.load(records,params)
-    word=request.GET.get('word','').strip()[:120]
-    error=None;neighbors=[];projection={};overview_projection={};normalized='';visualizations={}
-    if model is not None and word:
-        try:
-            normalized,neighbors=embeddings.neighbors(model,word,params['condition'])
-            projection=embeddings.projection(model,[normalized,*[r['term'] for r in neighbors]])
-        except ValueError as exc:error=str(exc)
-    vocabulary=[]
-    if model is not None:
-        vocabulary=[{'term':w,'cf':model.wv.get_vecattr(w,'count')} for w in model.wv.index_to_key[:20]]
-        overview_projection=embeddings.vocabulary_projection(model)
-        visualizations=embeddings.semantic_visualizations(model,model.wv.index_to_key[:min(40,len(model.wv))])
-    stats=embeddings.corpus_statistics(records,params['condition'])
-    frequencies=stats.pop('frequencies');stats.pop('sentences_data')
-    paired_models=embeddings.load_both(records,params)
-    both_ready=all(paired_models.values())
-    targets=[];neighbor_comparison=[];pair_rows=[];rare_rows=[];comparison_rows=[];research_report=[]
-    targets_text=request.GET.get('targets','')[:1000]
-    experiment=None
-    if both_ready:
-        targets=embeddings.parse_targets(targets_text,paired_models,params['condition'])
-        targets_text=', '.join(targets)
-        neighbor_comparison=embeddings.neighbor_comparison(paired_models,targets)
-        pair_rows=embeddings.semantic_pairs(paired_models)
-        rare_rows=embeddings.rare_word_analysis(paired_models,frequencies)
-        comparison_rows=embeddings.comparison_table(paired_models,rare_rows)
-    experiment_kind=request.GET.get('experiment','window')
-    kind,label,configs,experiment_models=embeddings.load_experiment(records,params,experiment_kind)
-    if all(experiment_models):
-        experiment=embeddings.experiment_result(label,kind,configs,experiment_models,targets[0] if targets else normalized)
-    if both_ready:
-        research_report=embeddings.evidence_report(paired_models,neighbor_comparison,pair_rows,rare_rows,experiment,visualizations)
-    loss_series=[]
-    if both_ready:
-        loss_series=[{'label':'CBOW','points':paired_models['cbow'].bir_metadata.get('losses',[])},{'label':'Skip-Gram','points':paired_models['skipgram'].bir_metadata.get('losses',[])}]
-    elif model is not None:
-        loss_series=[{'label':params['architecture'].replace('skipgram','Skip-Gram').replace('cbow','CBOW'),'points':model.bir_metadata.get('losses',[])}]
-    training_sample=(paired_models['cbow'].bir_metadata.get('sample_preview') if both_ready else (model.bir_metadata.get('sample_preview') if model is not None else {}))
-    parameter_choices=[{'name':name,'label':label,'options':[{'value':value,'label':{'skipgram':'Skip-Gram','cbow':'CBOW','A':'A · punctuation retained','B':'B · punctuation removed','C':'C · stopwords removed','D':'D · Porter stemming'}.get(value,str(value)),'selected':params[name]==value} for value in options]} for name,label,options in [('architecture','Architecture',['cbow','skipgram']),('condition','Preprocessing',['A','B','C','D']),('dimensions','Embedding dimension',[50,100]),('window','Context window',[2,5,10]),('min_count','Minimum word count',[1,2,5]),('epochs','Training epochs',[10,20,40])]]
-    return render(request,'search/word2vec.html',{
-        **filters,'analysis_tab':'word2vec','page_title':'Word2Vec · BioMed IR','params':params,
-        'full_params':embeddings.full_parameters(params),'parameter_choices':parameter_choices,
-        'model_metadata':model.bir_metadata if model is not None else None,'document_count':len(records),
-        'corpus_stats':stats,'word':word,'normalized_word':normalized,'neighbors':neighbors,
-        'embedding_error':error,'projection':projection,'overview_projection':overview_projection,
-        'visualizations':visualizations,'model_vocabulary':vocabulary,'both_ready':both_ready,
-        'paired_models':paired_models,'targets':targets,'targets_text':targets_text,
-        'neighbor_comparison':neighbor_comparison,'semantic_pairs':pair_rows,'rare_rows':rare_rows,
-        'comparison_rows':comparison_rows,'research_report':research_report,'experiment':experiment,
-        'experiment_kind':experiment_kind,'experiment_choices':[{'value':key,'label':value[0]} for key,value in embeddings.EXPERIMENTS.items()],
-        'loss_series':loss_series,'training_sample':training_sample,
-    })
-
-def _legacy_word2vec_export(request):
-    filters=topic_context(request);records=embeddings.corpus_records(filter_documents(Document.objects.all(),filters['selected_topics']))
-    params=embeddings.parameters(request.GET);model=embeddings.load(records,params)
-    if model is None:raise Http404('Train this scope and parameter combination first.')
-    header=f'{len(model.wv)} {model.vector_size}\n'
-    vectors=header+'\n'.join(w+' '+' '.join(format(float(x),'.8g') for x in model.wv[w]) for w in model.wv.index_to_key)+'\n'
-    files={'vectors.txt':vectors,'metadata.json':json.dumps(model.bir_metadata,ensure_ascii=False,indent=2),'corpus_ids.csv':csv_text(['local_id'],([pk] for pk,_ in records))}
-    files['vocabulary_pca.json']=json.dumps(embeddings.vocabulary_projection(model),ensure_ascii=False,indent=2)
-    files['training_loss.csv']=csv_text(['epoch','loss','cumulative_loss','seconds'],([r[k] for k in ['epoch','loss','cumulative_loss','seconds']] for r in model.bir_metadata.get('losses',[])))
-    visualization=embeddings.semantic_visualizations(model,model.wv.index_to_key[:min(40,len(model.wv))])
-    files['pca.json']=json.dumps(visualization['pca'],ensure_ascii=False,indent=2)
-    files['tsne.json']=json.dumps(visualization['tsne'],ensure_ascii=False,indent=2)
-    word=request.GET.get('word','')[:120]
-    if word:
-        try:
-            normalized,rows=embeddings.neighbors(model,word,params['condition'])
-            files['similar_words.csv']=csv_text(['query','neighbor','cosine_similarity'],([normalized,r['term'],r['similarity']] for r in rows))
-            files['projection.json']=json.dumps(embeddings.projection(model,[normalized,*[r['term'] for r in rows]]))
-        except ValueError:pass
-    paired=embeddings.load_both(records,params)
-    if all(paired.values()):
-        stats=embeddings.corpus_statistics(records,params['condition'])
-        targets=embeddings.parse_targets(request.GET.get('targets',''),paired,params['condition'])
-        comparisons=embeddings.neighbor_comparison(paired,targets)
-        pairs=embeddings.semantic_pairs(paired)
-        rare=embeddings.rare_word_analysis(paired,stats['frequencies'])
-        kind,label,configs,experiment_models=embeddings.load_experiment(records,params,request.GET.get('experiment','window'))
-        experiment=embeddings.experiment_result(label,kind,configs,experiment_models,targets[0]) if all(experiment_models) else None
-        evidence=embeddings.evidence_report(paired,comparisons,pairs,rare,experiment,visualization)
-        files['cbow_vs_skipgram.csv']=csv_text(['property','CBOW','Skip-Gram'],embeddings.comparison_table(paired,rare))
-        files['semantic_neighbors.csv']=csv_text(['target','architecture','rank','neighbor','cosine_similarity'],([row['target'],architecture,item['rank'],item['term'],item['similarity']] for row in comparisons for architecture in ['cbow','skipgram'] for item in row[architecture]))
-        files['semantic_pairs.csv']=csv_text(['word_a','word_b','CBOW_cosine','Skip-Gram_cosine'],([r['word_a'],r['word_b'],r['cbow'],r['skipgram']] for r in pairs))
-        files['rare_words.csv']=csv_text(['word','frequency','CBOW_neighbors','Skip-Gram_neighbors'],([r['word'],r['frequency'],', '.join(r['cbow']),', '.join(r['skipgram'])] for r in rare))
-        files['word_embedding_report.md']='# Word Embedding Report\n\n'+'\n\n'.join('## '+r['question']+'\n\n'+r['answer'] for r in evidence)+'\n\n## Why might Skip-Gram be particularly useful for rare or domain-specific scientific terms?\n\nSkip-Gram creates prediction signals from a center word to multiple context words, so a rare center word can receive several contextual updates when it appears. Whether that helps here must be judged from the rare-word experiment above, not assumed from theory.'
-    return download_zip(files,'word2vec_results')
-
 
 @require_http_methods(['GET','POST'])
 def word2vec_view(request):

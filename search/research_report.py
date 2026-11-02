@@ -1,4 +1,6 @@
-"""Evidence-linked report scaffold: measurements are actual, interpretations are bounded."""
+# search/research_report.py
+# Project 2 研究報告：把實測數值帶入 RQ 回答草稿與 Executive Summary。
+
 import re
 from .analysis import CONDITIONS
 

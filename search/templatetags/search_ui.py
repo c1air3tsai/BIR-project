@@ -1,3 +1,6 @@
+# search/templatetags/search_ui.py
+# 模板小工具：query_url（改網址參數）、topic_query（保留主題篩選）。
+
 from django import template
 register = template.Library()
 

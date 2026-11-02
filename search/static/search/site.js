@@ -1,3 +1,4 @@
+/* search/static/search/site.js：全站共用互動：主題篩選自動套用、匯入工作進度條輪詢、刪除前確認、表單送出中狀態 */
 'use strict';
 const topicForm = document.querySelector('.topic-toolbar-form');
 if (topicForm) {

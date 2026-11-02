@@ -1,4 +1,6 @@
-"""Retry short SQLite write contention only outside a rolled-back transaction."""
+# search/db_retry.py
+# SQLite「database is locked」時的短暫重試裝飾器（匯入時使用）。
+
 import sqlite3
 import time
 from functools import wraps

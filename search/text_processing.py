@@ -1,3 +1,7 @@
+# search/text_processing.py
+# HW1 文字處理核心：生醫 tokenizer、stopword 清單、Porter stemming、句子切分、文件統計、BM25 公式。
+# Project 3（weighting/preprocessing.py）也重用這裡的 tokenizer 與 stopword。
+
 import math
 import re
 from functools import lru_cache

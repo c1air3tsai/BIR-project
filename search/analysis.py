@@ -1,4 +1,6 @@
-"""Abstract-only, deterministic A–D comparisons and unsmoothed base-10 IDF."""
+# search/analysis.py
+# Project 2 Zipf 分析：A–D 四種前處理條件、CF/DF/IDF、log–log 迴歸與區段擬合。
+
 import hashlib
 import math
 import re

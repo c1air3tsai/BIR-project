@@ -1,3 +1,6 @@
+# search/models.py
+# 資料表定義：Topic（主題）、Document（文章）、Term / Posting（HW1 倒排索引）、ImportJob（背景匯入工作）。
+
 import uuid
 from django.db import models
 
@@ -60,32 +63,6 @@ class Posting(models.Model):
 
     def __str__(self):
         return f"{self.term.word} -> doc#{self.document_id} (tf={self.term_freq})"
-
-
-class EvaluationQuery(models.Model):
-    text = models.CharField(max_length=300, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['id']
-
-    def __str__(self):
-        return self.text
-
-
-class RelevanceJudgment(models.Model):
-    query = models.ForeignKey(EvaluationQuery, on_delete=models.CASCADE, related_name='judgments')
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='relevance_judgments')
-    relevance = models.PositiveSmallIntegerField(choices=[(0, 'Not relevant'), (1, 'Relevant')])
-    source = models.CharField(max_length=30, default='manual')
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=['query', 'document'], name='unique_relevance_judgment')]
-
-    def __str__(self):
-        return f'{self.query_id} / {self.document_id}: {self.relevance}'
 
 
 class ImportJob(models.Model):

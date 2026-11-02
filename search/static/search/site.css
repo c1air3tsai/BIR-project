@@ -1,3 +1,4 @@
+/* search/static/search/site.css：全站樣式（顏色變數、版面、按鈕、表格、各頁面） */
 :root{--bg:#ffffff;--paper:#fff;--ink:#17365d;--text:#243746;--muted:#687985;--line:#dbe3e9;--blue:#2a6aa4;--deep:#17365d;--wash:#eef5fa;--gold:#ac8541;--radius:14px;--sans:Inter,'Segoe UI',Arial,sans-serif;--serif:Georgia,'Times New Roman',serif}
 html { scroll-padding-top: 175px; }
 .nav-label-short { display: none; }

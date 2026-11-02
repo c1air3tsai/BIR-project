@@ -1,0 +1,2 @@
+﻿preprocessing,documents,tokens,vocabulary,avg_length,median_length,min_length,max_length,hapax
+tokenize + lowercase + remove punctuation → remove stopwords → no stemming,3000,429590,25865,143.196667,145.0,4,506,10958

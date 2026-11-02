@@ -1,0 +1,13 @@
+﻿id,text,rule,relevant,highly_relevant
+Q01,GLP-1 receptor agonists for obesity and weight loss,"Obesity, Obesity, Morbid, Weight Loss, Anti-Obesity Agents",648,400
+Q02,semaglutide,Semaglutide,143,0
+Q03,liraglutide treatment,Liraglutide,266,56
+Q04,cardiovascular outcomes and heart failure,"Cardiovascular Diseases, Heart Failure, Cardiovascular System, Myocardium",148,120
+Q05,side effects and safety of GLP-1 drugs,[qualifier] adverse effects,293,208
+Q06,insulin secretion from pancreatic beta cells,"Insulin-Secreting Cells, Insulin Secretion, Islets of Langerhans",336,164
+Q07,appetite and food intake regulation,"Appetite, Appetite Regulation, Eating, Satiation, Satiety Response, Feeding Behavior",283,140
+Q08,DPP-4 inhibitors,"Dipeptidyl-Peptidase IV Inhibitors, Dipeptidyl Peptidase 4",213,118
+Q09,bariatric surgery gastric bypass,"Bariatric Surgery, Gastric Bypass, Gastrectomy",117,94
+Q10,neuroprotection in Alzheimer and Parkinson disease,"Alzheimer Disease, Parkinson Disease, Neurodegenerative Diseases, Neuroprotective Agents",97,89
+Q11,nonalcoholic fatty liver disease,"Non-alcoholic Fatty Liver Disease, Fatty Liver",47,39
+Q12,gut microbiota,Gastrointestinal Microbiome,77,54

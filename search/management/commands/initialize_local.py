@@ -1,4 +1,6 @@
-"""Report persistent collection state without installing sample articles."""
+# search/management/commands/initialize_local.py
+# python manage.py initialize_local：檢查本機文章庫狀態（不會安裝範例文章）。
+
 from pathlib import Path
 
 from django.conf import settings

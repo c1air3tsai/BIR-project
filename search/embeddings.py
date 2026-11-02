@@ -1,4 +1,6 @@
-"""Reproducible, cached Word2Vec experiments over the shared Zipf tokenizer."""
+# search/embeddings.py
+# Project 2 Word2Vec：CBOW / Skip-Gram 訓練、快取、鄰近詞、PCA / t-SNE 視覺化與匯出。
+
 from __future__ import annotations
 
 import hashlib

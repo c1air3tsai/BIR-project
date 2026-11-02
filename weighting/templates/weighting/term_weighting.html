@@ -1,0 +1,275 @@
+{% extends 'search/base.html' %}
+{% comment %}
+  Project 3 · Term Weighting 頁面（weighting/views.py 的 page() 產生）
+  由上到下：① 詞項統計 ② 權重方法 ③ 搜尋 ④ 比較模式 ⑤ 評估（對照實驗 RQ 區塊已註解掉，結果見 docs/）
+  沿用網站既有樣式（panel、data-table、metrics-grid…），新增的少量樣式在 weighting/static/weighting/term_weighting.css
+  英文為預設文字，data-i18n="tw.*" 的中文翻譯在 search/static/search/i18n.js
+{% endcomment %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p3-2">{% endblock %}
+{% block content %}
+<main class="site-shell page-main tw-page" id="main">
+  {% include 'search/_analysis_nav.html' %}
+
+  <header class="page-heading">
+    <span class="section-kicker" data-i18n="tw.kicker">PROJECT #3 · TERM WEIGHTING &amp; VECTOR SPACE RETRIEVAL</span>
+    <h1 data-i18n="tw.title">Term weighting.</h1>
+    <p data-i18n="tw.subtitle">Turn abstracts and queries into weighted term vectors, rank by cosine similarity, and measure how each weighting changes the ranking.</p>
+  </header>
+
+  {# ---------- 前處理設定（整頁共用） ---------- #}
+  <form method="get" class="panel tw-settings" action="#main">
+    {% for key, value in hidden_settings %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+    <div class="tw-settings-text">
+      <span class="section-kicker" data-i18n="tw.settings.kicker">CONTROLLED SETTINGS</span>
+      <p><strong data-i18n="tw.settings.corpus">Corpus</strong> · <span data-i18n="tw.settings.corpus.value">GLP-1 PubMed abstracts</span> ({{ summary.documents }})</p>
+      <p class="tw-muted">{{ config.label }}</p>
+    </div>
+    <div class="research-controls tw-settings-controls">
+      <label><span data-i18n="tw.stopwords">Stopword removal</span>
+        <select name="stop"><option value="1" {% if state.stop == '1' %}selected{% endif %} data-i18n="tw.on">On</option><option value="0" {% if state.stop == '0' %}selected{% endif %} data-i18n="tw.off">Off</option></select></label>
+      <label><span data-i18n="tw.stemming">Porter stemming</span>
+        <select name="stem"><option value="0" {% if state.stem == '0' %}selected{% endif %} data-i18n="tw.off">Off</option><option value="1" {% if state.stem == '1' %}selected{% endif %} data-i18n="tw.on">On</option></select></label>
+      <button class="secondary-button small-button" type="submit" data-i18n="tw.apply">Apply</button>
+    </div>
+  </form>
+
+  <nav class="tw-steps" aria-label="Sections">
+    <a href="#stats"><b>1</b> <span data-i18n="tw.nav.stats">Term statistics</span></a>
+    <a href="#methods"><b>2</b> <span data-i18n="tw.nav.methods">Weighting methods</span></a>
+    <a href="#search"><b>3</b> <span data-i18n="tw.nav.search">Search · Top 10</span></a>
+    <a href="#compare"><b>4</b> <span data-i18n="tw.nav.compare">Compare</span></a>
+    {# <a href="#experiments"><b>5</b> <span data-i18n="tw.nav.experiments">Controlled experiments</span></a> #}
+    <a href="#evaluation"><b>5</b> <span data-i18n="tw.nav.evaluation">Evaluation</span></a>
+  </nav>
+
+  {# ========== ① 詞項統計（任務一） ========== #}
+  <section id="stats" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker" data-i18n="tw.stats.kicker">1 · PREPROCESSING &amp; TERM STATISTICS</span><h2 data-i18n="tw.stats.title">Corpus statistics</h2></div></div>
+    <div class="metrics-grid tw-metrics">
+      <div><span data-i18n="tw.documents">Documents (N)</span><strong>{{ summary.documents }}</strong></div>
+      <div><span data-i18n="tw.tokens">Tokens</span><strong>{{ summary.tokens }}</strong></div>
+      <div><span data-i18n="tw.vocabulary">Vocabulary size</span><strong>{{ summary.vocabulary }}</strong><small>{{ summary.hapax }} <span data-i18n="tw.hapax">appear only once</span></small></div>
+      <div><span data-i18n="tw.avglength">Mean length</span><strong>{{ summary.avg_length|floatformat:1 }}</strong><small><span data-i18n="tw.range">range</span> {{ summary.min_length }}–{{ summary.max_length }} · <span data-i18n="tw.median">median</span> {{ summary.median_length|floatformat:0 }}</small></div>
+    </div>
+
+    <div class="tw-two-col">
+      <article class="panel">
+        <h3 data-i18n="tw.length.title">Document length distribution</h3>
+        <p class="method-note" data-i18n="tw.length.note">Tokens per abstract after preprocessing. Hover a bar for its range.</p>
+        <div class="tw-histogram" role="img" aria-label="Document length histogram">
+          {% for bin in histogram %}<div class="tw-bar" style="--h:{{ bin.height }}%" title="{{ bin.start }}–{{ bin.end }} tokens: {{ bin.count }} documents"><span>{{ bin.count }}</span></div>{% endfor %}
+        </div>
+        <div class="tw-histogram-axis"><span>{{ histogram.0.start }}</span><span data-i18n="tw.length.axis">tokens per document</span><span>{{ summary.max_length }}</span></div>
+      </article>
+
+      <article class="panel">
+        <h3 data-i18n="tw.lookup.title">Look up a term</h3>
+        <form method="get" class="tw-inline-form" action="#stats">
+          {% for key, value in hidden_term %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+          <input name="term" value="{{ state.term }}" maxlength="60" aria-label="Term">
+          <button class="secondary-button small-button" type="submit" data-i18n="tw.lookup">Look up</button>
+        </form>
+        {% if term_info %}
+          {% if term_info.found %}
+          <div class="tw-term-facts">
+            <div><span>term</span><strong>{{ term_info.term }}</strong></div>
+            <div><span>CF</span><strong>{{ term_info.cf }}</strong></div>
+            <div><span>DF</span><strong>{{ term_info.df }}</strong></div>
+            <div><span>IDF = log10(N/DF)</span><strong>{{ term_info.idf|floatformat:4 }}</strong></div>
+          </div>
+          <div class="tw-table-wrap"><table class="data-table tw-compact">
+            <thead><tr><th>PMID</th><th>TF</th><th>|d|</th><th>1+log10 TF</th><th>TF × IDF</th></tr></thead>
+            <tbody>{% for doc in term_info.documents %}<tr><td><a class="text-link" href="https://pubmed.ncbi.nlm.nih.gov/{{ doc.pmid }}/" target="_blank" rel="noopener">{{ doc.pmid }}</a></td><td>{{ doc.tf }}</td><td>{{ doc.length }}</td><td>{{ doc.log_tf|floatformat:3 }}</td><td>{{ doc.tfidf|floatformat:3 }}</td></tr>{% endfor %}</tbody>
+          </table></div>
+          <p class="method-note"><span data-i18n="tw.lookup.note">Documents with the highest TF for this term.</span></p>
+          {% elif term_info.term %}<p class="tw-muted">“{{ term_info.term }}” <span data-i18n="tw.lookup.missing">is not in the vocabulary.</span></p>
+          {% else %}<p class="tw-muted" data-i18n="tw.lookup.removed">This input becomes empty after preprocessing (for example a stopword).</p>{% endif %}
+        {% endif %}
+      </article>
+    </div>
+
+    <article class="panel tw-block">
+      <h3 data-i18n="tw.topdf.title">Top 20 terms by document frequency</h3>
+      <p class="method-note" data-i18n="tw.topdf.note">High-DF terms appear in many abstracts, so their IDF is close to 0.</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th>#</th><th>Term</th><th>DF</th><th>DF / N</th><th>CF</th><th>IDF</th></tr></thead>
+        <tbody>{% for row in top_df %}<tr><td>{{ forloop.counter }}</td><td><strong>{{ row.term }}</strong></td><td>{{ row.df }}</td><td>{{ row.df_ratio|floatformat:3 }}</td><td>{{ row.cf }}</td><td>{{ row.idf|floatformat:4 }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </article>
+  </section>
+
+  {# ========== ② 權重方法（任務二） ========== #}
+  <section id="methods" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker" data-i18n="tw.methods.kicker">2 · TERM WEIGHTING</span><h2 data-i18n="tw.methods.title">Weighting methods</h2></div></div>
+    <div class="tw-table-wrap panel tw-flush"><table class="data-table">
+      <thead><tr><th data-i18n="tw.method">Method</th><th data-i18n="tw.formula">Formula</th><th></th></tr></thead>
+      <tbody>{% for method in methods %}<tr><td><strong>{{ method.label }}</strong></td><td><code>{{ method.formula }}</code></td><td>{% if not method.required %}<span class="tw-tag" data-i18n="tw.extra">extra comparison</span>{% endif %}</td></tr>{% endfor %}
+      <tr><td><strong>L2 normalization</strong></td><td><code>v̂ = v / ‖v‖₂ ，score = q̂ · d̂ = cos(q, d)</code></td><td><span class="tw-tag" data-i18n="tw.l2tag">on / off for every method</span></td></tr></tbody>
+    </table></div>
+    <p class="method-note" data-i18n="tw.methods.note">N = number of documents, df = documents containing the term, tf = occurrences in one document. The query uses the same preprocessing, vocabulary and IDF as the documents. With L2 the score is cosine similarity; without L2 it is the raw dot product q · d, so longer documents can collect larger scores.</p>
+  </section>
+
+  {# ========== ③ 搜尋（任務三） ========== #}
+  <section id="search" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker" data-i18n="tw.search.kicker">3 · VECTOR SPACE SEARCH</span><h2 data-i18n="tw.search.title">Search · Top 10</h2></div></div>
+    <form method="get" class="panel tw-search-form" action="#search">
+      {% for key, value in hidden_search %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+      <div class="research-controls">
+        <label class="tw-grow"><span data-i18n="tw.query">Query</span><input name="q" value="{{ state.q }}" maxlength="300" required></label>
+        <label><span data-i18n="tw.weighting">Weighting</span><select name="method">{% for method in methods %}<option value="{{ method.key }}" {% if method.key == state.method %}selected{% endif %}>{{ method.label }}</option>{% endfor %}</select></label>
+        <label><span data-i18n="tw.normalization">L2 normalization</span><select name="l2"><option value="1" {% if use_l2 %}selected{% endif %} data-i18n="tw.l2on">On · cosine</option><option value="0" {% if not use_l2 %}selected{% endif %} data-i18n="tw.l2off">Off · dot product</option></select></label>
+        <button class="primary-button" type="submit" data-i18n="tw.search">Search</button>
+      </div>
+      <div class="tw-chips"><span data-i18n="tw.examples">Examples</span>{% for query in demo_queries %}<a href="?stop={{ state.stop }}&amp;stem={{ state.stem }}&amp;method={{ state.method }}&amp;l2={{ state.l2 }}&amp;q={{ query|urlencode }}#search">{{ query }}</a>{% endfor %}</div>
+    </form>
+
+    <p class="tw-query-info">
+      <span data-i18n="tw.queryterms">Query vector terms</span>: {% for term in result.terms %}<code>{{ term }}</code> {% empty %}—{% endfor %}
+      {% if result.unknown %}· <span data-i18n="tw.unknown">not in vocabulary</span>: {% for term in result.unknown %}<code>{{ term }}</code> {% endfor %}{% endif %}
+      · {{ result.matches }} <span data-i18n="tw.matching">documents share at least one term</span>
+    </p>
+
+    {% if results %}
+    <ol class="tw-results">
+      {% for row in results %}
+      <li>
+        <div class="tw-rank">{{ row.rank }}</div>
+        <div class="tw-result-body">
+          <a class="tw-result-title" href="{% url 'search:document_detail' row.doc_id %}">{{ row.title }}</a>
+          <p class="tw-result-meta">PMID <a class="text-link" href="https://pubmed.ncbi.nlm.nih.gov/{{ row.pmid }}/" target="_blank" rel="noopener">{{ row.pmid }}</a> · {{ row.year }} · |d| = {{ row.length }} · <span data-i18n="tw.matched">matched</span>: {{ row.matched|join:", " }}</p>
+          <p class="tw-snippet">{{ row.snippet }}</p>
+        </div>
+        <div class="tw-score"><span data-i18n="tw.score">score</span><strong>{{ row.score|floatformat:4 }}</strong></div>
+      </li>
+      {% endfor %}
+    </ol>
+    {% else %}<p class="panel tw-muted" data-i18n="tw.noresults">No document contains any query term.</p>{% endif %}
+  </section>
+
+  {# ========== ④ 比較模式（任務三） ========== #}
+  <section id="compare" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker" data-i18n="tw.compare.kicker">4 · COMPARISON MODE</span><h2 data-i18n="tw.compare.title">Same query, every weighting</h2></div></div>
+    <p class="method-note"><span data-i18n="tw.compare.note">Query, preprocessing and normalization are fixed; only the weighting changes. Arrows show the change relative to the method selected in Search</span> (<strong>{{ method_label }}</strong>, {% if use_l2 %}L2 on{% else %}L2 off{% endif %}): <span class="tw-up">▲</span> <span data-i18n="tw.better">ranked higher</span>, <span class="tw-down">▼</span> <span data-i18n="tw.worse">ranked lower</span>, <span class="tw-new">new</span> <span data-i18n="tw.notinbase">not in its Top 10</span>.</p>
+    <div class="tw-compare-scroll"><div class="tw-compare-grid">
+      {% for column in comparison.columns %}
+      <article class="tw-compare-col{% if column.is_baseline %} is-baseline{% endif %}">
+        <header><strong>{{ column.label }}</strong><small>{% if column.is_baseline %}<span data-i18n="tw.baseline">baseline</span>{% else %}<span data-i18n="tw.overlap">overlap</span> {{ column.overlap }}/10{% endif %}</small></header>
+        <ol>{% for item in column.items %}
+          <li title="{{ item.title }}"><span class="tw-crank">{{ item.rank }}</span><span class="tw-cbody"><a href="{% url 'search:document_detail' item.doc_id %}">{{ item.pmid }}</a><small>{{ item.title }}</small></span>
+            <span class="tw-change">{% if column.is_baseline %}{% elif item.change is None %}<span class="tw-new">new</span>{% elif item.change > 0 %}<span class="tw-up">▲{{ item.change }}</span>{% elif item.change < 0 %}<span class="tw-down">▼{% widthratio item.change 1 -1 %}</span>{% else %}<span class="tw-same">=</span>{% endif %}</span></li>
+        {% empty %}<li class="tw-muted">—</li>{% endfor %}</ol>
+      </article>
+      {% endfor %}
+    </div></div>
+  </section>
+
+  {# ========== 對照實驗 RQ1 / RQ2 / RQ4（任務四）：已改放在報告與 CSV，網頁上先註解掉；要恢復就刪掉下面的 comment / endcomment ========== #}
+  {% comment %}
+  <section id="experiments" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker" data-i18n="tw.exp.kicker">5 · CONTROLLED EXPERIMENTS</span><h2 data-i18n="tw.exp.title">How weighting changes term weights</h2></div></div>
+
+    <div class="tw-two-col">
+      <article class="panel">
+        <span class="section-kicker">RQ1</span>
+        <h3 data-i18n="tw.rq1.title">Raw TF grows linearly, Log TF saturates</h3>
+        <div class="tw-table-wrap"><table class="data-table tw-compact">
+          <thead><tr><th>tf</th><th>Raw TF</th><th>1 + log10(tf)</th></tr></thead>
+          <tbody>{% for row in tf_scaling %}<tr><td>{{ row.tf }}</td><td>{{ row.raw_tf|floatformat:0 }}</td><td>{{ row.log_tf|floatformat:3 }}</td></tr>{% endfor %}</tbody>
+        </table></div>
+        <p class="method-note" data-i18n="tw.rq1.note">Twenty occurrences weigh 20× one occurrence under Raw TF, but only about 2.3× under Log TF.</p>
+      </article>
+      <article class="panel">
+        <span class="section-kicker">RQ2</span>
+        <h3 data-i18n="tw.rq2.title">IDF of high-DF vs low-DF terms</h3>
+        <div class="tw-idf-pair">
+          <table class="data-table tw-compact"><thead><tr><th data-i18n="tw.highdf">High DF</th><th>DF</th><th>IDF</th></tr></thead>
+            <tbody>{% for row in idf_groups.high %}<tr><td>{{ row.term }}</td><td>{{ row.df }}</td><td>{{ row.idf|floatformat:3 }}</td></tr>{% endfor %}</tbody></table>
+          <table class="data-table tw-compact"><thead><tr><th data-i18n="tw.lowdf">Low DF</th><th>DF</th><th>IDF</th></tr></thead>
+            <tbody>{% for row in idf_groups.low %}<tr><td>{{ row.term }}</td><td>{{ row.df }}</td><td>{{ row.idf|floatformat:3 }}</td></tr>{% endfor %}</tbody></table>
+        </div>
+      </article>
+    </div>
+
+    <article class="panel tw-block">
+      <span class="section-kicker">RQ1 · RQ2</span>
+      <h3 data-i18n="tw.weights.title">Same term, different weights</h3>
+      <p class="method-note" data-i18n="tw.weights.note">For each term: the abstract where it occurs most often, and one where it occurs once.</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th>Term</th><th>DF</th><th>IDF</th><th>PMID</th><th>|d|</th><th>tf</th><th>Raw TF</th><th>Log TF</th><th>TF-IDF</th><th>Log TF-IDF</th></tr></thead>
+        <tbody>{% for row in term_weights %}<tr{% if row.tf == 1 %} class="tw-subtle-row"{% endif %}><td><strong>{{ row.term }}</strong></td><td>{{ row.df }}</td><td>{{ row.idf|floatformat:3 }}</td><td>{{ row.pmid }}</td><td>{{ row.doc_length }}</td><td>{{ row.tf }}</td><td>{{ row.raw_tf|floatformat:0 }}</td><td>{{ row.log_tf|floatformat:3 }}</td><td>{{ row.tfidf|floatformat:3 }}</td><td>{{ row.logtfidf|floatformat:3 }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </article>
+
+    <article class="panel tw-block">
+      <span class="section-kicker">RQ4</span>
+      <h3><span data-i18n="tw.rq4.title">L2 normalization and document length</span> <small>“{{ length_demo.query }}” · {{ method_label }}</small></h3>
+      <p class="method-note"><span data-i18n="tw.rq4.note">Mean length of the Top 10</span>: <strong>{{ length_demo.mean_length_no_l2|floatformat:1 }}</strong> (<span data-i18n="tw.nol2">no L2</span>) → <strong>{{ length_demo.mean_length_l2|floatformat:1 }}</strong> (L2) · <span data-i18n="tw.corpusmean">corpus mean</span> {{ length_demo.corpus_mean_length|floatformat:1 }} · <span data-i18n="tw.overlap">overlap</span> {{ length_demo.overlap }}/10</p>
+      <div class="tw-idf-pair">
+        <table class="data-table tw-compact"><thead><tr><th>#</th><th data-i18n="tw.nol2.head">No L2 · PMID</th><th>|d|</th><th>score</th><th data-i18n="tw.withl2">with L2</th></tr></thead>
+          <tbody>{% for row in length_demo.no_l2 %}<tr><td>{{ row.rank }}</td><td>{{ row.pmid }}</td><td>{{ row.length }}</td><td>{{ row.score|floatformat:3 }}</td><td>{% if row.other_rank %}#{{ row.other_rank }}{% else %}<span class="tw-down">out</span>{% endif %}</td></tr>{% endfor %}</tbody></table>
+        <table class="data-table tw-compact"><thead><tr><th>#</th><th data-i18n="tw.l2.head">L2 · PMID</th><th>|d|</th><th>cosine</th><th data-i18n="tw.withoutl2">without L2</th></tr></thead>
+          <tbody>{% for row in length_demo.l2 %}<tr><td>{{ row.rank }}</td><td>{{ row.pmid }}</td><td>{{ row.length }}</td><td>{{ row.score|floatformat:3 }}</td><td>{% if row.other_rank %}#{{ row.other_rank }}{% else %}<span class="tw-up">new</span>{% endif %}</td></tr>{% endfor %}</tbody></table>
+      </div>
+      <h4 data-i18n="tw.rq4.all">All 12 evaluation queries · mean Top-10 document length</h4>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th data-i18n="tw.method">Method</th><th data-i18n="tw.nol2">no L2</th><th>L2</th><th data-i18n="tw.overlapavg">Top-10 overlap</th></tr></thead>
+        <tbody>{% for row in length_bias %}<tr><td>{{ row.label }}</td><td>{{ row.mean_top10_length_no_l2|floatformat:1 }}</td><td>{{ row.mean_top10_length_l2|floatformat:1 }}</td><td>{{ row.mean_top10_overlap|floatformat:1 }} / 10</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </article>
+  </section>
+
+  {% endcomment %}
+
+  {# ========== ⑤ 評估（任務五） ========== #}
+  <section id="evaluation" class="tw-section">
+    <div class="section-heading-row">
+      <div><span class="section-kicker" data-i18n="tw.eval.kicker">5 · EVALUATION</span><h2 data-i18n="tw.eval.title">Retrieval effectiveness</h2></div>
+      <a class="secondary-button small-button" href="{% url 'weighting:export' %}?stop={{ state.stop }}&amp;stem={{ state.stem }}" data-i18n="tw.export">Download CSV ↓</a>
+    </div>
+    <p class="method-note" data-i18n="tw.eval.note">12 queries. A document is relevant when its MeSH headings contain a descriptor listed for the query (grade 2 if it is a Major Topic, otherwise 1). Bold marks the highest mean for each metric.</p>
+
+    {# 指標說明：預設收合，點標題展開；依使用者要求，EN / 繁中 介面都顯示中文 #}
+    <details class="panel tw-glossary">
+      <summary data-i18n="tw.glossary.title">這些指標代表什麼？（點一下展開）</summary>
+      <dl>
+        <div><dt>P@5 / P@10</dt><dd data-i18n="tw.glossary.p">Precision（精確率）：前 5（或前 10）筆結果中，相關文件占多少。前 5 筆有 4 筆相關 → P@5 = 0.8。</dd></div>
+        <div><dt>Recall@10</dt><dd data-i18n="tw.glossary.r">Recall（召回率）：語料中所有相關文件，有多少出現在前 10 筆。若某查詢有 50 篇相關文件，前 10 筆最多只能找到 10 篇，上限是 10 / 50 = 0.2。</dd></div>
+        <div><dt>MRR</dt><dd data-i18n="tw.glossary.mrr">Mean Reciprocal Rank：第一篇相關文件排第幾名，取倒數後對所有查詢平均。第 1 名就相關 → 1；第 2 名 → 0.5；第 4 名 → 0.25。只看「第一個找到的」。</dd></div>
+        <div><dt>nDCG@10</dt><dd data-i18n="tw.glossary.ndcg">Normalized DCG：相關文件排得越前面分數越高，2 分（主要主題）比 1 分給更多分，最後除以「理想排序」的分數。1 = 前 10 名排得完美。</dd></div>
+      </dl>
+      <p class="method-note" data-i18n="tw.glossary.note">所有指標都介於 0 到 1，越高越好。P@k 和 nDCG 看整個前 10 名的品質，MRR 只看第一篇相關文件。這些是「評估指標」，用來替排名打分數；搜尋裡下拉選的「權重方法」才是決定排名的方式。</p>
+    </details>
+
+    <div class="tw-table-wrap panel tw-flush"><table class="data-table tw-eval-table">
+      <thead><tr><th data-i18n="tw.configuration">Configuration</th>{% for name in metric_names %}<th>{{ name }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for row in evaluation_rows %}<tr{% if row.use_l2 %} class="tw-l2-row"{% endif %}><td>{{ row.label }}</td>
+        {% for cell in row.cells %}<td><div class="tw-cell-bar{% if row.use_l2 %} is-l2{% endif %}" style="--w:{{ cell.width }}"></div><span class="{% if cell.best %}tw-best{% endif %}">{{ cell.value|floatformat:3 }}</span></td>{% endfor %}</tr>{% endfor %}</tbody>
+    </table></div>
+    <p class="tw-legend"><span class="tw-swatch"></span> <span data-i18n="tw.nol2">no L2</span> <span class="tw-swatch is-l2"></span> L2 (cosine)</p>
+
+    <article class="panel tw-block">
+      <h3><span data-i18n="tw.perquery">Per-query nDCG@10</span> <small>{% if use_l2 %}L2 on{% else %}L2 off{% endif %}</small></h3>
+      <p class="method-note" data-i18n="tw.perquery.note">Each row is one query. Darker = better among the six methods for that query; the boxed cell is that query's best method.</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact tw-heat-table">
+        <thead><tr><th data-i18n="tw.query">Query</th><th class="tw-num" data-i18n="tw.relevant.short">Relevant</th>{% for label in method_labels %}<th class="tw-num">{{ label }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for row in evaluation_queries %}<tr>
+          <td class="tw-query-cell" title="MeSH: {{ row.rule }}"><b>{{ row.id }}</b> {{ row.text|truncatechars:42 }}</td>
+          <td class="tw-num tw-muted">{{ row.relevant }}</td>
+          {% for cell in row.cells %}<td class="tw-num tw-heat{% if cell.dark %} is-dark{% endif %}{% if cell.best %} is-best{% endif %}" style="--a:{{ cell.alpha }}">{{ cell.value|floatformat:2 }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="method-note" data-i18n="tw.eval.limit">Hover a query to see its MeSH rule. Limitations: MeSH indexing can be incomplete or missing for recent records, and terms shared by the rule and the query can favour exact-match methods.</p>
+    </article>
+
+    {% if has_png %}
+    <figure class="panel tw-block tw-figure">
+      <img src="{% url 'weighting:result_file' 'metrics_comparison.png' %}" alt="Heatmap of mean P@5, P@10, Recall@10, MRR and nDCG@10 for every weighting with and without L2 normalization">
+    </figure>
+    <figure class="panel tw-block tw-figure">
+      <img src="{% url 'weighting:result_file' 'l2_effect_mrr.png' %}" alt="MRR of each weighting method before and after L2 normalization">
+    </figure>
+    <p class="method-note" data-i18n="tw.png.note">Charts generated by python manage.py run_weighting_experiments (default settings).</p>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

@@ -1,4 +1,6 @@
-"""Report the running revision, SQLite mode and most recent import failure."""
+# search/management/commands/import_diagnostics.py
+# python manage.py import_diagnostics：顯示版本、SQLite 模式與最近一次匯入錯誤。
+
 from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand

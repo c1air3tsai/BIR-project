@@ -1,4 +1,6 @@
-"""Django's command-line utility for administrative tasks."""
+# manage.py
+# Django 指令入口：python manage.py runserver / migrate / test / run_weighting_experiments …
+
 import os
 import sys
 

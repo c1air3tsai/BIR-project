@@ -1,3 +1,4 @@
+/* search/static/search/zipf_dual.js：Zipf 與比較領域頁的雙圖（A–D 線條可開關） */
 'use strict';
 (() => {
   const panel=document.querySelector('[data-zipf-chart]'),source=document.getElementById('zipf-data');

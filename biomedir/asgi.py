@@ -1,11 +1,5 @@
-"""
-ASGI config for biomedir project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.1/howto/deployment/asgi/
-"""
+# biomedir/asgi.py
+# ASGI 伺服器入口（目前用 runserver，不會用到；保留給正式部署）。
 
 import os
 
