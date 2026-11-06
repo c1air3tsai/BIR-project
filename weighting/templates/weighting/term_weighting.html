@@ -6,7 +6,7 @@
   英文為預設文字，data-i18n="tw.*" 的中文翻譯在 search/static/search/i18n.js
 {% endcomment %}
 {% load static %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p3-2">{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p4-3">{% endblock %}
 {% block content %}
 <main class="site-shell page-main tw-page" id="main">
   {% include 'search/_analysis_nav.html' %}
@@ -273,3 +273,4 @@
   </section>
 </main>
 {% endblock %}
+{% block scripts %}<script src="{% static 'weighting/section_nav.js' %}?v=p4-3" defer></script>{% endblock %}

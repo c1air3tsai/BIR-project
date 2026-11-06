@@ -1,0 +1,261 @@
+{
+  "dataset": {
+    "documents": 3299,
+    "tokens": 259353,
+    "vocabulary": 18314,
+    "avg_length": 78.61564110336465,
+    "empty": 14,
+    "topic_counts": {
+      "earn": 1087,
+      "acq": 719,
+      "crude": 189,
+      "grain": 149,
+      "trade": 117
+    },
+    "other_topics": 777,
+    "no_topics": 280
+  },
+  "w2v": {
+    "cbow": {
+      "sentences": 51188,
+      "tokens": 805875,
+      "vocabulary": 14679,
+      "seconds": 22.2
+    },
+    "skipgram": {
+      "sentences": 51188,
+      "tokens": 805875,
+      "vocabulary": 14679,
+      "seconds": 63.4
+    }
+  },
+  "params": {
+    "vector_size": 100,
+    "window": 5,
+    "min_count": 3,
+    "negative": 5,
+    "sample": 0.001,
+    "epochs": 20,
+    "seed": 42,
+    "workers": 1
+  },
+  "means": [
+    {
+      "method": "tfidf",
+      "label": "A · TF-IDF",
+      "p10": 0.73,
+      "mrr": 0.8333333333333333,
+      "ndcg10": 0.7281678417817712,
+      "r10": 0.029069696234509213
+    },
+    {
+      "method": "w2v_tfidf_cbow",
+      "label": "B · TF-IDF weighted CBOW",
+      "p10": 0.85,
+      "mrr": 0.9099999999999999,
+      "ndcg10": 0.8479416537344953,
+      "r10": 0.03645916813378686
+    },
+    {
+      "method": "w2v_tfidf_sg",
+      "label": "B · TF-IDF weighted Skip-Gram",
+      "p10": 0.8950000000000001,
+      "mrr": 0.9666666666666666,
+      "ndcg10": 0.9081643856109203,
+      "r10": 0.040741390362391904
+    },
+    {
+      "method": "w2v_mean_cbow",
+      "label": "C · Mean CBOW",
+      "p10": 0.865,
+      "mrr": 0.885,
+      "ndcg10": 0.8583878253296116,
+      "r10": 0.03736161443888943
+    },
+    {
+      "method": "w2v_mean_sg",
+      "label": "C · Mean Skip-Gram",
+      "p10": 0.905,
+      "mrr": 0.925,
+      "ndcg10": 0.900098218951982,
+      "r10": 0.04065260988426582
+    },
+    {
+      "method": "hybrid_cbow",
+      "label": "D · Hybrid A + CBOW",
+      "p10": 0.8350000000000002,
+      "mrr": 0.8875,
+      "ndcg10": 0.8362005196317878,
+      "r10": 0.03518642728379946
+    },
+    {
+      "method": "hybrid_sg",
+      "label": "D · Hybrid A + Skip-Gram",
+      "p10": 0.8099999999999999,
+      "mrr": 0.9166666666666666,
+      "ndcg10": 0.8231192030862431,
+      "r10": 0.033848407697476254
+    }
+  ],
+  "by_type": [
+    {
+      "method": "tfidf",
+      "type": "keyword",
+      "p10": 0.9200000000000002,
+      "mrr": 1.0,
+      "ndcg10": 0.9358954210171634,
+      "r10": 0.040126207102718345
+    },
+    {
+      "method": "tfidf",
+      "type": "paraphrase",
+      "p10": 0.54,
+      "mrr": 0.6666666666666666,
+      "ndcg10": 0.5204402625463791,
+      "r10": 0.01801318536630007
+    },
+    {
+      "method": "w2v_tfidf_cbow",
+      "type": "keyword",
+      "p10": 0.9200000000000002,
+      "mrr": 0.95,
+      "ndcg10": 0.9104235449411213,
+      "r10": 0.04033266565830087
+    },
+    {
+      "method": "w2v_tfidf_cbow",
+      "type": "paraphrase",
+      "p10": 0.78,
+      "mrr": 0.8699999999999999,
+      "ndcg10": 0.785459762527869,
+      "r10": 0.03258567060927285
+    },
+    {
+      "method": "w2v_tfidf_sg",
+      "type": "keyword",
+      "p10": 0.96,
+      "mrr": 1.0,
+      "ndcg10": 0.9709082400522719,
+      "r10": 0.0433843492468972
+    },
+    {
+      "method": "w2v_tfidf_sg",
+      "type": "paraphrase",
+      "p10": 0.8300000000000001,
+      "mrr": 0.9333333333333332,
+      "ndcg10": 0.845420531169569,
+      "r10": 0.03809843147788659
+    },
+    {
+      "method": "w2v_mean_cbow",
+      "type": "keyword",
+      "p10": 0.93,
+      "mrr": 0.9,
+      "ndcg10": 0.9154856759387752,
+      "r10": 0.0400631083819015
+    },
+    {
+      "method": "w2v_mean_cbow",
+      "type": "paraphrase",
+      "p10": 0.8,
+      "mrr": 0.8699999999999999,
+      "ndcg10": 0.801289974720448,
+      "r10": 0.03466012049587737
+    },
+    {
+      "method": "w2v_mean_sg",
+      "type": "keyword",
+      "p10": 0.96,
+      "mrr": 0.9,
+      "ndcg10": 0.9408419126307829,
+      "r10": 0.04230161062040374
+    },
+    {
+      "method": "w2v_mean_sg",
+      "type": "paraphrase",
+      "p10": 0.85,
+      "mrr": 0.95,
+      "ndcg10": 0.8593545252731808,
+      "r10": 0.039003609148127893
+    },
+    {
+      "method": "hybrid_cbow",
+      "type": "keyword",
+      "p10": 0.9200000000000002,
+      "mrr": 0.95,
+      "ndcg10": 0.9280075903193193,
+      "r10": 0.03998416669222156
+    },
+    {
+      "method": "hybrid_cbow",
+      "type": "paraphrase",
+      "p10": 0.75,
+      "mrr": 0.825,
+      "ndcg10": 0.7443934489442563,
+      "r10": 0.030388687875377362
+    },
+    {
+      "method": "hybrid_sg",
+      "type": "keyword",
+      "p10": 0.93,
+      "mrr": 1.0,
+      "ndcg10": 0.9472932793483256,
+      "r10": 0.04065530763181887
+    },
+    {
+      "method": "hybrid_sg",
+      "type": "paraphrase",
+      "p10": 0.6900000000000001,
+      "mrr": 0.8333333333333333,
+      "ndcg10": 0.6989451268241604,
+      "r10": 0.027041507763133632
+    }
+  ],
+  "corpus_size": [
+    {
+      "w2v_corpus": "train",
+      "method": "w2v_tfidf_cbow",
+      "tokens": 805875,
+      "vocabulary": 14679,
+      "p10": 0.85,
+      "mrr": 0.9099999999999999,
+      "ndcg10": 0.8479416537344953,
+      "r10": 0.03645916813378686
+    },
+    {
+      "w2v_corpus": "train",
+      "method": "w2v_tfidf_sg",
+      "tokens": 805875,
+      "vocabulary": 14679,
+      "p10": 0.8950000000000001,
+      "mrr": 0.9666666666666666,
+      "ndcg10": 0.9081643856109203,
+      "r10": 0.040741390362391904
+    },
+    {
+      "w2v_corpus": "train_unused",
+      "method": "w2v_tfidf_cbow",
+      "tokens": 1470341,
+      "vocabulary": 21950,
+      "p10": 0.8550000000000001,
+      "mrr": 0.95,
+      "ndcg10": 0.8667394120699461,
+      "r10": 0.03706458698750935
+    },
+    {
+      "w2v_corpus": "train_unused",
+      "method": "w2v_tfidf_sg",
+      "tokens": 1470341,
+      "vocabulary": 21950,
+      "p10": 0.915,
+      "mrr": 1.0,
+      "ndcg10": 0.9213378578821665,
+      "r10": 0.04226723215669008
+    }
+  ],
+  "core_methods": [
+    "tfidf",
+    "w2v_tfidf_cbow",
+    "w2v_tfidf_sg"
+  ]
+}

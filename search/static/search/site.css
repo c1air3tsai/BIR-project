@@ -777,3 +777,10 @@ h2{font-size:22px}
 @media(max-width:760px){.setup-block-heading,.parameter-update-row{align-items:flex-start;flex-direction:column}.corpus-config-row,.parameter-input-grid{grid-template-columns:1fr}.corpus-config-row .preset-row{display:flex;grid-column:auto;flex-wrap:wrap}.setup-block .compact-settings{grid-template-columns:1fr 1fr}.fixed-setting-grid{grid-template-columns:1fr}.parameter-update-row button{width:100%}}
 .fixed-settings-details{margin-top:9px;padding-top:8px;border-top:1px solid #e2ebf2;color:#587187;font-size:11px}.fixed-settings-details summary{cursor:pointer;color:#2a6aa4;font-weight:700}.fixed-settings-details>div{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.fixed-settings-details p{margin:0;padding:7px 8px;border-radius:7px;background:#f3f7fa;line-height:1.4}.fixed-settings-details strong,.fixed-settings-details span{display:block}.fixed-settings-details strong{margin-bottom:2px;color:#294c68;font-family:ui-monospace,monospace}.fixed-settings-details span{color:#61798c}
 @media(max-width:650px){.fixed-settings-details>div{grid-template-columns:1fr}}
+
+/* 主選單有 4 項（搜尋 / 文章 / 分析 / Reuters）：很窄的手機螢幕只顯示文字，避免撐開版面 */
+@media (max-width: 480px) {
+  .main-nav { gap: 4px; }
+  .main-nav a { padding: 8px 4px; gap: 0; font-size: 14px; }
+  .main-nav .icon { display: none; }
+}

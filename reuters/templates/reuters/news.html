@@ -1,0 +1,47 @@
+{% extends 'search/base.html' %}
+{% comment %}
+  Project 4 · Reuters 新聞內頁（reuters/views.py 的 news_detail() 產生）
+  全文 + 查詢詞高亮；從搜尋結果點進來時（網址帶 q），顯示這篇在方法 A / B 的排名與 TF-IDF 權重最高的詞
+{% endcomment %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p4-3"><link rel="stylesheet" href="{% static 'reuters/reuters.css' %}?v=p4-3">{% endblock %}
+{% block content %}
+<main class="site-shell page-main tw-page rt-page rt-news" id="main">
+  <a class="text-link" href="{% url 'reuters:page' %}?q={{ state.q|urlencode }}&amp;method={{ state.method }}&amp;topic={{ state.topic }}#search">← 回到搜尋結果</a>
+
+  <header class="page-heading rt-news-head">
+    <span class="section-kicker">REUTERS-21578 · NEWID {{ doc.id }} · {{ doc.date }}</span>
+    <h1>{{ title }}</h1>
+    <p>{% for t in doc.topics %}<span class="rt-topic rt-{{ t }}">{{ t }}</span>{% empty %}<span class="tw-muted">這篇沒有 topics 標籤</span>{% endfor %}
+      <span class="tw-muted">· ModApte 測試集 · 前處理後 {{ length }} 個詞</span></p>
+  </header>
+
+  {% if has_query %}
+  <article class="panel rt-news-context{% if relevant %} is-relevant{% endif %}">
+    <div>
+      <span class="section-kicker">查詢</span>
+      <p><strong>{{ state.q }}</strong>{% if state.topic %} · 目標主題 <span class="rt-topic rt-{{ state.topic }}">{{ state.topic }}</span>
+        {% if relevant %}<b class="tw-up">相關</b>{% else %}<b class="tw-down">不相關</b>{% endif %}{% endif %}</p>
+    </div>
+    <div class="rt-rank-row">{% for r in ranks %}<div><span>{{ r.label }}</span><strong>{% if r.rank %}#{{ r.rank }}{% else %}—{% endif %}</strong></div>{% endfor %}</div>
+    <p class="method-note">同一篇新聞在三種方法的完整排名中排第幾名（— 代表 TF-IDF 沒有找到它：完全沒有共同的詞）。</p>
+  </article>
+  {% endif %}
+
+  <div class="rt-news-grid">
+    <article class="panel rt-news-body">
+      <h3>全文{% if has_query %} <small>黃色 = 查詢詞</small>{% endif %}</h3>
+      <div class="rt-article-text">{{ body|default:"（這篇新聞只有標題，沒有內文）" }}</div>
+    </article>
+    <aside class="panel">
+      <h3>TF-IDF 權重最高的 10 個詞</h3>
+      <p class="method-note">方法 A 看到的就是這些詞：tf × idf 越高，越能代表這篇新聞。</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th>詞</th><th class="tw-num">tf</th><th class="tw-num">idf</th><th class="tw-num">tf × idf</th></tr></thead>
+        <tbody>{% for term, tf, idf, weight in top_terms %}<tr><td><a class="text-link" href="{% url 'reuters:page' %}?word={{ term|urlencode }}#words">{{ term }}</a></td><td class="tw-num">{{ tf }}</td><td class="tw-num">{{ idf|floatformat:3 }}</td><td class="tw-num">{{ weight|floatformat:3 }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="method-note">點詞可以看它在 Word2Vec 裡的鄰近詞。</p>
+    </aside>
+  </div>
+</main>
+{% endblock %}

@@ -25,3 +25,6 @@ data/*.sqlite3-*
 
 # 手動刪除資料前的備份
 data/backup*/
+
+# Project 4：從 UCI 下載的 Reuters-21578 原始資料與處理後的快取
+data/reuters/

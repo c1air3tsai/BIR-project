@@ -6,8 +6,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page_title|default:"BioMed IR" }}</title>
-  <link rel="stylesheet" href="{% static 'search/site.css' %}?v=20261013-ui-v13">
-  <script src="{% static 'search/i18n.js' %}?v=20261027-p3b" defer></script>
+  <link rel="stylesheet" href="{% static 'search/site.css' %}?v=20261102-p4">
+  <script src="{% static 'search/i18n.js' %}?v=20261102-p4" defer></script>
   <script src="{% static 'search/site.js' %}?v=20261006-log10-zipf-v12" defer></script>
   {% block extra_head %}{% endblock %}
 </head>
@@ -18,6 +18,7 @@
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
     <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5v15M3 4c3-1 6-1 9 1 3-2 6-2 9-1v15c-3-1-6-1-9 1-3-2-6-2-9-1Z"/></symbol>
     <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v17h17M7 7l4 6 5 3 5 1"/></symbol>
+    <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 5h13v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2ZM17 9h3v9a2 2 0 0 1-2 2M7 9h7M7 13h7M7 16h4"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
@@ -29,6 +30,7 @@
         <a {% if request.resolver_match.url_name == 'home' %}class="active" aria-current="page"{% endif %} href="{% url 'search:home' %}{% topic_query %}"><svg class="icon"><use href="#i-search"/></svg>Search</a>
         <a {% if request.resolver_match.url_name == 'articles' or request.resolver_match.url_name == 'document_detail' %}class="active" aria-current="page"{% endif %} href="{% url 'search:articles' %}{% topic_query %}"><svg class="icon"><use href="#i-book"/></svg>Articles</a>
         <a {% if request.resolver_match.url_name == 'zipf' or analysis_tab %}class="active" aria-current="page"{% endif %} href="{% url 'search:zipf' %}{% topic_query %}"><svg class="icon"><use href="#i-chart"/></svg><span class="nav-label-long">Analysis</span><span class="nav-label-short">Analysis</span></a>
+        <a {% if request.resolver_match.namespace == 'reuters' %}class="active" aria-current="page"{% endif %} href="{% url 'reuters:page' %}"><svg class="icon"><use href="#i-news"/></svg>Reuters</a>
       </nav>
       <a class="primary-button nav-upload {% if request.resolver_match.url_name == 'import' %}current{% endif %}" href="{% url 'search:import' %}"><svg class="icon"><use href="#i-plus"/></svg>Upload</a>
     </div>

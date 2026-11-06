@@ -1,0 +1,21 @@
+﻿query_id,topic,type,text,ndcg_tfidf,ndcg_cbow,ndcg_sg,delta_sg_minus_tfidf,p10_tfidf,p10_sg
+E1,earn,keyword,quarterly net profit and earnings per share,1.0,1.0,1.0,0.0,1.0,1.0
+E2,earn,keyword,dividend declared to shareholders,1.0,1.0,1.0,0.0,1.0,1.0
+E3,earn,paraphrase,company income results for the year,0.861138,1.0,1.0,0.138862,0.9,1.0
+E4,earn,paraphrase,firm reports bigger losses than last year,0.8237,0.625334,0.257875,-0.565825,0.8,0.3
+A1,acq,keyword,merger and acquisition agreement,1.0,1.0,0.933746,-0.066254,1.0,0.9
+A2,acq,keyword,takeover bid tender offer for shares,1.0,0.921602,1.0,0.0,1.0,1.0
+A3,acq,paraphrase,firm buys a rival business,0.38775,1.0,1.0,0.61225,0.5,1.0
+A4,acq,paraphrase,investor group seeks control of company,1.0,1.0,1.0,0.0,1.0,1.0
+C1,crude,keyword,crude oil prices and OPEC output,1.0,1.0,1.0,0.0,1.0,1.0
+C2,crude,keyword,oil production in barrels per day,0.889954,1.0,1.0,0.110046,0.9,1.0
+C3,crude,paraphrase,petroleum supply from the gulf,0.438108,0.933746,0.860382,0.422274,0.4,0.8
+C4,crude,paraphrase,energy ministers discuss fuel pricing,0.390927,0.492006,1.0,0.609073,0.4,1.0
+G1,grain,keyword,wheat and corn exports,1.0,1.0,1.0,0.0,1.0,1.0
+G2,grain,keyword,grain shipments to the soviet union,0.627409,0.626731,0.870125,0.242716,0.5,0.8
+G3,grain,paraphrase,harvest of cereals by farmers,0.702631,0.763095,0.775994,0.073364,0.7,0.8
+G4,grain,paraphrase,crop subsidies and farm aid,0.236807,0.74119,0.763193,0.526385,0.3,0.7
+T1,trade,keyword,trade deficit with japan,0.841591,0.779908,0.905212,0.063621,0.8,0.9
+T2,trade,keyword,tariffs on imports and trade sanctions,1.0,0.775994,1.0,0.0,1.0,1.0
+T3,trade,paraphrase,protectionism between nations,0.179931,0.299227,0.796761,0.61683,0.2,0.7
+T4,trade,paraphrase,dispute over foreign goods entering markets,0.18341,1.0,1.0,0.81659,0.2,1.0

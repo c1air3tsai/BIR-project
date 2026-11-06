@@ -1,0 +1,78 @@
+/* =============================================================================
+   reuters/static/reuters/reuters.css
+   Project 4 Reuters 頁面專用的少量樣式；其餘沿用 weighting/static/weighting/term_weighting.css（tw-*）
+   ============================================================================= */
+.rt-list { margin: 8px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.75; }
+.rt-subhead { margin: 28px 0 6px; }
+.rt-subhead small { font-size: 13px; font-weight: 400; color: var(--muted); }
+.rt-inline-img { display: block; max-width: 720px; width: 100%; margin-top: 12px; }
+
+/* 主題標籤（Okabe-Ito 色盲友善配色，與圖表一致） */
+.rt-topic { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 10px; padding: 1px 8px; margin-right: 4px; color: #fff; background: #687985; }
+.rt-earn { background: #B07800; }
+.rt-acq { background: #A0527F; }
+.rt-crude { background: #C04F00; }
+.rt-grain { background: #007A5A; }
+.rt-trade { background: #0072B2; }
+
+/* CBOW / Skip-Gram 流程示意 */
+.rt-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 4px; font-size: 14px; }
+.rt-flow span { border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; background: #f8fbfd; }
+.rt-flow b { border-radius: 6px; padding: 2px 8px; background: var(--wash); color: var(--blue); }
+
+/* 鄰近詞 */
+.rt-chip { display: inline-block; margin: 2px 6px 2px 0; padding: 2px 8px; border-radius: 12px; background: #f2f6f9; font-size: 13px; white-space: nowrap; }
+.rt-chip small { color: var(--muted); font-size: 11px; }
+.rt-neighbors td { white-space: normal; }
+.rt-lookup { margin-top: 14px; }
+
+/* 搜尋結果：相關 / 不相關 */
+.tw-results li.rt-relevant { box-shadow: inset 4px 0 0 #009E73; padding-left: 10px; }
+.tw-results li.rt-irrelevant { opacity: .78; }
+.tw-compare-col li.rt-relevant { background: #e9f6f1; }
+.rt-compare-grid { grid-template-columns: repeat(3, minmax(260px, 1fr)); min-width: 820px; }
+
+/* 搜尋結果與並排比較的標題可以點進新聞內頁 */
+.tw-cbody a { color: var(--ink); font-weight: 600; }
+.tw-cbody a:hover, a.tw-result-title:hover { color: var(--blue); text-decoration: underline; }
+
+/* 互動散布圖（projection.js） */
+.rt-proj-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.rt-proj-head .method-note { margin: 4px 0 0; }
+.rt-proj-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.rt-seg { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
+.rt-seg button { border: 0; background: none; padding: 6px 12px; font-size: 13px; color: var(--muted); min-height: 34px; }
+.rt-seg button + button { border-left: 1px solid var(--line); }
+.rt-seg button[aria-pressed="true"] { background: var(--wash); color: var(--blue); font-weight: 700; }
+.rt-seg button:hover { color: var(--blue); }
+.rt-zoom { padding: 0 8px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 42px; text-align: center; }
+.rt-proj-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 8px; font-size: 13px; }
+.rt-proj-legend button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 3px 10px; font-size: 13px; color: var(--ink); }
+.rt-proj-legend button i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.rt-proj-legend button[aria-pressed="false"] { opacity: .4; text-decoration: line-through; }
+.rt-proj-canvas { position: relative; border: 1px solid var(--line); border-radius: 10px; background: #fcfdfe; overflow: hidden; }
+.rt-proj-canvas svg { display: block; width: 100%; height: 560px; cursor: grab; touch-action: none; user-select: none; }
+.rt-proj-canvas svg.is-dragging { cursor: grabbing; }
+.rt-proj-seed { font-size: 13px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: #fcfdfe; stroke-width: 3px; }
+.rt-proj-word { font-size: 11.5px; fill: #4b5d6b; paint-order: stroke; stroke: #fcfdfe; stroke-width: 3px; }
+.rt-proj-hit { cursor: pointer; }
+.rt-proj-tip { position: absolute; z-index: 5; max-width: 220px; pointer-events: none; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; box-shadow: 0 4px 14px #17365d22; font-size: 12.5px; line-height: 1.5; }
+.rt-proj-tip strong { display: block; color: var(--ink); font-size: 14px; }
+.rt-proj-tip span { color: var(--muted); }
+@media (max-width: 760px) { .rt-proj-canvas svg { height: 420px; } }
+
+/* 新聞內頁 */
+.rt-news-head h1 { font-size: clamp(26px, 3.4vw, 38px); }
+.rt-news-head p { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.rt-news-context { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 24px; align-items: center; padding: 18px 24px; margin-bottom: 22px; }
+.rt-news-context.is-relevant { box-shadow: inset 4px 0 0 #009E73; }
+.rt-news-context .section-kicker { margin-bottom: 2px; }
+.rt-news-context .method-note { grid-column: 1 / -1; margin: 4px 0 0; }
+.rt-rank-row { display: flex; gap: 22px; }
+.rt-rank-row span { display: block; font-size: 12px; color: var(--muted); }
+.rt-rank-row strong { font-size: 22px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.rt-news-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.rt-article-text { white-space: pre-line; font-size: 16px; line-height: 1.85; margin-top: 10px; color: var(--text); }
+.rt-article-text mark, .rt-news-head mark { background: #fff0b8; color: inherit; border-radius: 2px; }
+@media (max-width: 860px) { .rt-news-grid, .rt-news-context { grid-template-columns: 1fr; } }
+

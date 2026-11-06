@@ -1,0 +1,260 @@
+{% extends 'search/base.html' %}
+{% comment %}
+  Project 4 · Reuters-21578 新聞檢索（reuters/views.py 的 page() 產生）
+  由上到下：① 資料集概況 ② Word2Vec 訓練 ③ 詞層級分析 ④ 新聞搜尋 ⑤ 文件層級評估
+  樣式沿用 Project 3 的 weighting/static/weighting/term_weighting.css（tw-*），另加 reuters/static/reuters/reuters.css（rt-*）
+{% endcomment %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p4-3"><link rel="stylesheet" href="{% static 'reuters/reuters.css' %}?v=p4-3">{% endblock %}
+{% block content %}
+<main class="site-shell page-main tw-page rt-page" id="main">
+
+  <header class="page-heading">
+    <span class="section-kicker">PROJECT #4 · REUTERS-21578 · TF-IDF vs WORD EMBEDDING</span>
+    <h1>Reuters 新聞檢索。</h1>
+    <p>同一批新聞、同一組查詢，比較「只看字詞是否相同」的 TF-IDF，和「從上下文學到詞義」的 Word2Vec，誰能把相關新聞排得更前面。</p>
+  </header>
+
+  <nav class="tw-steps" aria-label="Sections">
+    <a href="#dataset"><b>1</b> 資料集</a>
+    <a href="#training"><b>2</b> Word2Vec 訓練</a>
+    <a href="#words"><b>3</b> 詞層級分析</a>
+    <a href="#search"><b>4</b> 新聞搜尋</a>
+    <a href="#evaluation"><b>5</b> 文件層級評估</a>
+  </nav>
+
+  {# ========== ① 資料集 ========== #}
+  <section id="dataset" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">1 · DATASET</span><h2>Reuters-21578（ModApte 切分）</h2></div></div>
+    <div class="metrics-grid tw-metrics">
+      <div><span>訓練集（訓練 Word2Vec）</span><strong>9,603</strong><small>LEWISSPLIT = TRAIN</small></div>
+      <div><span>測試集（被檢索的新聞）</span><strong>{{ summary.documents }}</strong><small>LEWISSPLIT = TEST</small></div>
+      <div><span>測試集詞彙量</span><strong>{{ summary.vocabulary }}</strong><small>{{ summary.tokens }} tokens</small></div>
+      <div><span>平均長度</span><strong>{{ summary.avg_length|floatformat:1 }}</strong><small>前處理後的詞數</small></div>
+    </div>
+    <div class="tw-two-col">
+      <article class="panel">
+        <h3>作業指定的 5 個主題（測試集篇數）</h3>
+        <div class="tw-table-wrap"><table class="data-table tw-compact">
+          <thead><tr><th>topics</th><th>主題</th><th class="tw-num">篇數</th></tr></thead>
+          <tbody>{% for row in topic_rows %}<tr><td><span class="rt-topic rt-{{ row.key }}">{{ row.key }}</span></td><td>{{ row.label }}</td><td class="tw-num">{{ row.count }}</td></tr>{% endfor %}
+          <tr><td class="tw-muted">其他</td><td class="tw-muted">不屬於這 5 個主題（當作干擾項）</td><td class="tw-num tw-muted">{{ summary.other_topics }}</td></tr></tbody>
+        </table></div>
+      </article>
+      <article class="panel">
+        <h3>資料與前處理</h3>
+        <ul class="rt-list">
+          <li>來源：UCI Machine Learning Repository 的 Reuters-21578，解析 22 個 SGML 檔。</li>
+          <li>切分依官方 README：訓練集 = TRAIN 且 TOPICS = YES，測試集 = TEST 且 TOPICS = YES。README 要求不可刪掉測試集的任何文件，所以 3,299 篇全部保留。</li>
+          <li>Word2Vec 只用訓練集訓練，避免詞向量「看過」要被檢索的新聞。</li>
+          <li>前處理（TF-IDF 與 Word2Vec 共用）：tokenize、轉小寫、去標點、移除 stopword、移除純數字，不做 stemming。</li>
+          <li>相關性：新聞的 topics 含有查詢的目標主題就算相關（0 / 1）。</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  {# ========== ② Word2Vec 訓練 ========== #}
+  <section id="training" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">2 · WORD2VEC TRAINING</span><h2>CBOW 與 Skip-Gram</h2></div></div>
+    <div class="tw-two-col">
+      <article class="panel">
+        <h3>CBOW：用上下文猜中間的詞</h3>
+        <p class="rt-flow"><span>shipment</span><span>of</span><b>?</b><span>to</span><span>japan</span> → <b>wheat</b></p>
+        <p class="method-note">把上下文詞的向量平均起來，預測中間是哪個詞。一個視窗只做一次預測，訓練快，對常見詞較穩定。</p>
+      </article>
+      <article class="panel">
+        <h3>Skip-Gram：用中間的詞猜上下文</h3>
+        <p class="rt-flow"><b>wheat</b> → <span>shipment</span><span>of</span><span>to</span><span>japan</span></p>
+        <p class="method-note">用中心詞分別預測每一個上下文詞。一個視窗要預測好幾次，訓練較慢，但少見的詞也能得到較多更新。</p>
+      </article>
+    </div>
+    <div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table">
+      <thead><tr><th>架構</th><th class="tw-num">訓練句數</th><th class="tw-num">訓練詞數</th><th class="tw-num">詞彙量</th><th class="tw-num">訓練時間</th><th class="tw-num">最後一個 epoch 的 loss</th></tr></thead>
+      <tbody>{% for m in metas %}<tr><td><strong>{{ m.label }}</strong></td><td class="tw-num">{{ m.sentences }}</td><td class="tw-num">{{ m.tokens }}</td><td class="tw-num">{{ m.vocabulary }}</td><td class="tw-num">{{ m.seconds }} 秒</td><td class="tw-num">{{ m.final_loss|floatformat:0 }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <p class="method-note">共用參數（控制變因）：維度 {{ params.vector_size }}、視窗 {{ params.window }}、最低詞頻 {{ params.min_count }}、negative sampling {{ params.negative }}、epochs {{ params.epochs }}、seed {{ params.seed }}。兩種架構的 loss 定義不同，數值不能直接比大小。</p>
+
+    <details class="panel tw-glossary tw-block">
+      <summary>自己用 numpy 實作的 CBOW / Skip-Gram（點一下展開）</summary>
+      <p class="method-note">為了理解訓練流程，另外在 <code>reuters/toy_word2vec.py</code> 用 numpy 從頭寫了兩種架構（完整 softmax，不用 gensim）。示範語料是 {{ toy.sentences|length }}+ 句模仿 Reuters 的短句，詞彙 {{ toy.vocabulary }} 個、訓練樣本 {{ toy.pairs }} 個。</p>
+      <p class="method-note">一個訓練樣本的例子：上下文 <code>{{ toy.example.context|join:", " }}</code> → 中心詞 <code>{{ toy.example.center }}</code>。CBOW 用上下文預測中心詞；Skip-Gram 反過來，用中心詞分別預測 4 個上下文詞。每一步都計算 softmax 機率、loss = −log p(正確答案)，再用梯度下降更新兩個權重矩陣。</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th>架構</th><th class="tw-num">第 1 個 epoch loss</th><th class="tw-num">最後 loss</th><th>oil 的鄰近詞</th><th>profit 的鄰近詞</th><th>japan 的鄰近詞</th></tr></thead>
+        <tbody>{% for r in toy.rows %}<tr><td><strong>{{ r.arch }}</strong></td><td class="tw-num">{{ r.first|floatformat:2 }}</td><td class="tw-num">{{ r.last|floatformat:2 }}</td>
+          <td>{% for w, s in r.neighbors.oil %}{{ w }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+          <td>{% for w, s in r.neighbors.profit %}{{ w }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+          <td>{% for w, s in r.neighbors.japan %}{{ w }}{% if not forloop.last %}, {% endif %}{% endfor %}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="method-note">profit 與 loss 在示範語料裡的上下文完全相同（company reported net ___），所以 cosine 是 1.00：向量一樣，意思卻相反。</p>
+      {% if has_results %}<img class="rt-inline-img" src="{% url 'reuters:result_file' 'toy_word2vec_loss.png' %}" alt="Toy CBOW and Skip-Gram loss curves">{% endif %}
+    </details>
+    {% if has_results %}<figure class="panel tw-block tw-figure"><img src="{% url 'reuters:result_file' 'w2v_training.png' %}" alt="gensim training loss per epoch"></figure>{% endif %}
+  </section>
+
+  {# ========== ③ 詞層級分析 ========== #}
+  <section id="words" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">3 · WORD-LEVEL ANALYSIS</span><h2>Top-5 鄰近詞</h2></div></div>
+    <p class="method-note">鄰近詞用 100 維詞向量的 cosine similarity 排序。<strong>向量相近不代表兩個詞是同義詞</strong>：它只代表兩個詞常出現在相似的上下文。</p>
+
+    <form method="get" class="panel tw-search-form" action="#words">
+      {% for key, value in hidden_word %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+      <div class="research-controls"><label class="tw-grow"><span>查一個詞的 Top-10 鄰近詞</span><input name="word" value="{{ state.word }}" maxlength="40"></label><button class="primary-button" type="submit">查詢</button></div>
+      {% if word_lookup.cbow is None %}<p class="tw-muted">「{{ word_lookup.word }}」不在 Word2Vec 詞彙表中（訓練集出現少於 {{ params.min_count }} 次，或是 stopword / 數字）。</p>
+      {% else %}<div class="tw-idf-pair rt-lookup">
+        {% for arch, items in word_lookup.items %}{% if arch != 'word' %}
+        <table class="data-table tw-compact"><thead><tr><th>{% if arch == 'cbow' %}CBOW{% else %}Skip-Gram{% endif %}</th><th class="tw-num">cosine</th></tr></thead>
+          <tbody>{% for n in items %}<tr><td>{{ n.word }}</td><td class="tw-num">{{ n.cosine|floatformat:3 }}</td></tr>{% endfor %}</tbody></table>
+        {% endif %}{% endfor %}
+      </div>{% endif %}
+    </form>
+
+    <div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table tw-compact rt-neighbors">
+      <thead><tr><th>詞</th><th>CBOW Top-5</th><th>Skip-Gram Top-5</th></tr></thead>
+      <tbody>{% for row in neighbor_table %}<tr><td><strong>{{ row.word }}</strong></td>
+        <td>{% for n in row.cbow %}<span class="rt-chip">{{ n.word }} <small>{{ n.cosine|floatformat:2 }}</small></span>{% endfor %}</td>
+        <td>{% for n in row.sg %}<span class="rt-chip">{{ n.word }} <small>{{ n.cosine|floatformat:2 }}</small></span>{% endfor %}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <div class="tw-two-col tw-block">
+      <article class="panel"><h3>合理的語意關係</h3><p class="method-note">wheat → corn、barley、grain；merger → acquisition、buyout；oil → crude、petroleum、gas；dividend → dividends、payout。</p></article>
+      <article class="panel"><h3>只是常出現在同類新聞</h3><p class="method-note">profit 的第一名就是 loss（意思相反，但都出現在財報的同一個位置）；opec → lukman、nazer（當時的石油部長）；japan → microchips（1987 年美日晶片貿易爭端）。</p></article>
+    </div>
+    <article class="panel tw-block"><h3>不符合預期的結果</h3><p class="method-note">oil → kernel（來自 palm kernel oil 棕櫚仁油）；Skip-Gram 常把很少見的專有名詞排進來，例如 profit → swissair、tariff → krapels、merger → siebe。原因是 Skip-Gram 讓少見的詞也得到很多次更新，只要它和查詢詞出現在同一篇新聞幾次，向量就會被拉近。</p></article>
+    {% if projection %}
+    {# 互動散布圖：reuters/static/reuters/projection.js #}
+    <article class="panel tw-block rt-proj" data-projection>
+      <div class="rt-proj-head">
+        <div><h3>誰跟誰比較近？</h3><p class="method-note" data-proj-note>t-SNE 保留「誰跟誰很近」的局部結構；群與群之間的距離沒有意義。</p></div>
+        <div class="rt-proj-controls">
+          <div class="rt-seg" role="group" aria-label="架構"><button type="button" data-set="arch:cbow" aria-pressed="true">CBOW</button><button type="button" data-set="arch:skipgram" aria-pressed="false">Skip-Gram</button></div>
+          <div class="rt-seg" role="group" aria-label="投影方法"><button type="button" data-set="method:tsne" aria-pressed="true">t-SNE</button><button type="button" data-set="method:pca" aria-pressed="false">PCA</button></div>
+          <div class="rt-seg" role="group" aria-label="縮放"><button type="button" data-zoom="out" aria-label="縮小">−</button><span class="rt-zoom" data-zoom-level>1.0×</span><button type="button" data-zoom="in" aria-label="放大">＋</button><button type="button" data-zoom="reset">重設</button></div>
+        </div>
+      </div>
+      <div class="rt-proj-legend">{% for topic, color in topic_colors.items %}<button type="button" data-topic="{{ topic }}" aria-pressed="true"><i style="background:{{ color }}"></i>{{ topic }}</button>{% endfor %}<span class="tw-muted">點圖例可隱藏 / 顯示主題；大圓點是種子詞（粗體），小圓點是它的 Top-5 鄰近詞</span></div>
+      <div class="rt-proj-canvas">
+        <svg role="img" aria-label="種子詞與 Top-5 鄰近詞的 2D 投影，可縮放與拖曳"></svg>
+        <div class="rt-proj-tip" hidden></div>
+      </div>
+      <p class="method-note">滾輪或 ＋／− 縮放、按住拖曳移動、雙擊放大。放大時字的大小不變、點之間的距離拉開，原本疊在一起的詞就會分開；滑鼠移到點上會標亮同一組的詞。兩種投影都只是 100 維向量的 2D 近似，真正的相近程度以上方表格的 cosine 為準。</p>
+    </article>
+    {{ projection|json_script:"rt-projection-data" }}
+    {% elif has_results %}
+    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:result_file' 'embedding_tsne.png' %}" alt="t-SNE projection of seed words and neighbors"></figure>
+    {% endif %}
+  </section>
+
+  {# ========== ④ 新聞搜尋 ========== #}
+  <section id="search" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">4 · NEWS SEARCH</span><h2>搜尋 · Top 10</h2></div></div>
+    <form method="get" class="panel tw-search-form" action="#search">
+      {% for key, value in hidden_search %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+      <div class="research-controls">
+        <label class="tw-grow"><span>查詢</span><input name="q" value="{{ state.q }}" maxlength="200" required></label>
+        <label><span>方法</span><select name="method">{% for m in methods %}<option value="{{ m.key }}" {% if m.key == state.method %}selected{% endif %}>{{ m.label }}</option>{% endfor %}</select></label>
+        <label><span>目標主題（標示相關）</span><select name="topic"><option value="" {% if not state.topic %}selected{% endif %}>不標示</option>{% for key, label in topics.items %}<option value="{{ key }}" {% if key == state.topic %}selected{% endif %}>{{ key }} · {{ label }}</option>{% endfor %}</select></label>
+        <button class="primary-button" type="submit">搜尋</button>
+      </div>
+      <div class="tw-chips"><span>範例</span>{% for q in demo_queries %}<a href="?q={{ q|urlencode }}&amp;method={{ state.method }}&amp;topic={% if 'oil' in q or 'petroleum' in q %}crude{% elif 'buys' in q %}acq{% elif 'cereals' in q %}grain{% elif 'trade' in q %}trade{% else %}{{ state.topic }}{% endif %}&amp;word={{ state.word }}#search">{{ q }}</a>{% endfor %}</div>
+    </form>
+
+    <div class="tw-table-wrap tw-block"><table class="data-table tw-compact">
+      <thead><tr><th>查詢詞</th><th>在測試集中（TF-IDF 用得到）</th><th class="tw-num">DF</th><th class="tw-num">IDF</th><th>有詞向量（Embedding 用得到）</th></tr></thead>
+      <tbody>{% for t in query_terms %}<tr><td><code>{{ t.term }}</code></td><td>{% if t.in_collection %}✓{% else %}<span class="tw-down">✗ TF-IDF 忽略</span>{% endif %}</td><td class="tw-num">{{ t.df }}</td><td class="tw-num">{{ t.idf|floatformat:3 }}</td><td>{% if t.has_vector %}✓{% else %}<span class="tw-down">✗ 沒有向量</span>{% endif %}</td></tr>{% endfor %}</tbody>
+    </table></div>
+
+    <h3 class="rt-subhead">{{ method_label }}{% if state.topic %} <small>· 綠色 = 屬於 {{ state.topic }} 主題（相關）</small>{% endif %}</h3>
+    <ol class="tw-results">
+      {% for row in results %}
+      <li class="{% if row.relevant %}rt-relevant{% elif state.topic %}rt-irrelevant{% endif %}">
+        <div class="tw-rank">{{ row.rank }}</div>
+        <div class="tw-result-body">
+          <a class="tw-result-title" href="{% url 'reuters:news' row.id %}?q={{ state.q|urlencode }}&amp;method={{ state.method }}&amp;topic={{ state.topic }}">{{ row.title|title }}</a>
+          <p class="tw-result-meta">NEWID {{ row.id }} · {{ row.date }} · {% for t in row.topics %}<span class="rt-topic rt-{{ t }}">{{ t }}</span>{% empty %}<span class="tw-muted">無主題</span>{% endfor %}</p>
+          <p class="tw-snippet">{{ row.snippet }}</p>
+        </div>
+        <div class="tw-score"><span>cosine</span><strong>{{ row.score|floatformat:4 }}</strong></div>
+      </li>
+      {% empty %}<p class="panel tw-muted">沒有任何新聞含有查詢詞（TF-IDF 只能比對完全相同的詞）。</p>{% endfor %}
+    </ol>
+
+    <h3 class="rt-subhead">方法 A vs 方法 B 並排 <small>同一個查詢；{% if state.topic %}標題列顯示前 10 名裡有幾篇屬於 {{ state.topic }}{% else %}選擇目標主題可標示相關{% endif %}</small></h3>
+    <div class="tw-compare-scroll"><div class="tw-compare-grid rt-compare-grid">
+      {% for column in comparison %}
+      <article class="tw-compare-col{% if column.method == state.method %} is-baseline{% endif %}">
+        <header><strong>{{ column.label }}</strong><small>{% if state.topic %}相關 {{ column.hits }}/10{% endif %}</small></header>
+        <ol>{% for row in column.rows %}
+          <li class="{% if row.relevant %}rt-relevant{% elif state.topic %}rt-irrelevant{% endif %}"><span class="tw-crank">{{ row.rank }}</span><span class="tw-cbody"><a href="{% url 'reuters:news' row.id %}?q={{ state.q|urlencode }}&amp;method={{ column.method }}&amp;topic={{ state.topic }}">{{ row.title|title|truncatechars:70 }}</a><small>{{ row.topics|join:", "|default:"無主題" }}</small></span></li>
+        {% empty %}<li class="tw-muted">沒有結果</li>{% endfor %}</ol>
+      </article>
+      {% endfor %}
+    </div></div>
+  </section>
+
+  {# ========== ⑤ 文件層級評估 ========== #}
+  <section id="evaluation" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">5 · DOCUMENT-LEVEL RETRIEVAL</span><h2>檢索效果評估</h2></div></div>
+    <p class="method-note">{{ eval_queries|length }} 個查詢（5 個主題 × 4 個）：每個主題 2 個用典型關鍵字（keyword），2 個刻意換說法（paraphrase）。相關性 = 新聞的 topics 含有查詢的目標主題。</p>
+
+    <details class="panel tw-glossary">
+      <summary>這些指標代表什麼？（點一下展開）</summary>
+      <dl>
+        <div><dt>P@10</dt><dd>前 10 筆結果中有幾成相關。前 10 筆有 9 篇相關 → 0.9。</dd></div>
+        <div><dt>MRR</dt><dd>每個查詢找出第一篇相關新聞排第幾名，取倒數（第 1 名 → 1、第 2 名 → 0.5），再對所有查詢平均。</dd></div>
+        <div><dt>nDCG@10</dt><dd>相關新聞排得越前面分數越高（第 k 名除以 log₂(k+1)），再除以理想排序的分數。1 = 前 10 名完美。</dd></div>
+        <div><dt>Recall@10</dt><dd>所有相關新聞中有幾成出現在前 10 名。每個主題有 117–1,087 篇相關，上限很低，僅供參考。</dd></div>
+      </dl>
+    </details>
+
+    {% if evaluation %}
+    <div class="tw-table-wrap panel tw-flush"><table class="data-table tw-eval-table">
+      <thead><tr><th>方法</th>{% for name in evaluation.metric_names %}<th>{{ name }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for row in evaluation.means %}<tr{% if row.core %} class="tw-l2-row"{% endif %}><td>{% if row.core %}<strong>{{ row.label }}</strong>{% else %}{{ row.label }}{% endif %}</td>
+        {% for cell in row.cells %}<td><div class="tw-cell-bar is-l2" style="--w:{{ cell.width }}"></div><span class="{% if cell.best %}tw-best{% endif %}">{{ cell.value|floatformat:3 }}</span></td>{% endfor %}</tr>{% endfor %}</tbody>
+    </table></div>
+    <p class="method-note">粗體列是作業要求的核心比較（A：TF-IDF，B：TF-IDF 加權詞向量）；C、D 是額外比較。</p>
+
+    <div class="tw-two-col tw-block">
+      <article class="panel">
+        <h3>keyword vs paraphrase 查詢（nDCG@10）</h3>
+        <div class="tw-table-wrap"><table class="data-table tw-compact">
+          <thead><tr><th>方法</th><th class="tw-num">keyword</th><th class="tw-num">paraphrase</th></tr></thead>
+          <tbody>{% for r in evaluation.types %}<tr><td>{{ r.label }}</td><td class="tw-num">{{ r.keyword|floatformat:3 }}</td><td class="tw-num">{{ r.paraphrase|floatformat:3 }}</td></tr>{% endfor %}</tbody>
+        </table></div>
+        <p class="method-note">差距主要來自換說法的查詢：TF-IDF 只能比對完全相同的詞。</p>
+      </article>
+      <article class="panel">
+        <h3>Word2Vec 訓練語料加大</h3>
+        <div class="tw-table-wrap"><table class="data-table tw-compact">
+          <thead><tr><th>方法</th><th>訓練語料</th><th class="tw-num">詞數</th><th class="tw-num">nDCG@10</th></tr></thead>
+          <tbody>{% for r in evaluation.corpus %}<tr><td>{{ r.label }}</td><td>{% if r.w2v_corpus == 'train' %}train（9,603 篇）{% else %}train + unused（18,279 篇）{% endif %}</td><td class="tw-num">{{ r.tokens }}</td><td class="tw-num">{{ r.ndcg10|floatformat:3 }}</td></tr>{% endfor %}</tbody>
+        </table></div>
+        <p class="method-note">README 允許用未使用的 8,676 篇收集統計資訊；只用來訓練詞向量，不參與檢索。</p>
+      </article>
+    </div>
+
+    <article class="panel tw-block">
+      <h3>逐查詢 nDCG@10 <small>A vs B</small></h3>
+      <p class="method-note">每一列是一個查詢，顏色越深代表這題越好，框起來的是這題最好的方法。最右欄是 Skip-Gram 減 TF-IDF 的差距。</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact tw-heat-table">
+        <thead><tr><th>查詢</th><th>主題</th><th>類型</th><th class="tw-num">A · TF-IDF</th><th class="tw-num">B · CBOW</th><th class="tw-num">B · Skip-Gram</th><th class="tw-num">SG − TF-IDF</th></tr></thead>
+        <tbody>{% for r in evaluation.queries %}<tr>
+          <td class="tw-query-cell"><b>{{ r.query_id }}</b> <a class="text-link" href="?q={{ r.text|urlencode }}&amp;method=tfidf&amp;topic={{ r.topic }}&amp;word={{ state.word }}#search">{{ r.text }}</a></td>
+          <td><span class="rt-topic rt-{{ r.topic }}">{{ r.topic }}</span></td><td class="tw-muted">{{ r.type }}</td>
+          {% for cell in r.cells %}<td class="tw-num tw-heat{% if cell.dark %} is-dark{% endif %}{% if cell.best %} is-best{% endif %}" style="--a:{{ cell.alpha }}">{{ cell.value|floatformat:2 }}</td>{% endfor %}
+          <td class="tw-num {% if r.delta > 0.0005 %}tw-up{% elif r.delta < -0.0005 %}tw-down{% else %}tw-same{% endif %}">{{ r.delta|floatformat:2 }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="method-note">點查詢文字會用 TF-IDF 搜尋同一個查詢，可以再切換方法比較結果。</p>
+    </article>
+
+    {% if has_results %}
+    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:result_file' 'metrics_comparison.png' %}" alt="Heatmap of mean metrics per method"></figure>
+    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:result_file' 'keyword_vs_paraphrase.png' %}" alt="nDCG for keyword and paraphrase queries"></figure>
+    {% endif %}
+    {% else %}
+    <p class="panel tw-muted">還沒有評估結果。請先執行 <code>python manage.py run_reuters_experiments</code>。</p>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{% static 'weighting/section_nav.js' %}?v=p4-3" defer></script><script src="{% static 'reuters/projection.js' %}?v=p4-3" defer></script>{% endblock %}

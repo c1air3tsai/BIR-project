@@ -6,7 +6,8 @@
 |---|---|---|
 | HW1 | XML 解析、tokenization、句子切分、BM25 搜尋、文章匯入 | 搜尋、文章、匯入 |
 | Project 2 | Zipf 分析（A–D 前處理）、比較領域、Word2Vec、文字比對 | 分析 → Zipf / 比較領域 / Word2Vec / 文字比對 |
-| **Project 3** | **Term Weighting、向量空間檢索、對照實驗、評估** | **分析 → 詞項權重**（`/analysis/term-weighting/`） |
+| Project 3 | Term Weighting、向量空間檢索、對照實驗、評估 | 分析 → 詞項權重（`/analysis/term-weighting/`） |
+| **Project 4** | **Reuters-21578：TF-IDF vs Word2Vec 新聞檢索** | **主選單 → Reuters**（`/reuters/`） |
 
 ---
 
@@ -60,6 +61,23 @@ docker compose exec web python manage.py run_weighting_experiments
 
 查詢與相關性規則（MeSH）都寫在 [weighting/queries.py](weighting/queries.py)，改完重跑上面的指令即可。
 
+## 2b. Project 4：Reuters-21578 新聞檢索
+
+打開上方主選單的「Reuters」（中文介面顯示「Reuters 新聞」，網址 `/reuters/`）。由上到下：① 資料集（ModApte 切分）② Word2Vec 訓練（gensim CBOW / Skip-Gram ＋ 自製 numpy 示範）③ 詞層級分析（Top-5 鄰近詞、PCA / t-SNE）④ 新聞搜尋（方法 A / B 並排）⑤ 文件層級評估（P@10、MRR、nDCG@10）。
+
+```powershell
+# 一鍵重跑：第一次會從 UCI 下載 Reuters-21578 並訓練 Word2Vec（約 5 分鐘），之後讀快取
+docker compose exec web python manage.py run_reuters_experiments
+docker compose exec web python manage.py test reuters
+```
+
+- 資料：UCI Machine Learning Repository 的 Reuters-21578，存在 `data/reuters/`（不進 git）
+- 評估查詢與 topic 相關性規則：[reuters/queries.py](reuters/queries.py)
+- 實驗輸出：`docs/project4_results/`
+- 第一次開頁面需要約 10 秒載入模型，之後很快；Demo 前先開一次
+- 頁面完整說明（由上到下）：[docs/project4_page_guide.md](docs/project4_page_guide.md)；一分鐘進度報告：[docs/project4_progress_speech.md](docs/project4_progress_speech.md)
+- 新聞內頁 `/reuters/news/<NEWID>/`：從搜尋結果點標題進入，顯示全文、查詢詞高亮、這篇在各方法的排名
+
 ## 3. 專案結構
 
 ```
@@ -101,10 +119,27 @@ bir_main_project/
 │  ├─ management/commands/run_weighting_experiments.py   一鍵重跑實驗
 │  └─ tests.py                4 篇小語料手算驗證
 │
+├─ reuters/                   ★ Project 4（Reuters-21578 新聞檢索）全部在這裡
+│  ├─ corpus.py               下載 UCI 資料、安全解壓、解析 SGML、ModApte 切分
+│  ├─ text.py                 前處理（TF-IDF 與 Word2Vec 共用）、切句
+│  ├─ embedding.py            gensim 訓練 CBOW / Skip-Gram、鄰近詞
+│  ├─ toy_word2vec.py         自己用 numpy 實作的 CBOW / Skip-Gram（教學示範）
+│  ├─ static/reuters/projection.js  可縮放的「誰跟誰比較近」互動散布圖
+│  ├─ retrieval.py            方法 A：TF-IDF；方法 B：TF-IDF 加權詞向量（＋ C、D 額外比較）
+│  ├─ queries.py              20 個評估查詢（keyword / paraphrase）
+│  ├─ evaluation.py           topic 相關性與 P@10、MRR、nDCG@10
+│  ├─ experiments.py          所有 CSV / PNG 輸出
+│  ├─ views.py / urls.py / templates/ / static/
+│  ├─ management/commands/run_reuters_experiments.py
+│  └─ tests.py
+│
 ├─ docs/                      文件
 │  ├─ project3_report.md      Project 3 報告
 │  ├─ project3_demo.md        Project 3 Demo 腳本
 │  ├─ project3_results/       Project 3 實驗輸出（CSV、PNG）
+│  ├─ project4_results/       Project 4 實驗輸出（CSV、PNG、互動圖座標 projection.json）
+│  ├─ project4_page_guide.md  Project 4 頁面完整說明
+│  ├─ project4_progress_speech.md  Project 4 一分鐘進度報告
 │  ├─ project2_checklist.md   Project 2 需求對照
 │  ├─ algorithm_rules.md      HW1 / Project 2 演算法規則（tokenizer、句子切分、Zipf…）
 │  ├─ import_guide.md         匯入文章使用說明（中文）
