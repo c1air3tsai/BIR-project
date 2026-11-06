@@ -1,0 +1,5 @@
+﻿w2v_corpus,method,tokens,vocabulary,p10,mrr,ndcg10,r10
+train,w2v_tfidf_cbow,1140863,19026,0.65,0.776667,0.657627,0.029999
+train,w2v_tfidf_sg,1140863,19026,0.745,0.8,0.731668,0.036083
+train_unused,w2v_tfidf_cbow,1259086,19923,0.67,0.875,0.687922,0.032069
+train_unused,w2v_tfidf_sg,1259086,19923,0.76,0.870833,0.757281,0.035629

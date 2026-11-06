@@ -1,12 +1,12 @@
 # =============================================================================
 # reuters/tests.py
 # Project 4 單元測試：python manage.py test reuters
-#   1. SGML 解析與 ModApte 切分規則
+#   1. SGML 解析與三種切分規則（ModApte / ModLewis / ModHayes）
 #   2. 前處理（去數字、stopword、Reuter 署名）
 #   3. TF-IDF 加權平均詞向量的公式（手算）
 #   4. 自製 numpy CBOW 的梯度（與數值微分比對）與 loss 會下降
 #   5. 評估：topic 相關性
-#   6. 網頁（若 Reuters 資料與模型已準備好）
+#   6. 網頁：主頁、新聞列表、新聞內頁（若 Reuters 資料與模型已準備好）
 # =============================================================================
 import tempfile
 from pathlib import Path
@@ -16,7 +16,7 @@ import numpy as np
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
-from .corpus import cache_path, modapte_split, parse_sgml
+from .corpus import cache_path, modapte_split, modhayes_split, modlewis_split, parse_sgml
 from .retrieval import ReutersIndex
 from .text import preprocess, sentences
 from .toy_word2vec import ToyWord2Vec, build_vocabulary, softmax, training_pairs
@@ -31,25 +31,36 @@ SGML = '''<!DOCTYPE lewis SYSTEM "lewis.dtd">
 <DATE>9-APR-1987</DATE><TOPICS></TOPICS><TEXT><TITLE>NO TOPIC STORY</TITLE><BODY>Text.</BODY></TEXT></REUTERS>
 <REUTERS TOPICS="NO" LEWISSPLIT="TRAIN" CGISPLIT="TRAINING-SET" OLDID="3" NEWID="3">
 <DATE>1-MAR-1987</DATE><TOPICS><D>earn</D></TOPICS><TEXT><TITLE>X</TITLE></TEXT></REUTERS>
+<REUTERS TOPICS="BYPASS" LEWISSPLIT="TEST" CGISPLIT="PUBLISHED-TESTSET" OLDID="4" NEWID="4">
+<DATE>2-APR-1987</DATE><TOPICS></TOPICS><TEXT><TITLE>BYPASS STORY</TITLE></TEXT></REUTERS>
 '''
 
 
 class CorpusTests(SimpleTestCase):
-    def test_parse_and_modapte_split(self):
+    def test_parse_and_splits(self):
         with tempfile.TemporaryDirectory() as directory:
             Path(directory, 'reut2-000.sgm').write_text(SGML, encoding='latin-1')
             docs = parse_sgml(directory)
-        self.assertEqual([d['id'] for d in docs], [1, 2, 3])
+        self.assertEqual([d['id'] for d in docs], [1, 2, 3, 4])
         self.assertEqual(docs[0]['topics'], ['crude', 'nat-gas'])
         # &lt; 還原、結尾的 Reuter 署名與控制字元被移除
         self.assertEqual(docs[0]['body'], 'OPEC said it raised crude <oil> output by 12 pct.')
-        # README：TEST + TOPICS=YES 即使沒有任何 topic 仍屬於測試集；TOPICS=NO 不使用
-        self.assertEqual([d['split'] for d in docs], ['train', 'test', 'unused'])
+        # ModApte：TEST + TOPICS=YES 即使沒有任何 topic 仍屬於測試集；TOPICS=NO 不使用
+        self.assertEqual([d['splits']['modapte'] for d in docs], ['train', 'test', 'unused', 'unused'])
+        # ModLewis：TOPICS=NO 也算；BYPASS 不使用
+        self.assertEqual([d['splits']['modlewis'] for d in docs], ['train', 'test', 'train', 'unused'])
+        # ModHayes：只看 CGISPLIT，BYPASS 也照樣分進去
+        self.assertEqual([d['splits']['modhayes'] for d in docs], ['train', 'train', 'train', 'test'])
+        self.assertEqual(docs[3]['attrs'], {'TOPICS': 'BYPASS', 'LEWISSPLIT': 'TEST', 'CGISPLIT': 'PUBLISHED-TESTSET'})
 
-    def test_split_rule(self):
+    def test_split_rules(self):
         self.assertEqual(modapte_split({'TOPICS': 'YES', 'LEWISSPLIT': 'TRAIN'}), 'train')
         self.assertEqual(modapte_split({'TOPICS': 'BYPASS', 'LEWISSPLIT': 'TRAIN'}), 'unused')
         self.assertEqual(modapte_split({'TOPICS': 'YES', 'LEWISSPLIT': 'NOT-USED'}), 'unused')
+        self.assertEqual(modlewis_split({'TOPICS': 'NO', 'LEWISSPLIT': 'TEST'}), 'test')
+        self.assertEqual(modlewis_split({'TOPICS': 'YES', 'LEWISSPLIT': 'NOT-USED'}), 'unused')
+        self.assertEqual(modhayes_split({'TOPICS': 'NO', 'CGISPLIT': 'TRAINING-SET'}), 'train')
+        self.assertEqual(modhayes_split({'TOPICS': 'YES', 'CGISPLIT': 'PUBLISHED-TESTSET'}), 'test')
 
 
 class TextTests(SimpleTestCase):
@@ -129,25 +140,48 @@ class ToyWord2VecTests(SimpleTestCase):
 # 需要真實資料與模型：Docker 或本機執行過 run_reuters_experiments 之後才會跑
 @skipUnless(cache_path().is_file(), 'Reuters corpus not prepared')
 class ReutersDataTests(TestCase):
-    def test_modapte_counts_match_readme(self):
-        from .corpus import load_documents
-        counts = {}
-        for doc in load_documents():
-            counts[doc['split']] = counts.get(doc['split'], 0) + 1
-        self.assertEqual(counts, {'train': 9603, 'test': 3299, 'unused': 8676})
+    def test_split_counts_match_readme(self):
+        from .corpus import split_counts
+        self.assertEqual(split_counts(), {'modapte': {'train': 9603, 'test': 3299, 'unused': 8676},
+                                          'modlewis': {'train': 13625, 'test': 6188, 'unused': 1765},
+                                          'modhayes': {'train': 20856, 'test': 722, 'unused': 0}})
 
     def test_relevance_and_page(self):
         from .evaluation import relevance
         from .retrieval import load_index
-        index = load_index('train')
+        index = load_index('modapte')
         self.assertEqual(int(relevance(index, 'crude').sum()), 189)
         response = self.client.get(reverse('reuters:page'), {'q': 'wheat exports', 'method': 'tfidf', 'topic': 'grain'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<mark>wheat</mark>', html=False)
+        # 20 個評估查詢全部列出來，連結會帶著目前的切分並跳回搜尋段
+        self.assertContains(response, 'q=energy+ministers+discuss+fuel+pricing', html=False)
+        self.assertContains(response, 'split=modapte', html=False)
+
+    def test_page_on_other_split(self):
+        response = self.client.get(reverse('reuters:page'), {'split': 'modhayes', 'q': 'wheat exports', 'topic': 'grain'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Reuters-21578（ModHayes 切分）')
+        self.assertEqual(response.context['summary']['documents'], 722)
+
+    def test_news_list_filters_by_topic(self):
+        response = self.client.get(reverse('reuters:news_list'), {'split': 'modapte', 'part': 'test', 'topic': 'crude'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['count'], 189)
+        response = self.client.get(reverse('reuters:news_list'), {'topic': '_none', 'title': 'oil'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(all(not row['topic_items'] for row in response.context['rows']))
+
+    def test_news_detail_for_training_document(self):
+        from .corpus import split_documents
+        newid = split_documents('train', 'modapte')[0]['id']
+        response = self.client.get(reverse('reuters:news', args=[newid]), {'q': 'oil'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '不在被檢索的測試集裡')
 
     def test_news_detail_shows_ranks_and_highlight(self):
         from .retrieval import load_index
-        index = load_index('train')
+        index = load_index('modapte')
         top_row, _ = index.ranking('wheat exports', 'tfidf', limit=1)[0]
         newid = index.documents[top_row]['id']
         response = self.client.get(reverse('reuters:news', args=[newid]),

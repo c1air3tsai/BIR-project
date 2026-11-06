@@ -1,0 +1,22 @@
+﻿split,method,label,p10,mrr,ndcg10,r10,ndcg_keyword,ndcg_paraphrase
+modapte,tfidf,A · TF-IDF,0.73,0.833333,0.728168,0.02907,0.935895,0.52044
+modapte,w2v_tfidf_cbow,B · TF-IDF weighted CBOW,0.85,0.91,0.847942,0.036459,0.910424,0.78546
+modapte,w2v_tfidf_sg,B · TF-IDF weighted Skip-Gram,0.895,0.966667,0.908164,0.040741,0.970908,0.845421
+modapte,w2v_mean_cbow,C · Mean CBOW,0.865,0.885,0.858388,0.037362,0.915486,0.80129
+modapte,w2v_mean_sg,C · Mean Skip-Gram,0.905,0.925,0.900098,0.040653,0.940842,0.859355
+modapte,hybrid_cbow,D · Hybrid A + CBOW,0.835,0.8875,0.836201,0.035186,0.928008,0.744393
+modapte,hybrid_sg,D · Hybrid A + Skip-Gram,0.81,0.916667,0.823119,0.033848,0.947293,0.698945
+modlewis,tfidf,A · TF-IDF,0.545,0.614226,0.531087,0.022802,0.78458,0.277595
+modlewis,w2v_tfidf_cbow,B · TF-IDF weighted CBOW,0.65,0.776667,0.657627,0.029999,0.744823,0.57043
+modlewis,w2v_tfidf_sg,B · TF-IDF weighted Skip-Gram,0.745,0.8,0.731668,0.036083,0.815823,0.647513
+modlewis,w2v_mean_cbow,C · Mean CBOW,0.685,0.79375,0.685867,0.030613,0.785941,0.585792
+modlewis,w2v_mean_sg,C · Mean Skip-Gram,0.745,0.839583,0.740365,0.033603,0.841311,0.639419
+modlewis,hybrid_cbow,D · Hybrid A + CBOW,0.655,0.64,0.627811,0.029026,0.769096,0.486525
+modlewis,hybrid_sg,D · Hybrid A + Skip-Gram,0.65,0.708333,0.63554,0.028285,0.778939,0.492141
+modhayes,tfidf,A · TF-IDF,0.555,0.771726,0.57959,0.110031,0.773363,0.385817
+modhayes,w2v_tfidf_cbow,B · TF-IDF weighted CBOW,0.655,0.789642,0.662303,0.115964,0.797464,0.527141
+modhayes,w2v_tfidf_sg,B · TF-IDF weighted Skip-Gram,0.67,0.786121,0.675102,0.122147,0.813052,0.537152
+modhayes,w2v_mean_cbow,C · Mean CBOW,0.63,0.861667,0.651735,0.118119,0.779596,0.523873
+modhayes,w2v_mean_sg,C · Mean Skip-Gram,0.685,0.843123,0.699564,0.127696,0.849727,0.549401
+modhayes,hybrid_cbow,D · Hybrid A + CBOW,0.63,0.787143,0.644572,0.116274,0.796474,0.49267
+modhayes,hybrid_sg,D · Hybrid A + Skip-Gram,0.635,0.727389,0.637104,0.121513,0.807549,0.466658

@@ -1,0 +1,226 @@
+{
+  "split": "modhayes",
+  "counts": {
+    "train": 20856,
+    "test": 722,
+    "unused": 0
+  },
+  "dataset": {
+    "documents": 722,
+    "tokens": 85496,
+    "vocabulary": 9808,
+    "avg_length": 118.41551246537396,
+    "empty": 2,
+    "topic_counts": {
+      "earn": 22,
+      "acq": 79,
+      "crude": 54,
+      "grain": 45,
+      "trade": 65
+    },
+    "other_topics": 309,
+    "no_topics": 157
+  },
+  "w2v": {
+    "cbow": {
+      "sentences": 105231,
+      "tokens": 1644128,
+      "vocabulary": 23269,
+      "seconds": 44.9
+    },
+    "skipgram": {
+      "sentences": 105231,
+      "tokens": 1644128,
+      "vocabulary": 23269,
+      "seconds": 144.0
+    }
+  },
+  "params": {
+    "vector_size": 100,
+    "window": 5,
+    "min_count": 3,
+    "negative": 5,
+    "sample": 0.001,
+    "epochs": 20,
+    "seed": 42,
+    "workers": 1
+  },
+  "means": [
+    {
+      "method": "tfidf",
+      "label": "A · TF-IDF",
+      "p10": 0.555,
+      "mrr": 0.7717261904761905,
+      "ndcg10": 0.5795899985564228,
+      "r10": 0.11003119477803021
+    },
+    {
+      "method": "w2v_tfidf_cbow",
+      "label": "B · TF-IDF weighted CBOW",
+      "p10": 0.655,
+      "mrr": 0.7896416083916084,
+      "ndcg10": 0.6623026519236681,
+      "r10": 0.11596403830581045
+    },
+    {
+      "method": "w2v_tfidf_sg",
+      "label": "B · TF-IDF weighted Skip-Gram",
+      "p10": 0.67,
+      "mrr": 0.7861208920187794,
+      "ndcg10": 0.6751015887008562,
+      "r10": 0.12214732524859107
+    },
+    {
+      "method": "w2v_mean_cbow",
+      "label": "C · Mean CBOW",
+      "p10": 0.6300000000000001,
+      "mrr": 0.8616666666666667,
+      "ndcg10": 0.6517346673453329,
+      "r10": 0.11811926470154319
+    },
+    {
+      "method": "w2v_mean_sg",
+      "label": "C · Mean Skip-Gram",
+      "p10": 0.685,
+      "mrr": 0.84312324929972,
+      "ndcg10": 0.6995642659136061,
+      "r10": 0.12769606155682106
+    },
+    {
+      "method": "hybrid_cbow",
+      "label": "D · Hybrid A + CBOW",
+      "p10": 0.6300000000000001,
+      "mrr": 0.7871428571428571,
+      "ndcg10": 0.6445723137312065,
+      "r10": 0.1162742320970169
+    },
+    {
+      "method": "hybrid_sg",
+      "label": "D · Hybrid A + Skip-Gram",
+      "p10": 0.635,
+      "mrr": 0.7273888888888889,
+      "ndcg10": 0.637103831747041,
+      "r10": 0.12151320081699828
+    }
+  ],
+  "by_type": [
+    {
+      "method": "tfidf",
+      "type": "keyword",
+      "p10": 0.76,
+      "mrr": 0.9,
+      "ndcg10": 0.7733626135440061,
+      "r10": 0.15310026588507603
+    },
+    {
+      "method": "tfidf",
+      "type": "paraphrase",
+      "p10": 0.35000000000000003,
+      "mrr": 0.6434523809523809,
+      "ndcg10": 0.38581738356883954,
+      "r10": 0.06696212367098442
+    },
+    {
+      "method": "w2v_tfidf_cbow",
+      "type": "keyword",
+      "p10": 0.8,
+      "mrr": 0.8625,
+      "ndcg10": 0.7974642857567227,
+      "r10": 0.14754385792360475
+    },
+    {
+      "method": "w2v_tfidf_cbow",
+      "type": "paraphrase",
+      "p10": 0.51,
+      "mrr": 0.7167832167832169,
+      "ndcg10": 0.5271410180906135,
+      "r10": 0.08438421868801617
+    },
+    {
+      "method": "w2v_tfidf_sg",
+      "type": "keyword",
+      "p10": 0.8100000000000002,
+      "mrr": 0.875,
+      "ndcg10": 0.8130516462052769,
+      "r10": 0.15441254479229163
+    },
+    {
+      "method": "w2v_tfidf_sg",
+      "type": "paraphrase",
+      "p10": 0.53,
+      "mrr": 0.6972417840375587,
+      "ndcg10": 0.5371515311964353,
+      "r10": 0.08988210570489052
+    },
+    {
+      "method": "w2v_mean_cbow",
+      "type": "keyword",
+      "p10": 0.76,
+      "mrr": 0.9333333333333332,
+      "ndcg10": 0.7795960744285406,
+      "r10": 0.14568233454309404
+    },
+    {
+      "method": "w2v_mean_cbow",
+      "type": "paraphrase",
+      "p10": 0.5,
+      "mrr": 0.79,
+      "ndcg10": 0.5238732602621253,
+      "r10": 0.09055619485999233
+    },
+    {
+      "method": "w2v_mean_sg",
+      "type": "keyword",
+      "p10": 0.8300000000000001,
+      "mrr": 1.0,
+      "ndcg10": 0.8497272547322385,
+      "r10": 0.16455758493733177
+    },
+    {
+      "method": "w2v_mean_sg",
+      "type": "paraphrase",
+      "p10": 0.54,
+      "mrr": 0.6862464985994399,
+      "ndcg10": 0.5494012770949739,
+      "r10": 0.09083453817631033
+    },
+    {
+      "method": "hybrid_cbow",
+      "type": "keyword",
+      "p10": 0.78,
+      "mrr": 0.9,
+      "ndcg10": 0.7964741395600208,
+      "r10": 0.1480192053609775
+    },
+    {
+      "method": "hybrid_cbow",
+      "type": "paraphrase",
+      "p10": 0.48,
+      "mrr": 0.6742857142857143,
+      "ndcg10": 0.49267048790239204,
+      "r10": 0.08452925883305631
+    },
+    {
+      "method": "hybrid_sg",
+      "type": "keyword",
+      "p10": 0.8,
+      "mrr": 0.9,
+      "ndcg10": 0.8075494989434759,
+      "r10": 0.16038974621253105
+    },
+    {
+      "method": "hybrid_sg",
+      "type": "paraphrase",
+      "p10": 0.47000000000000003,
+      "mrr": 0.5547777777777778,
+      "ndcg10": 0.4666581645506064,
+      "r10": 0.08263665542146556
+    }
+  ],
+  "corpus_size": [],
+  "core_methods": [
+    "tfidf",
+    "w2v_tfidf_cbow",
+    "w2v_tfidf_sg"
+  ]
+}

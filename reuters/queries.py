@@ -5,10 +5,13 @@
 # 相關性判斷（作業指定）：以 Reuters 的 topics 欄位為準
 #   新聞的 topics 含有查詢對應的主題 → 相關（1），否則不相關（0）
 #
+# Reuters-21578 是文字分類資料集，沒有附官方查詢，所以這 20 個查詢是自己設計的：
 # 每個主題 4 個查詢，分兩種類型：
-#   keyword    用該主題新聞最常見的關鍵字（TF-IDF 的主場）
+#   keyword    用該主題新聞最常見、最有代表性的詞（TF-IDF 的主場）；
+#              這些詞可以對照 run_reuters_experiments 產生的 topic_keywords.csv（訓練集統計）
 #   paraphrase 刻意換一種說法，避開最典型的關鍵字（例如用 petroleum / energy 代替 oil），
 #              用來測試 Word Embedding 能不能補上「字不一樣就比對不到」的弱點
+# 網頁的搜尋區會把 20 個查詢全部列出來，點一下就搜尋
 # =============================================================================
 
 EVALUATION_QUERIES = [
@@ -39,10 +42,24 @@ EVALUATION_QUERIES = [
     {'id': 'T4', 'topic': 'trade', 'type': 'paraphrase', 'text': 'dispute over foreign goods entering markets'},
 ]
 
-# 網頁搜尋框下方的範例查詢（點一下就搜尋）
-DEMO_QUERIES = ['petroleum supply from the gulf', 'crude oil prices and OPEC output',
-                'firm buys a rival business', 'harvest of cereals by farmers', 'trade deficit with japan']
+# 網頁一打開時的預設查詢（C3：TF-IDF 與詞向量差異最明顯的例子之一）
+DEFAULT_QUERY = 'petroleum supply from the gulf'
 
 # 詞層級分析（Top-5 鄰近詞）預設要看的詞：涵蓋 5 個主題，也包含容易誤解的 profit / loss
 NEIGHBOR_WORDS = ['oil', 'petroleum', 'opec', 'wheat', 'corn', 'merger', 'takeover',
                   'profit', 'loss', 'dividend', 'tariff', 'deficit', 'japan']
+
+# 詞層級分析的「試試這些詞」按鈕：每組是一種常見的現象（以 ModApte 模型觀察；hint 是滑鼠提示）
+WORD_SUGGESTIONS = [
+    ('反義詞也很近', [('profit', '最近的詞是 loss：都出現在 net ___ 的位置'),
+                     ('rise', 'fall、drop、decline 都很近'), ('higher', '最近的是 lower'),
+                     ('surplus', '最近的是 deficit（順差 vs 逆差）'), ('buy', 'sell 也很近')]),
+    ('同一類的詞', [('january', '其他月份'), ('monday', '其他星期'), ('yen', '其他貨幣：marks、guilders、dollar'),
+                    ('gold', 'silver、platinum、bullion')]),
+    ('人物與組織', [('opec', 'lukman、nazer：1987 年的石油部長'), ('reagan', 'administration、congress'),
+                    ('coffee', 'ico：國際咖啡組織')]),
+    ('1987 年的新聞事件', [('japan', 'microchips：美日半導體貿易爭端'), ('iran', 'missiles、silkworm：兩伊戰爭'),
+                         ('strike', 'seamen、miners：罷工新聞')]),
+    ('固定詞組與財報縮寫', [('wall', 'street 的 cosine 高達 0.94'), ('palm', 'rbd、deodorised：棕櫚油規格'),
+                          ('shr', 'oper、vs、div：財報表格的縮寫')]),
+]

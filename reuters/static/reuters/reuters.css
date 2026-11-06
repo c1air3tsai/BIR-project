@@ -76,3 +76,72 @@
 .rt-article-text mark, .rt-news-head mark { background: #fff0b8; color: inherit; border-radius: 2px; }
 @media (max-width: 860px) { .rt-news-grid, .rt-news-context { grid-template-columns: 1fr; } }
 
+/* 段落導覽列右邊：目前使用的切分 */
+.rt-nav-split { margin-left: auto; align-self: center; font-size: 13px; color: var(--muted); white-space: nowrap; padding: 0 4px; }
+.rt-nav-split strong { color: var(--ink); }
+
+/* ① 切分選單（README 第 VIII 節的三種切分） */
+.rt-split-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 4px 0 6px; }
+.rt-split-card { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--text); }
+.rt-split-card:hover { border-color: var(--blue); background: #f8fbfd; }
+.rt-split-card.is-active { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue) inset; background: var(--wash); }
+.rt-split-name { font-weight: 700; font-size: 16px; color: var(--ink); display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.rt-split-name small { font-weight: 400; font-size: 12px; color: var(--muted); }
+.rt-split-name em { font-style: normal; font-size: 11.5px; font-weight: 700; color: #fff; background: var(--blue); border-radius: 10px; padding: 1px 8px; }
+.rt-split-nums { font-size: 13px; color: var(--muted); }
+.rt-split-nums b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.rt-split-note { font-size: 13px; line-height: 1.6; }
+.rt-split-table tr.is-active td, .rt-split-results .is-active { background: #eef5fb; }
+.rt-split-table .rt-topic { margin: 0; }
+.rt-split-results th.rt-group { text-align: center; border-bottom: 1px solid var(--line); }
+.rt-split-results td:first-child { white-space: nowrap; }
+.rt-split-results th, .rt-split-results td { padding-left: 7px; padding-right: 7px; }
+.rt-wide-img { display: block; width: 100%; max-width: 1100px; margin-top: 14px; }
+@media (max-width: 860px) { .rt-split-picker { grid-template-columns: minmax(0, 1fr); } }
+
+/* ③ 「試試這些詞」 */
+.rt-word-bank { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.rt-bank-title { display: block; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.rt-bank-title small, .rt-query-bank summary small { font-weight: 400; color: var(--muted); }
+.rt-word-row { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 8px; align-items: center; padding: 3px 0; font-size: 13px; color: var(--muted); }
+.rt-word-row .tw-chips { margin-top: 0; }
+.tw-chips a.is-active, .rt-query-chips a.is-active { background: var(--deep); border-color: var(--deep); color: #fff; }
+@media (max-width: 600px) { .rt-word-row { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 6px 0; } }
+
+/* ④ 評估查詢清單 */
+.rt-query-bank { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.rt-query-bank summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink); }
+.rt-query-bank > .method-note { margin: 8px 0 4px; }
+.rt-query-row { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-bottom: 1px solid #eef2f5; }
+.rt-query-row:last-child { border-bottom: 0; }
+.rt-query-topic { font-size: 13px; color: var(--ink); line-height: 1.6; }
+.rt-query-topic small { display: block; color: var(--muted); font-size: 12px; }
+.rt-query-chips { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+.rt-query-chips a { border: 1px solid var(--line); border-radius: 16px; padding: 3px 10px; font-size: 13px; color: var(--ink); background: #f8fbfd; }
+.rt-query-chips a:hover { background: var(--wash); }
+.rt-query-chips a b { font-size: 11.5px; color: var(--muted); margin-right: 2px; }
+.rt-query-chips a.is-active b { color: #dbe8f3; }
+.rt-qtype { font-style: normal; font-size: 11px; font-weight: 700; border-radius: 8px; padding: 0 6px; margin-left: 4px; }
+.rt-qtype.is-keyword { color: #00507d; background: #dcecf7; }
+.rt-qtype.is-paraphrase { color: #8a3a00; background: #fbe6d6; }
+@media (max-width: 760px) { .rt-query-row { grid-template-columns: minmax(0, 1fr); } }
+
+/* 新聞內頁：主題與所屬切分 */
+.rt-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-right: 6px; letter-spacing: .04em; }
+.rt-topic-name { font-size: 13px; color: var(--ink); margin: 0 10px 0 -1px; }
+.rt-news-splits { margin-top: 6px; }
+.rt-member { display: inline-block; font-size: 12.5px; border: 1px solid var(--line); border-radius: 10px; padding: 1px 9px; margin-right: 4px; color: var(--muted); background: #fff; }
+.rt-member.is-test { color: var(--ink); }
+.rt-member.is-active { border-color: var(--blue); color: var(--blue); font-weight: 700; }
+
+/* 新聞列表 */
+.rt-list-filter { margin-bottom: 8px; }
+.rt-topic-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 14px; }
+.rt-filter-chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 16px; padding: 3px 11px; font-size: 13px; color: var(--ink); background: #f8fbfd; }
+.rt-filter-chip small { color: var(--muted); font-variant-numeric: tabular-nums; }
+.rt-filter-chip:hover { background: var(--wash); }
+.rt-filter-chip.is-active { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue) inset; background: var(--wash); }
+.rt-other-topic { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.rt-other-topic select { max-width: 260px; padding: 6px 10px; border: 1px solid #cbdce9; border-radius: 7px; background: #fff; font: inherit; font-size: 13px; color: #203e59; }
+.tw-results.rt-news-rows li { grid-template-columns: minmax(0, 1fr); }
+.rt-news-rows .tw-result-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }

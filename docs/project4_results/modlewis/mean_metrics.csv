@@ -1,0 +1,8 @@
+﻿method,label,p10,mrr,ndcg10,r10
+tfidf,A · TF-IDF,0.545,0.614226,0.531087,0.022802
+w2v_tfidf_cbow,B · TF-IDF weighted CBOW,0.65,0.776667,0.657627,0.029999
+w2v_tfidf_sg,B · TF-IDF weighted Skip-Gram,0.745,0.8,0.731668,0.036083
+w2v_mean_cbow,C · Mean CBOW,0.685,0.79375,0.685867,0.030613
+w2v_mean_sg,C · Mean Skip-Gram,0.745,0.839583,0.740365,0.033603
+hybrid_cbow,D · Hybrid A + CBOW,0.655,0.64,0.627811,0.029026
+hybrid_sg,D · Hybrid A + Skip-Gram,0.65,0.708333,0.63554,0.028285

@@ -613,6 +613,15 @@ h2{font-size:22px}
 .region-details summary { cursor:pointer; font-weight:600; color:#17365d; }
 .region-details summary span { color:#687985; font-size:14px; font-weight:400; margin-left:15px; }
 .region-details .region-section { margin-top:20px; }
+/* 文章頁：Reuters-21578 新聞（Project 4，另一個資料集）的入口 */
+.collection-link-panel{display:flex;align-items:center;gap:14px;margin:16px 0 4px;padding:14px 18px;border:1px solid #cfe0ee;border-radius:10px;background:#f6fafd;color:var(--ink)}
+.collection-link-panel>div{flex:1;min-width:220px}
+.collection-link-panel strong,.collection-link-panel small{display:block}
+.collection-link-panel strong{font-size:14px}
+.collection-link-panel small{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.45}
+.collection-link-panel>span{font-size:14px;font-weight:600;color:var(--blue);white-space:nowrap}
+.collection-link-panel:hover{border-color:var(--blue)}
+@media (max-width:600px){.collection-link-panel{flex-direction:column;align-items:flex-start;gap:6px}}
 .bulk-delete-panel{display:flex;align-items:center;gap:14px;margin:16px 0 4px;padding:14px 18px;border:1px solid #ead6d6;border-radius:10px;background:#fffafa}
 .bulk-delete-panel>div{flex:1;min-width:220px}
 .bulk-delete-panel strong,.bulk-delete-panel small{display:block}

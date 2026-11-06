@@ -1,0 +1,15 @@
+﻿method,type,p10,mrr,ndcg10,r10
+tfidf,keyword,0.78,0.85,0.78458,0.035255
+tfidf,paraphrase,0.31,0.378452,0.277595,0.010349
+w2v_tfidf_cbow,keyword,0.74,0.9,0.744823,0.036483
+w2v_tfidf_cbow,paraphrase,0.56,0.653333,0.57043,0.023515
+w2v_tfidf_sg,keyword,0.82,0.883333,0.815823,0.038814
+w2v_tfidf_sg,paraphrase,0.67,0.716667,0.647513,0.033352
+w2v_mean_cbow,keyword,0.78,0.9,0.785941,0.033805
+w2v_mean_cbow,paraphrase,0.59,0.6875,0.585792,0.02742
+w2v_mean_sg,keyword,0.84,0.95,0.841311,0.036526
+w2v_mean_sg,paraphrase,0.65,0.729167,0.639419,0.03068
+hybrid_cbow,keyword,0.77,0.833333,0.769096,0.036363
+hybrid_cbow,paraphrase,0.54,0.446667,0.486525,0.021689
+hybrid_sg,keyword,0.77,0.85,0.778939,0.035553
+hybrid_sg,paraphrase,0.53,0.566667,0.492141,0.021018

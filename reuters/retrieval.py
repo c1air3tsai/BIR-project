@@ -1,6 +1,6 @@
 # =============================================================================
 # reuters/retrieval.py
-# Project 4：新聞檢索引擎（檢索對象 = ModApte 測試集全部 3,299 篇）
+# Project 4：新聞檢索引擎（檢索對象 = 所選切分的測試集全部文件；預設 ModApte 3,299 篇）
 #
 # 方法 A：TF-IDF
 #   文件 / 查詢向量的每一維是一個詞：w(t,d) = tf(t,d) × idf(t)，idf(t) = log10(N / df(t))
@@ -28,7 +28,7 @@ from scipy import sparse
 from weighting import schemes
 
 from . import embedding
-from .corpus import TOPICS, document_text, split_documents
+from .corpus import DEFAULT_SPLIT, TOPICS, document_text, split_documents
 from .text import preprocess
 
 HYBRID_ALPHA = 0.5
@@ -47,9 +47,10 @@ CORE_METHODS = ('tfidf', 'w2v_tfidf_cbow', 'w2v_tfidf_sg')
 
 
 class ReutersIndex:
-    def __init__(self, w2v_corpus='train'):
+    def __init__(self, split=DEFAULT_SPLIT, w2v_corpus='train'):
+        self.split = split
         self.w2v_corpus = w2v_corpus
-        self.documents = split_documents('test')
+        self.documents = split_documents('test', split)
         self.n = len(self.documents)
         self.doc_terms = [preprocess(document_text(doc)) for doc in self.documents]
         vocabulary = {}
@@ -61,7 +62,7 @@ class ReutersIndex:
                 values.append(tf)
         self.vocabulary = vocabulary
         self.terms = sorted(vocabulary, key=vocabulary.get)
-        # tf 稀疏矩陣：3,299 篇 × 詞彙量
+        # tf 稀疏矩陣：測試集篇數 × 詞彙量
         self.counts = sparse.csr_matrix((values, (rows, cols)), shape=(self.n, len(vocabulary)), dtype=np.float64)
         self.df = schemes.document_frequency(self.counts)
         self.idf = schemes.inverse_document_frequency(self.df, self.n)       # log10(N / df)
@@ -79,11 +80,10 @@ class ReutersIndex:
                 return rank
         return None
 
-    # 某篇新聞 TF-IDF 權重最高的詞：[(詞, tf, idf, tf × idf), ...]
-    def top_terms(self, row, n=10):
-        counts = self.counts.getrow(row).tocoo()
-        items = [(self.terms[col], int(tf), float(self.idf[col]), float(tf * self.idf[col]))
-                 for col, tf in zip(counts.col, counts.data)]
+    # 一串詞（一篇新聞）TF-IDF 權重最高的詞：[(詞, tf, idf, tf × idf), ...]
+    # idf 用這個測試集計算；不在測試集的新聞（例如訓練集）也能算，沒出現過的詞視為最稀有
+    def top_terms(self, terms, n=10):
+        items = [(term, tf, self.term_idf(term), tf * self.term_idf(term)) for term, tf in Counter(terms).items()]
         return sorted(items, key=lambda item: (-item[3], item[0]))[:n]
 
     # 一個詞的 idf；不在測試集的詞視為最稀有（df = 1）
@@ -122,7 +122,7 @@ class ReutersIndex:
     def embedding_matrix(self, architecture, weighted):
         key = (architecture, weighted)
         if key not in self._embedding_matrices:
-            vectors, _ = embedding.load(self.w2v_corpus, architecture)
+            vectors, _ = embedding.load(self.split, self.w2v_corpus, architecture)
             matrix = np.vstack([self._average(self._term_weights(terms, weighted), vectors)
                                 for terms in self.doc_terms])
             norms = np.linalg.norm(matrix, axis=1, keepdims=True)
@@ -130,10 +130,10 @@ class ReutersIndex:
         return self._embedding_matrices[key]
 
     def query_embedding(self, terms, architecture, weighted):
-        vectors, _ = embedding.load(self.w2v_corpus, architecture)
+        vectors, _ = embedding.load(self.split, self.w2v_corpus, architecture)
         return schemes.l2_normalize_vector(self._average(self._term_weights(terms, weighted), vectors))
 
-    # 對全部 3,299 篇計分（cosine），回傳長度 N 的陣列
+    # 對測試集全部文件計分（cosine），回傳長度 N 的陣列
     def scores(self, query, method):
         terms = preprocess(query)
         if method == 'tfidf':
@@ -157,20 +157,24 @@ class ReutersIndex:
 
     # 查詢詞的診斷資訊：哪些詞在測試集裡（TF-IDF 用得到）、哪些詞有詞向量（Embedding 用得到）
     def query_terms(self, query, architecture='cbow'):
-        vectors, _ = embedding.load(self.w2v_corpus, architecture)
+        vectors, _ = embedding.load(self.split, self.w2v_corpus, architecture)
         return [{'term': term, 'in_collection': term in self.vocabulary,
                  'df': int(self.df[self.vocabulary[term]]) if term in self.vocabulary else 0,
                  'idf': self.term_idf(term), 'has_vector': term in vectors.key_to_index}
                 for term in dict.fromkeys(preprocess(query))]
 
+    # 測試集概況；other_topics = 有 topics 但不屬於 5 個主題，no_topics = 完全沒有 topics 標籤
     def summary(self):
         topic_counts = {topic: sum(topic in doc['topics'] for doc in self.documents) for topic in TOPICS}
         return {'documents': self.n, 'tokens': int(self.lengths.sum()), 'vocabulary': len(self.vocabulary),
                 'avg_length': float(self.lengths.mean()), 'empty': int((self.lengths == 0).sum()),
                 'topic_counts': topic_counts,
-                'other_topics': sum(not any(t in TOPICS for t in doc['topics']) for doc in self.documents)}
+                'other_topics': sum(bool(doc['topics']) and not any(t in TOPICS for t in doc['topics'])
+                                    for doc in self.documents),
+                'no_topics': sum(not doc['topics'] for doc in self.documents)}
 
 
-@lru_cache(maxsize=2)
-def load_index(w2v_corpus='train'):
-    return ReutersIndex(w2v_corpus)
+# 3 種切分的主索引 + train + unused 詞向量的索引（語料大小實驗）
+@lru_cache(maxsize=6)
+def load_index(split=DEFAULT_SPLIT, w2v_corpus='train'):
+    return ReutersIndex(split, w2v_corpus)

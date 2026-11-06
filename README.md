@@ -63,20 +63,24 @@ docker compose exec web python manage.py run_weighting_experiments
 
 ## 2b. Project 4：Reuters-21578 新聞檢索
 
-打開上方主選單的「Reuters」（中文介面顯示「Reuters 新聞」，網址 `/reuters/`）。由上到下：① 資料集（ModApte 切分）② Word2Vec 訓練（gensim CBOW / Skip-Gram ＋ 自製 numpy 示範）③ 詞層級分析（Top-5 鄰近詞、PCA / t-SNE）④ 新聞搜尋（方法 A / B 並排）⑤ 文件層級評估（P@10、MRR、nDCG@10）。
+打開上方主選單的「Reuters」（中文介面顯示「Reuters 新聞」，網址 `/reuters/`）。由上到下：① 資料集（README 的三種切分，預設 ModApte）② Word2Vec 訓練（gensim CBOW / Skip-Gram ＋ 自製 numpy 示範）③ 詞層級分析（Top-5 鄰近詞、PCA / t-SNE）④ 新聞搜尋（方法 A / B 並排）⑤ 文件層級評估（P@10、MRR、nDCG@10，以及三種切分的比較）。
 
 ```powershell
-# 一鍵重跑：第一次會從 UCI 下載 Reuters-21578 並訓練 Word2Vec（約 5 分鐘），之後讀快取
+# 一鍵重跑：第一次會從 UCI 下載 Reuters-21578，三種切分各訓練一組 Word2Vec（約 15 分鐘），之後讀快取
 docker compose exec web python manage.py run_reuters_experiments
+# 只重跑某個切分
+docker compose exec web python manage.py run_reuters_experiments --split modapte
 docker compose exec web python manage.py test reuters
 ```
 
 - 資料：UCI Machine Learning Repository 的 Reuters-21578，存在 `data/reuters/`（不進 git）
-- 評估查詢與 topic 相關性規則：[reuters/queries.py](reuters/queries.py)
-- 實驗輸出：`docs/project4_results/`
-- 第一次開頁面需要約 10 秒載入模型，之後很快；Demo 前先開一次
+- 切分（官方 README 第 VIII 節）：ModApte（預設，README 推薦、作業指定）、ModLewis、ModHayes；在 ① 切換後整頁都改用該切分
+- 評估查詢（20 個，搜尋區全部列出可直接點）與 topic 相關性規則：[reuters/queries.py](reuters/queries.py)
+- 實驗輸出：`docs/project4_results/<切分>/`；三種切分共用的比較表、numpy 示範圖在 `docs/project4_results/` 最上層
+- 第一次開頁面（或第一次切換到某個切分）需要 10–20 秒載入模型，之後很快；Demo 前先開一次
 - 頁面完整說明（由上到下）：[docs/project4_page_guide.md](docs/project4_page_guide.md)；一分鐘進度報告：[docs/project4_progress_speech.md](docs/project4_progress_speech.md)
-- 新聞內頁 `/reuters/news/<NEWID>/`：從搜尋結果點標題進入，顯示全文、查詢詞高亮、這篇在各方法的排名
+- 新聞列表 `/reuters/news/`：資料集名稱 Reuters-21578，依 TOPICS 主題（earn、acq、crude…）瀏覽全部 21,578 篇；「文章」頁上方也有入口
+- 新聞內頁 `/reuters/news/<NEWID>/`：全文、主題、所屬切分、查詢詞高亮、這篇在各方法的排名
 
 ## 3. 專案結構
 
