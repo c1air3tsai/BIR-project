@@ -20,6 +20,10 @@
 .rt-flow span { border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; background: #f8fbfd; }
 .rt-flow b { border-radius: 6px; padding: 2px 8px; background: var(--wash); color: var(--blue); }
 
+/* Word2Vec 訓練參數：一行小字記錄 */
+.rt-param-line { margin: 8px 0 0; font-size: 12px; color: var(--muted); line-height: 1.6; }
+.rt-param-line + .method-note { margin-top: 2px; }
+
 /* 鄰近詞 */
 .rt-chip { display: inline-block; margin: 2px 6px 2px 0; padding: 2px 8px; border-radius: 12px; background: #f2f6f9; font-size: 13px; white-space: nowrap; }
 .rt-chip small { color: var(--muted); font-size: 11px; }
@@ -97,6 +101,10 @@
 .rt-split-results td:first-child { white-space: nowrap; }
 .rt-split-results th, .rt-split-results td { padding-left: 7px; padding-right: 7px; }
 .rt-wide-img { display: block; width: 100%; max-width: 1100px; margin-top: 14px; }
+
+/* 圖與圖說：去掉瀏覽器預設的 figure 左右縮排，圖說和其他說明文字同樣大小 */
+.rt-page figure { margin-left: 0; margin-right: 0; }
+.rt-page figure figcaption.method-note { margin: 12px 0 0; font-size: 13px; line-height: 1.8; }
 @media (max-width: 860px) { .rt-split-picker { grid-template-columns: minmax(0, 1fr); } }
 
 /* ③ 「試試這些詞」 */

@@ -121,6 +121,7 @@ def demo(epochs=200, dim=10, window=2, lr=0.1):
     pairs = training_pairs(sentences, vocabulary, window)
     words = sorted(vocabulary, key=vocabulary.get)
     result = {'vocabulary': len(vocabulary), 'pairs': len(pairs), 'sentences': TOY_SENTENCES,
+              'params': {'dim': dim, 'window': window, 'epochs': epochs, 'lr': lr},
               'example': {'context': [words[i] for i in pairs[2][0]], 'center': words[pairs[2][1]]}}
     for architecture in ('cbow', 'skipgram'):
         model = ToyWord2Vec(vocabulary, dim=dim)

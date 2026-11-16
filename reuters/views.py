@@ -244,9 +244,9 @@ def page(request):
         'relevant_range': (min(topic_counts.values()), max(topic_counts.values())),
         'metas': [{'key': a, 'label': embedding.ARCHITECTURES[a], **m, 'final_loss': m['epoch_losses'][-1]}
                   for a, m in metas.items()],
-        'params': embedding.PARAMS,
+        'params': embedding.PARAMS, 'learning_rate': embedding.LEARNING_RATE,
         'toy': {'vocabulary': toy['vocabulary'], 'pairs': toy['pairs'], 'example': toy['example'],
-                'sentences': toy['sentences'][:6],
+                'sentence_count': len(toy['sentences']), 'params': toy['params'],
                 'rows': [{'arch': embedding.ARCHITECTURES[a], 'first': toy[a]['losses'][0], 'last': toy[a]['losses'][-1],
                           'neighbors': toy[a]['neighbors']} for a in ('cbow', 'skipgram')]},
         'neighbor_table': neighbor_table, 'word_lookup': word_lookup, 'word_groups': _word_suggestions(state),

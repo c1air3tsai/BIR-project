@@ -6,7 +6,7 @@
   樣式沿用 Project 3 的 weighting/static/weighting/term_weighting.css（tw-*），另加 reuters/static/reuters/reuters.css（rt-*）
 {% endcomment %}
 {% load static reuters_ui %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p4-4"><link rel="stylesheet" href="{% static 'reuters/reuters.css' %}?v=p4-6">{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p4-4"><link rel="stylesheet" href="{% static 'reuters/reuters.css' %}?v=p4-7">{% endblock %}
 {% block content %}
 <main class="site-shell page-main tw-page rt-page" id="main">
 
@@ -77,11 +77,11 @@
           {% for n in opt.topic_counts %}<td class="tw-num">{{ n|thousands }}</td>{% endfor %}<td class="tw-num">{{ opt.no_topics|thousands }}</td></tr>{% endfor %}</tbody>
       </table></div>
       <ul class="rt-list">
-        <li><strong>ModApte</strong>：只保留 TOPICS = YES（有被標註主題）的新聞。README 指出很多「應該有主題」的新聞其實沒被標註，所以推薦主題研究用這個切分；作業也指定它，因此是預設。</li>
-        <li><strong>ModLewis</strong>：同樣的時間切點（1987/4/7），但 TOPICS = NO 的新聞也收進來。相關新聞幾乎一樣多，測試集卻多出約 2,900 篇沒有標籤的新聞；其中有些其實和查詢有關，卻被算成不相關。</li>
-        <li><strong>ModHayes</strong>：重現 1990 年 CONSTRUE 系統的測試集，只有 722 篇、集中在 1987/4/2–6/16；訓練集包含測試期之後的新聞。README 說它有主題分布不尋常、近似重複的新聞、時間過度集中等問題，不太適合一般的分類研究（例如 earn 只剩 22 篇）。</li>
+        <li><strong>ModApte</strong>：只收 TOPICS = YES（有人標過主題）的新聞，所以測試集 3,299 篇裡只有 280 篇沒有標籤，「沒有標籤就算不相關」這條規則很少誤判。README 也因為很多新聞漏標而推薦主題研究用這個切分；作業指定它，所以是預設。</li>
+        <li><strong>ModLewis</strong>：時間切點相同（1987/4/7），但 TOPICS = NO 的新聞也收進來，所以測試集變成 6,188 篇，其中 3,166 篇沒有標籤，相關新聞數卻幾乎不變（earn 1,088 篇 vs ModApte 1,087 篇）。沒有標籤的新聞裡有些其實和查詢有關，卻一律算錯，所以每個方法的分數都會被壓低。</li>
+        <li><strong>ModHayes</strong>：重現 1990 年 CONSTRUE 系統的測試集，只有 722 篇、集中在 1987/4/2–6/16，訓練集反而包含測試期之後的新聞。每個主題的相關新聞因此很少（earn 只有 22 篇），README 也提到它主題分布不尋常、有近似重複的新聞，所以分數容易被少數幾篇新聞左右。</li>
       </ul>
-      <p class="method-note">檢索結果的差異見第 5 段最後的「三種切分的檢索結果」。</p>
+      <p class="method-note">三種切分實際的檢索結果與原因，見第 5 段最後的「三種切分的檢索結果」。</p>
     </article>
   </section>
 
@@ -92,23 +92,47 @@
       <article class="panel">
         <h3>CBOW：用上下文猜中間的詞</h3>
         <p class="rt-flow"><span>shipment</span><span>of</span><b>?</b><span>to</span><span>japan</span> → <b>wheat</b></p>
-        <p class="method-note">把上下文詞的向量平均起來，預測中間是哪個詞。一個視窗只做一次預測，訓練快，對常見詞較穩定。</p>
+        <p class="method-note">CBOW 先把上下文詞的向量平均，再預測中間是哪個詞，一個視窗只做一次預測，所以訓練快（ModApte 22.2 秒）。但平均會沖淡少見詞的訊號（一般常見的解釋），所以在用字比較少見的換說法查詢上，TF-IDF 加權 CBOW 的 nDCG@10 是 0.785，低於 Skip-Gram 的 0.845。</p>
       </article>
       <article class="panel">
         <h3>Skip-Gram：用中間的詞猜上下文</h3>
         <p class="rt-flow"><b>wheat</b> → <span>shipment</span><span>of</span><span>to</span><span>japan</span></p>
-        <p class="method-note">用中心詞分別預測每一個上下文詞。一個視窗要預測好幾次，訓練較慢，但少見的詞也能得到較多更新。</p>
+        <p class="method-note">Skip-Gram 用中心詞分別預測每一個上下文詞，每個（中心詞, 上下文詞）配對都是一筆訓練資料，所以訓練慢（ModApte 63.4 秒，約 CBOW 的 3 倍）。但少見的詞也因此得到比較多次更新（一般常見的解釋），換說法查詢的 nDCG@10 是 0.845。</p>
       </article>
     </div>
     <div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table">
       <thead><tr><th>架構</th><th class="tw-num">訓練句數</th><th class="tw-num">訓練詞數</th><th class="tw-num">詞彙量</th><th class="tw-num">訓練時間</th><th class="tw-num">最後一個 epoch 的 loss</th></tr></thead>
       <tbody>{% for m in metas %}<tr><td><strong>{{ m.label }}</strong></td><td class="tw-num">{{ m.sentences|thousands }}</td><td class="tw-num">{{ m.tokens|thousands }}</td><td class="tw-num">{{ m.vocabulary|thousands }}</td><td class="tw-num">{{ m.seconds }} 秒</td><td class="tw-num">{{ m.final_loss|floatformat:0 }}</td></tr>{% endfor %}</tbody>
     </table></div>
-    <p class="method-note">訓練語料：{{ split_info.label }} 訓練集 {{ counts.train|thousands }} 篇。共用參數（控制變因）：維度 {{ params.vector_size }}、視窗 {{ params.window }}、最低詞頻 {{ params.min_count }}、negative sampling {{ params.negative }}、epochs {{ params.epochs }}、seed {{ params.seed }}。兩種架構的 loss 定義不同，數值不能直接比大小。</p>
+    <p class="rt-param-line">訓練參數（兩種架構相同，只差 sg = 0 / 1）：{{ split_info.label }} 訓練集 {{ counts.train|thousands }} 篇 · vector_size {{ params.vector_size }} · window {{ params.window }} · min_count {{ params.min_count }} · negative {{ params.negative }} · sample {{ params.sample }} · epochs {{ params.epochs }} · alpha {{ learning_rate.alpha }} → {{ learning_rate.min_alpha }} · seed {{ params.seed }} · workers {{ params.workers }}</p>
+    <article class="panel tw-block">
+      <h3>CBOW 和 Skip-Gram 的檢索結果差在哪？ <small>數字為 ModApte 的 nDCG@10</small></h3>
+      <ul class="rt-list">
+        <li>兩者都用 TF-IDF 加權平均成文件向量時，Skip-Gram 0.908、CBOW 0.848；ModLewis（0.732 vs 0.658）和 ModHayes（0.675 vs 0.662）也都是 Skip-Gram 較高。</li>
+        <li>差最多的是換說法查詢：C4 energy ministers discuss fuel pricing，Skip-Gram 1.00、CBOW 0.49；T3 protectionism between nations，0.80 vs 0.30。這兩題用的都是比較少見的說法，和「Skip-Gram 對少見詞學得比較好」的一般解釋一致，但這裡沒有直接驗證（推測）。</li>
+        <li>也有反例：E4 firm reports bigger losses than last year，CBOW 0.63、Skip-Gram 0.26（原因見第 5 段）。所以不能預設 Skip-Gram 一定比較好，它還要多花約 3 倍的訓練時間。</li>
+      </ul>
+    </article>
+    {% if has_results %}<figure class="panel tw-block tw-figure"><img src="{% url 'reuters:split_result' state.split 'w2v_training.png' %}" alt="gensim training loss per epoch">
+      <figcaption class="method-note">loss 曲線怎麼看（以 ModApte 為例）：<br>
+        ① 兩條都往下降，代表模型越來越會預測上下文，訓練有在收斂；後面幾輪變化變小，一般的解釋是學習率線性遞減到 {{ learning_rate.min_alpha }}，每輪更新的幅度越來越小。<br>
+        ② Skip-Gram 的數字大很多（第 1 輪約 852 萬，CBOW 約 209 萬），因為 Skip-Gram 每個（中心詞, 上下文詞）配對都算一次 loss，CBOW 每個中心詞只算一次，加總的次數不同，所以兩種架構的 loss 不能直接比大小。<br>
+        ③ 曲線中間有幾次突然下降（CBOW 第 7、17–18 輪，Skip-Gram 第 7、20 輪），剛好都發生在累積 loss 超過 2²³、2²⁴、2²⁵、2²⁶ 的那一輪。gensim 用 float32 累加 loss，數字越大越多小數被捨去，所以這幾次下降很可能是記錄誤差，不是模型突然變好（推測，但數字吻合；不影響詞向量本身）。</figcaption></figure>{% endif %}
 
     <details class="panel tw-glossary tw-block">
-      <summary>自己用 numpy 實作的 CBOW / Skip-Gram（點一下展開）</summary>
-      <p class="method-note">為了理解訓練流程，另外在 <code>reuters/toy_word2vec.py</code> 用 numpy 從頭寫了兩種架構（完整 softmax，不用 gensim）。示範語料是 {{ toy.sentences|length }}+ 句模仿 Reuters 的短句，詞彙 {{ toy.vocabulary }} 個、訓練樣本 {{ toy.pairs }} 個（與切分無關）。</p>
+      <summary>自己用 numpy 實作的 CBOW / Skip-Gram（教學版，和上面的實驗是分開的；點一下展開）</summary>
+      <p class="method-note">作業的學習目標之一是「理解並實作 CBOW 與 Skip-Gram 的基本訓練流程」。上面的實驗用 gensim，看不到每一步怎麼算，所以另外在 <code>reuters/toy_word2vec.py</code> 用 numpy 從頭寫了一個小版本。它不參與搜尋和評估，和上面的差別：</p>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th></th><th>上面的實驗（gensim）</th><th>這裡的教學版（numpy）</th></tr></thead>
+        <tbody>
+          <tr><td>語料</td><td>{{ split_info.label }} 訓練集 {{ counts.train|thousands }} 篇</td><td>{{ toy.sentence_count }} 句自己寫的短句（模仿 Reuters 五個主題，與切分無關）</td></tr>
+          <tr><td>詞彙量</td><td>{{ metas.0.vocabulary|thousands }}</td><td>{{ toy.vocabulary }}（訓練樣本 {{ toy.pairs }} 個）</td></tr>
+          <tr><td>維度 / 視窗</td><td>{{ params.vector_size }} / {{ params.window }}</td><td>{{ toy.params.dim }} / {{ toy.params.window }}</td></tr>
+          <tr><td>輸出層</td><td>negative sampling：每次只算正確答案和 {{ params.negative }} 個錯誤答案</td><td>完整 softmax：每次算全部 {{ toy.vocabulary }} 個詞的機率</td></tr>
+          <tr><td>epochs / 學習率</td><td>{{ params.epochs }} / {{ learning_rate.alpha }} 遞減</td><td>{{ toy.params.epochs }} / {{ toy.params.lr }} 固定</td></tr>
+          <tr><td>用途</td><td>搜尋和評估用的詞向量</td><td>看懂每一步怎麼算；單元測試確認 CBOW 的梯度和數值微分一致</td></tr>
+        </tbody>
+      </table></div>
       <p class="method-note">一個訓練樣本的例子：上下文 <code>{{ toy.example.context|join:", " }}</code> → 中心詞 <code>{{ toy.example.center }}</code>。CBOW 用上下文預測中心詞；Skip-Gram 反過來，用中心詞分別預測 4 個上下文詞。每一步都計算 softmax 機率、loss = −log p(正確答案)，再用梯度下降更新兩個權重矩陣。</p>
       <div class="tw-table-wrap"><table class="data-table tw-compact">
         <thead><tr><th>架構</th><th class="tw-num">第 1 個 epoch loss</th><th class="tw-num">最後 loss</th><th>oil 的鄰近詞</th><th>profit 的鄰近詞</th><th>japan 的鄰近詞</th></tr></thead>
@@ -118,15 +142,15 @@
           <td>{% for w, s in r.neighbors.japan %}{{ w }}{% if not forloop.last %}, {% endif %}{% endfor %}</td></tr>{% endfor %}</tbody>
       </table></div>
       <p class="method-note">profit 與 loss 在示範語料裡的上下文完全相同（company reported net ___），所以 cosine 是 1.00：向量一樣，意思卻相反。</p>
+      <p class="method-note">loss 比較低不代表詞向量比較好：教學版 CBOW 的 loss 降到 {{ toy.rows.0.last|floatformat:2 }}，Skip-Gram 停在 {{ toy.rows.1.last|floatformat:2 }}，因為一個中心詞要猜好幾個不同的上下文詞，本來就不可能都猜中；可是表格裡 Skip-Gram 的鄰近詞反而比較合理，上面的實驗裡檢索效果也是 Skip-Gram 比較好。</p>
       {% if has_toy_chart %}<img class="rt-inline-img" src="{% url 'reuters:result_file' 'toy_word2vec_loss.png' %}" alt="Toy CBOW and Skip-Gram loss curves">{% endif %}
     </details>
-    {% if has_results %}<figure class="panel tw-block tw-figure"><img src="{% url 'reuters:split_result' state.split 'w2v_training.png' %}" alt="gensim training loss per epoch"></figure>{% endif %}
   </section>
 
   {# ========== ③ 詞層級分析 ========== #}
   <section id="words" class="tw-section">
     <div class="section-heading-row"><div><span class="section-kicker">3 · WORD-LEVEL ANALYSIS</span><h2>Top-5 鄰近詞</h2></div></div>
-    <p class="method-note">鄰近詞用 100 維詞向量的 cosine similarity 排序。<strong>向量相近不代表兩個詞是同義詞</strong>：它只代表兩個詞常出現在相似的上下文。</p>
+    <p class="method-note">鄰近詞用 100 維詞向量的 cosine similarity 排序。Word2Vec 只從「前後文」學向量，看不到詞的意思，所以兩個詞的向量相近，只代表它們常出現在相似的上下文，<strong>不代表是同義詞</strong>。</p>
 
     <form method="get" class="panel tw-search-form" action="#words">
       {% for key, value in hidden_word %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
@@ -150,12 +174,13 @@
         <td>{% for n in row.cbow %}<span class="rt-chip">{{ n.word }} <small>{{ n.cosine|floatformat:2 }}</small></span>{% endfor %}</td>
         <td>{% for n in row.sg %}<span class="rt-chip">{{ n.word }} <small>{{ n.cosine|floatformat:2 }}</small></span>{% endfor %}</td></tr>{% endfor %}</tbody>
     </table></div>
-    {% if state.split != 'modapte' %}<p class="method-note">下面三個說明框的例子來自 ModApte 的模型；目前 {{ split_info.label }} 模型的實際鄰近詞以上表為準。</p>{% endif %}
+    {% if state.split != 'modapte' %}<p class="method-note">下面幾個說明框的例子和數字來自 ModApte 的模型；目前 {{ split_info.label }} 模型的實際鄰近詞以上表為準。</p>{% endif %}
     <div class="tw-two-col tw-block">
-      <article class="panel"><h3>合理的語意關係</h3><p class="method-note">wheat → corn、barley、grain；merger → acquisition、buyout；oil → crude、petroleum、gas；dividend → dividends、payout。</p></article>
-      <article class="panel"><h3>只是常出現在同類新聞</h3><p class="method-note">profit 的第一名就是 loss（意思相反，但都出現在財報的同一個位置）；opec → lukman、nazer（當時的石油部長）；japan → microchips（1987 年美日晶片貿易爭端）。</p></article>
+      <article class="panel"><h3>合理的語意關係</h3><p class="method-note">同一類的詞會出現在相同的句型裡（例如 exports of ___ to the ussr 可以填 wheat、corn、barley），前後文相似，所以向量相近：wheat → corn、barley、grain；merger → acquisition、buyout；oil → crude、petroleum、gas；dividend → dividends、payout。dividend 和 dividends 是兩個向量，因為沒做 stemming。</p></article>
+      <article class="panel"><h3>只是常出現在同類新聞</h3><p class="method-note">視窗是左右各 {{ params.window }} 個詞，同一則新聞裡常一起出現的詞也會被拉近，即使意思不同：opec → lukman、nazer（1987 年的石油部長，常和 OPEC 出現在同一句）；japan → microchips（當年美日晶片貿易爭端的新聞很多）。</p></article>
     </div>
-    <article class="panel tw-block"><h3>不符合預期的結果</h3><p class="method-note">oil → kernel（來自 palm kernel oil 棕櫚仁油）；Skip-Gram 常把很少見的專有名詞排進來，例如 profit → swissair、tariff → krapels、merger → siebe。原因是 Skip-Gram 讓少見的詞也得到很多次更新，只要它和查詢詞出現在同一篇新聞幾次，向量就會被拉近。</p></article>
+    <article class="panel tw-block"><h3>為什麼反義詞的向量也很近？</h3><p class="method-note">Word2Vec 靠「預測前後文」學向量，只看得到詞出現在什麼位置，看不到詞的意思。反義詞在新聞裡常出現在同一個位置：net profit / net loss of 5 mln dlrs、prices rose / fell 5 pct、trade surplus / deficit，前後文幾乎一樣，向量就被拉到一起。所以在 ModApte 的 CBOW 裡，rise–fall 0.83、surplus–deficit 0.83、higher–lower 0.81、profit–loss 0.74，比 petroleum–oil 的 0.56 還近。第 2 段的 numpy 教學版直接驗證了這件事：示範語料裡 profit 和 loss 的上下文完全相同，cosine 就是 1.00。這對本次評估影響不大，因為賺錢和虧損的新聞都屬於 earn；但如果使用者只想找虧損的新聞，詞向量分不出來。</p></article>
+    <article class="panel tw-block"><h3>不符合預期的結果</h3><p class="method-note">oil → kernel：kernel 出現在 palm kernel output、palm kernel oils 這類句子裡，前後文是 palm、coconut、output、tonnes，和 palm oil 裡的 oil 幾乎一樣，所以被拉近；但 kernel 在 ModApte 訓練集只出現 10 次，向量本來就學得不穩。Skip-Gram 還常排進很少見的專有名詞，例如 profit → swissair、tariff → krapels、merger → siebe。Skip-Gram 每個（中心詞, 上下文詞）配對都會更新一次，少見的詞只要和這個詞在同一篇新聞出現幾次，向量就可能被拉得很近；加上 min_count 是 {{ params.min_count }}，只出現幾次的詞也有向量，學得不穩（推測）。</p></article>
     {% if projection %}
     {# 互動散布圖：reuters/static/reuters/projection.js #}
     <article class="panel tw-block rt-proj" data-projection>
@@ -235,12 +260,21 @@
       </article>
       {% endfor %}
     </div></div>
+    <article class="panel tw-block">
+      <h3>為什麼兩種方法排出來不一樣？ <small>以 C3 petroleum supply from the gulf、目標主題 crude 為例（ModApte；點上面查詢清單的 C3 就能看到）</small></h3>
+      <ul class="rt-list">
+        <li><strong>TF-IDF 抓錯的原因</strong>：TF-IDF 只比對字面，含有 gulf 或 petroleum 的新聞不管在講什麼都會被排上來。前 10 名只有 4 篇是 crude，其他 6 篇裡：3 篇是波斯灣戰事、航運的新聞（ship），2 篇是 British Petroleum、Dome Petroleum 這兩家公司的收購新聞（acq），1 篇是 jet。相反地，真正在講原油、卻沒用到這幾個字的新聞（例如 CRUDE OIL NETBACKS UP SHARPLY IN EUROPE, U.S.）只排第 48 名。</li>
+        <li><strong>詞向量找對的原因</strong>：Word2Vec 從前後文學到 petroleum 和 oil 很像（cosine：CBOW 0.56、Skip-Gram 0.60），查詢平均起來是一個「石油」方向的向量。新聞只要在講 crude、barrel、pipeline，即使沒有出現 petroleum，向量方向也會很接近。所以 TF-IDF 加權 CBOW 的前 10 名有 9 篇 crude、Skip-Gram 有 8 篇；上面那篇 NETBACKS 在 Skip-Gram 排第 1。</li>
+        <li><strong>詞向量算錯的那 1–2 篇</strong>：GLOBAL PETROLEUM UPS HEAVY FUEL PRICES（fuel）和 BANGLADESH TENDERS FOR TWO MLN BARRELS PETROLEUM（jet）。內容其實和石油有關，只是標籤不是 crude 才被算錯，這是「用 topics 判斷相關」的限制。</li>
+      </ul>
+    </article>
   </section>
 
   {# ========== ⑤ 文件層級評估 ========== #}
   <section id="evaluation" class="tw-section">
     <div class="section-heading-row"><div><span class="section-kicker">5 · DOCUMENT-LEVEL RETRIEVAL</span><h2>檢索效果評估</h2></div></div>
     <p class="method-note">{{ eval_queries|length }} 個查詢（5 個主題 × 4 個）：每個主題 2 個用典型關鍵字（keyword），2 個刻意換說法（paraphrase）。相關性 = 新聞的 topics 含有查詢的目標主題。以下是 {{ split_info.label }} 測試集 {{ summary.documents|thousands }} 篇的結果。</p>
+    {% if state.split != 'modapte' %}<p class="method-note">說明文字裡的數字都是 ModApte（作業指定的切分）；目前 {{ split_info.label }} 的實際數字以表格和圖為準。</p>{% endif %}
 
     <details class="panel tw-glossary">
       <summary>這些指標代表什麼？（點一下展開）</summary>
@@ -260,6 +294,17 @@
     </table></div>
     <p class="method-note">粗體列是作業要求的核心比較（A：TF-IDF，B：TF-IDF 加權詞向量）；C、D 是額外比較。</p>
 
+    <article class="panel tw-block">
+      <h3>為什麼是這個結果？ <small>數字為 ModApte 的 nDCG@10</small></h3>
+      <ul class="rt-list">
+        <li><strong>TF-IDF（0.728）</strong>：TF-IDF 把每個詞當成獨立的一維，只比對字面。查詢詞有出現在新聞裡就找得到，所以關鍵字查詢有 0.936；查詢詞沒出現的新聞一律 0 分，所以換說法查詢只有 0.520。可能的改進：查詢擴展（例如把 petroleum 擴展成 oil、crude）或做 stemming。</li>
+        <li><strong>TF-IDF 加權 CBOW / Skip-Gram（0.848 / 0.908）</strong>：Word2Vec 從前後文學到詞和詞的關係，所以 petroleum ≈ oil，字面不同也找得到，換說法查詢還有 0.785 / 0.845。Skip-Gram 的 MRR 是 0.967，表示 20 題裡幾乎每題第 1 名都是相關新聞。</li>
+        <li><strong>不加權平均（C）和 TF-IDF 加權（B）差不多</strong>（Skip-Gram 0.900 vs 0.908、CBOW 0.858 vs 0.848）：TF-IDF 加權會讓稀有的詞在平均時佔比較大。好處是 said、mln 這種到處都有的詞被壓低；壞處是公司名這類罕見詞也被放大，而它們的向量只學過幾次、又和主題無關，兩種效果互相抵消。例：T2 tariffs on imports and trade sanctions，加權讓 sanctions、tariffs 主導，Skip-Gram 1.00；不加權時 imports 一樣重，排進柳橙汁進口、大豆制裁、農產品進口這些主題不是 trade 的新聞，只有 0.63。G2 grain shipments to the soviet union 則相反：加權讓 shipments、soviet 比 grain 重，排進蘇聯柴油、石油的新聞，0.87；不加權反而是 1.00。</li>
+        <li><strong>混合法 D（A + CBOW 0.836、A + Skip-Gram 0.823）</strong>：D 直接把 TF-IDF 和詞向量的 cosine 各乘 0.5 相加，但兩邊的分數範圍不同：20 個查詢的前 10 名，TF-IDF 落在 0.06–0.49，Skip-Gram 擠在 0.67–0.90。以 C3 為例，前 10 名之內 TF-IDF 差了 0.086，Skip-Gram 只差 0.037，所以相加後的排名主要由 TF-IDF 決定（推測），換說法查詢也掉回 0.744 / 0.699。可能的改進：相加前先把兩邊分數正規化（例如 min-max），或改用名次相加（reciprocal rank fusion）。</li>
+        <li><strong>E4 是詞向量最弱的一題</strong>（firm reports bigger losses than last year：TF-IDF 0.82、CBOW 0.63、Skip-Gram 0.26）：TF-IDF 直接比對字面，前 10 名的 8 篇 earn 裡有 7 篇含有 losses。詞向量則是把 6 個詞平均成一個向量，TF-IDF 加權後 losses 只佔 17%，比重最大的反而是 bigger（約 1/3，因為它在測試集很少見、idf 最高），其他都是 firm、reports、last、year 這種一般商業用語。平均出來是「一般商業新聞」的方向，Skip-Gram 前 10 名的分數全擠在 0.727–0.747，收購、原油、貿易新聞都排進來，只有 3 篇是 earn。加權平均也不保留詞序和「變大／變小」的方向，可能也有影響（推測）。可能的改進：查詢很短、又都是一般用語時，混合 TF-IDF 的字面比對（分數先正規化）。</li>
+      </ul>
+    </article>
+
     <div class="tw-two-col tw-block">
       <article class="panel">
         <h3>keyword vs paraphrase 查詢（nDCG@10）</h3>
@@ -267,7 +312,7 @@
           <thead><tr><th>方法</th><th class="tw-num">keyword</th><th class="tw-num">paraphrase</th></tr></thead>
           <tbody>{% for r in evaluation.types %}<tr><td>{{ r.label }}</td><td class="tw-num">{{ r.keyword|floatformat:3 }}</td><td class="tw-num">{{ r.paraphrase|floatformat:3 }}</td></tr>{% endfor %}</tbody>
         </table></div>
-        <p class="method-note">差距主要來自換說法的查詢：TF-IDF 只能比對完全相同的詞。</p>
+        <p class="method-note">TF-IDF 只能找到「至少含有一個查詢詞」的新聞。關鍵字查詢的詞大多出現在相關新聞裡（C1 有 96%、T1 有 95% 的相關新聞含有查詢詞），換說法查詢就少很多（C4 25%、T3 15%）。其他相關新聞對 TF-IDF 都是 0 分，所以 TF-IDF 從 0.936 掉到 0.520。詞向量不需要字面相同，所以 TF-IDF 加權 Skip-Gram 只從 0.971 掉到 0.845（ModApte）。</p>
       </article>
       <article class="panel">
         <h3>Word2Vec 訓練語料加大</h3>
@@ -276,14 +321,14 @@
           <thead><tr><th>方法</th><th>訓練語料</th><th class="tw-num">詞數</th><th class="tw-num">nDCG@10</th></tr></thead>
           <tbody>{% for r in evaluation.corpus %}<tr><td>{{ r.label }}</td><td>{{ r.corpus_label }}（{{ r.docs|thousands }} 篇）</td><td class="tw-num">{{ r.tokens|thousands }}</td><td class="tw-num">{{ r.ndcg10|floatformat:3 }}</td></tr>{% endfor %}</tbody>
         </table></div>
-        <p class="method-note">README 允許用未使用的 {{ counts.unused|thousands }} 篇收集統計資訊；只用來訓練詞向量，不參與檢索。</p>
+        <p class="method-note">README 允許用未使用的 {{ counts.unused|thousands }} 篇收集統計資訊；這些新聞只用來訓練詞向量，不參與檢索。以 ModApte 為例，加入後訓練詞數從 805,875 增加到 1,470,341、詞彙量從 14,679 增加到 21,950，每個詞看到更多前後文、更多詞有向量，所以 CBOW 0.848 → 0.867、Skip-Gram 0.908 → 0.921。「資料越多，詞向量越準」是一般常見的解釋；這裡兩種架構都變好，和這個解釋一致。</p>
         {% else %}<p class="method-note">{{ split_info.label }} 沒有未使用的文件，這個實驗不適用（切換到 ModApte 或 ModLewis 可以看到）。</p>{% endif %}
       </article>
     </div>
 
     <article class="panel tw-block">
       <h3>逐查詢 nDCG@10 <small>A vs B</small></h3>
-      <p class="method-note">每一列是一個查詢，顏色越深代表這題越好，框起來的是這題最好的方法。最右欄是 Skip-Gram 減 TF-IDF 的差距。</p>
+      <p class="method-note">每一列是一個查詢，顏色越深代表這題越好，框起來的是這題最好的方法。最右欄是 Skip-Gram 減 TF-IDF 的差距。在 ModApte，差距最大的五題都是換說法查詢：T4 +0.82、T3 +0.62、A3 +0.61、C4 +0.61、G4 +0.53，原因同上（查詢詞沒出現在相關新聞裡，TF-IDF 給 0 分）。Skip-Gram 低於 TF-IDF 的只有 E4（−0.57，原因見上面）和 A1（−0.07）。</p>
       <div class="tw-table-wrap"><table class="data-table tw-compact tw-heat-table">
         <thead><tr><th>查詢</th><th>主題</th><th>類型</th><th class="tw-num">A · TF-IDF</th><th class="tw-num">B · CBOW</th><th class="tw-num">B · Skip-Gram</th><th class="tw-num">SG − TF-IDF</th></tr></thead>
         <tbody>{% for r in evaluation.queries %}<tr>
@@ -296,8 +341,10 @@
     </article>
 
     {% if has_results %}
-    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:split_result' state.split 'metrics_comparison.png' %}" alt="Heatmap of mean metrics per method"></figure>
-    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:split_result' state.split 'keyword_vs_paraphrase.png' %}" alt="nDCG for keyword and paraphrase queries"></figure>
+    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:split_result' state.split 'metrics_comparison.png' %}" alt="Heatmap of mean metrics per method">
+      <figcaption class="method-note">四個指標的熱圖：每一欄顏色越深越高，框起來的是該欄最好的方法。TF-IDF 那一列最淺，因為換說法查詢把它的平均拉低了。Recall@10 全部只有 0.03–0.04（ModApte），因為每個主題有上百篇相關新聞，前 10 名最多只能找回 10 篇；這是指標本身的上限，不是方法不好。</figcaption></figure>
+    <figure class="panel tw-block tw-figure"><img src="{% url 'reuters:split_result' state.split 'keyword_vs_paraphrase.png' %}" alt="nDCG for keyword and paraphrase queries">
+      <figcaption class="method-note">每一列的兩個點是同一個方法在關鍵字（藍）和換說法（橘）查詢的 nDCG@10，線越長代表換說法時掉越多。TF-IDF 的線最長（0.94 → 0.52），因為它只能比對字面；詞向量的線短很多（Skip-Gram 0.97 → 0.85），因為它不需要字面相同。混合法 D 的線又變長（A + Skip-Gram 0.95 → 0.70），因為排名被 TF-IDF 的分數主導（推測，見上面）。數字為 ModApte。</figcaption></figure>
     {% endif %}
     {% else %}
     <p class="panel tw-muted">還沒有 {{ split_info.label }} 的評估結果。請先執行 <code>python manage.py run_reuters_experiments</code>。</p>
@@ -316,11 +363,12 @@
       </table></div>
       <p class="method-note">淺藍底的欄位是目前選的切分。每個切分的詞向量都用它自己的訓練集重新訓練。</p>
       <ul class="rt-list">
-        <li><strong>不論哪個切分，B 都比 A 好</strong>，差距主要來自換說法的查詢，所以結論不是只有 ModApte 才成立。</li>
-        <li><strong>ModLewis 全部變低，是「答案」變了，不是方法變差</strong>：測試集多了約 2,900 篇沒有 TOPICS 標籤的新聞，一律算不相關。其中不少其實是相關的，例如查 dividend 時，TF-IDF 前 10 名有 7 篇是沒被標註的股利新聞。</li>
-        <li><strong>ModHayes 的 A、B 差距最小</strong>：測試集只有 722 篇，earn 只有 22 篇，相關新聞太少、分布特殊，數字比較不穩定。</li>
+        <li><strong>三種切分都是詞向量比較好，因為原因和切分無關</strong>：TF-IDF 只比對字面，換說法查詢的詞多半沒出現在相關新聞裡，那些新聞就拿 0 分；詞向量用各自的訓練集重新訓練，一樣學得到 petroleum ≈ oil。所以差距都集中在換說法查詢，TF-IDF → TF-IDF 加權 Skip-Gram：ModApte 0.520 → 0.845、ModLewis 0.278 → 0.648、ModHayes 0.386 → 0.537；關鍵字查詢只差 0.03–0.04。</li>
+        <li><strong>ModLewis 全部變低，是評分用的「答案」變了，不是方法變差</strong>：測試集多了約 2,900 篇沒有 TOPICS 標籤的新聞（3,166 篇 vs ModApte 280 篇），而規則是沒有標籤就算不相關，但其中有些其實相關。例：E2 dividend declared to shareholders，TF-IDF 前 10 名有 7 篇沒有標籤，其中 5 篇明明是股利新聞。所以每個方法都被扣分：TF-IDF 0.728 → 0.531、TF-IDF 加權 Skip-Gram 0.908 → 0.732。</li>
+        <li><strong>ModHayes 的數字比較不穩定</strong>：測試集只有 722 篇、earn 只有 22 篇相關，結果容易被少數幾篇新聞左右（推測）。實際上不同指標的排名就不一致：nDCG@10 最好的是 Mean Skip-Gram（0.700），MRR 最好的卻是 Mean CBOW（0.862），TF-IDF 和 TF-IDF 加權 Skip-Gram 的 MRR 只差 0.014（0.772 vs 0.786）。TF-IDF 和詞向量的差距也是三種切分裡最小的（nDCG@10 0.580 vs 0.675），這個原因沒有直接驗證，可能和測試集小、主題分布特殊有關（推測）。</li>
       </ul>
-      {% if split_results.has_chart %}<img class="rt-wide-img" src="{% url 'reuters:result_file' 'split_comparison.png' %}" alt="P@10, MRR and nDCG@10 of TF-IDF and TF-IDF weighted Word2Vec on the three splits">{% endif %}
+      {% if split_results.has_chart %}<figure class="tw-figure"><img class="rt-wide-img" src="{% url 'reuters:result_file' 'split_comparison.png' %}" alt="P@10, MRR and nDCG@10 of TF-IDF and TF-IDF weighted Word2Vec on the three splits">
+        <figcaption class="method-note">三種切分 × TF-IDF 和兩種 TF-IDF 加權詞向量。同一個方法在 ModLewis（黃）都比 ModApte（藍）低，因為 ModLewis 的測試集多了沒有標籤、被算成不相關的新聞；但在每一個切分裡，詞向量的長條都比 TF-IDF 長，因為換說法查詢的問題在每個切分都存在。</figcaption></figure>{% endif %}
     </article>
     {% endif %}
   </section>

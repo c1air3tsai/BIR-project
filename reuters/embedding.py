@@ -18,6 +18,7 @@
 # 參數或語料改變時會自動重新訓練。
 # =============================================================================
 import hashlib
+import inspect
 import json
 import time
 from functools import lru_cache
@@ -42,6 +43,10 @@ PARAMS = {
     'seed': 42,
     'workers': 1,
 }
+
+# 沒有寫在 PARAMS、沿用 gensim 預設值的學習率（網頁顯示用；直接讀 gensim 的預設值，不會和實際訓練不一致）
+_GENSIM_DEFAULTS = inspect.signature(Word2Vec).parameters
+LEARNING_RATE = {name: _GENSIM_DEFAULTS[name].default for name in ('alpha', 'min_alpha')}
 
 
 def model_dir():
