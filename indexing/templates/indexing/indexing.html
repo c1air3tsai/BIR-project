@@ -1,0 +1,339 @@
+{% extends 'search/base.html' %}
+{% comment %}
+  Project 5 · Inverted Index 建構：BSBI vs SPIMI（indexing/views.py 的 page() 產生）
+  由上到下：① 資料與前處理 ② Part 1 Inverted Index ③ BSBI ④ SPIMI ⑤ 效能比較 ⑥ 檢索測試
+  資料來源可以切換（?source=reuters / pubmed，indexing/sources.py），一次顯示一個來源的結果
+  效能數字與中間結果來自 run_indexing_experiments（docs/project5_results/[pubmed/]summary.json）；查詢是即時的
+  樣式沿用 Project 3 的 weighting/static/weighting/term_weighting.css（tw-*），另加 indexing/static/indexing/indexing.css（ix-*）
+{% endcomment %}
+{% load static reuters_ui indexing_ui %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'weighting/term_weighting.css' %}?v=p5-1"><link rel="stylesheet" href="{% static 'indexing/indexing.css' %}?v=p5-6">{% endblock %}
+{% block content %}
+<main class="site-shell page-main tw-page ix-page" id="main">
+
+  <header class="page-heading">
+    <span class="section-kicker">PROJECT #5 · {{ source.kicker }} · BSBI vs SPIMI</span>
+    <h1>Inverted Index 建構。</h1>
+    <p>同一批文件、同一套前處理、同一個記憶體上限，分別用 BSBI 與 SPIMI 建出倒排索引，比較兩種方法的建構時間、記憶體、blocks 與中間檔，最後用同樣的查詢確認兩個索引的檢索結果完全相同。</p>
+  </header>
+
+  {# 資料來源：一次顯示一個來源的結果，切換後整頁（Part 1 查詢、BSBI / SPIMI、效能比較、檢索測試）都換成那個來源 #}
+  <nav class="ix-sources" aria-label="資料來源">
+    <span>資料來源</span>
+    {% for s in sources %}{% if s.available %}<a href="?source={{ s.key }}"{% if s.key == source.key %} class="is-active" aria-current="page"{% endif %}>{{ s.label }}</a>{% else %}<span class="is-disabled" title="還沒下載：python manage.py fetch_pubmed_glp1">{{ s.label }}</span>{% endif %}{% endfor %}
+  </nav>
+
+  <nav class="tw-steps" aria-label="Sections">
+    <a href="#dataset"><b>1</b> 資料與前處理</a>
+    <a href="#part1"><b>2</b> Inverted Index</a>
+    <a href="#bsbi"><b>3</b> BSBI</a>
+    <a href="#spimi"><b>4</b> SPIMI</a>
+    <a href="#compare"><b>5</b> 效能比較</a>
+    <a href="#retrieval"><b>6</b> 檢索測試</a>
+  </nav>
+
+  {% if not results %}
+  <div class="panel tw-block"><p class="method-note">還沒有實驗結果。請先執行 <code>docker compose exec web python manage.py run_indexing_experiments{% if source.key != 'reuters' %} --source {{ source.key }}{% endif %}</code>（約 30 分鐘以上），完成後重新整理這一頁。Part 1 的即時查詢不需要實驗結果。</p></div>
+  {% endif %}
+
+  {# ========== ① 資料與前處理 ========== #}
+  <section id="dataset" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">1 · DATASET</span><h2>{{ source.label }} 全部 {{ part1.documents|thousands }} {{ source.unit }}</h2></div>
+      {% if source.key == 'reuters' %}<a class="secondary-button small-button" href="{% url 'reuters:news_list' %}">瀏覽全部新聞 →</a>{% endif %}</div>
+    {% if results %}
+    <div class="metrics-grid tw-metrics">
+      <div><span>文件</span><strong>{{ results.dataset.documents|thousands }}</strong><small>{% if source.key == 'pubmed' %}docID = 依 PMID 排序的 1–{{ results.dataset.documents|thousands }}{% else %}docID = NEWID；{{ results.dataset.empty|thousands }} 篇前處理後沒有任何詞{% endif %}</small></div>
+      <div><span>Tokens（前處理後）</span><strong>{{ results.dataset.tokens|thousands }}</strong><small>BSBI 的 term-document pairs 數</small></div>
+      <div><span>Vocabulary</span><strong>{{ results.dataset.vocabulary|thousands }}</strong><small>不重複的 terms</small></div>
+      <div><span>Postings</span><strong>{{ results.dataset.postings|thousands }}</strong><small>不重複的 (term, doc)</small></div>
+    </div>
+    {% endif %}
+    <div class="tw-two-col">
+      <article class="panel">
+        <h3>文件與前處理</h3>
+        <ul class="ix-list">
+          {% if source.key == 'pubmed' %}<li>資料集：作業建議的「疾病名稱，例如 GLP-1」。用 PubMed E-utilities 查 <code>GLP-1 AND hasabstract AND english</code>，取最新的 {{ part1.documents|thousands }} 篇有摘要的英文文獻（python manage.py fetch_pubmed_glp1）。每篇的文字是標題加摘要，docID 是依 PMID 由小到大重新編號的 1–{{ part1.documents|thousands }}。</li>
+          {% else %}<li>資料集：作業 Part 1 指定的 Reuters-21578（1987 年路透社新聞，UCI 版本），沿用 Project 4 下載與解析好的資料。每篇新聞的文字是標題加內文，docID 用 Reuters 的 NEWID（1–21,578）。</li>{% endif %}
+          <li>Tokenization：HW1 的 tokenizer；Lowercase normalization：全部轉小寫。</li>
+          <li>Stop-word removal（可選，有做）：HW1 的 72 個 stopword；另外移除沒有英文字母的 token（純數字、金額）。</li>
+          <li>Stemming / Lemmatization（可選，沒有做）：保留原詞形，postings 比較好對照原文。</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>怎麼比才公平</h3>
+        <ul class="ix-list">
+          <li>同一批文件、同樣的讀取順序、同一個前處理函式（作業要求）。</li>
+          <li>同一個記憶體上限（預設 {{ results.limit_mb|default:4 }} MB）：BSBI 限制記憶體裡的 pairs，SPIMI 限制記憶體裡的 dictionary + postings，用量都以 Python 物件的實際大小（sys.getsizeof）估計。</li>
+          <li>同樣的磁碟格式與同一段合併程式（k-way merge），差別只在「怎麼建出每個 block」。</li>
+          <li>時間：每種方法跑 {{ results.repeats|default:5 }} 次取中位數；記憶體：另外跑一次，用 tracemalloc 量峰值（tracemalloc 會拖慢速度，所以不和計時一起跑）。</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  {# ========== ② Part 1 Inverted Index ========== #}
+  <section id="part1" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">2 · PART 1 · INVERTED INDEX</span><h2>Dictionary 與 Postings List</h2></div></div>
+    <div class="tw-two-col">
+      <article class="panel">
+        <h3>Dictionary：先找到 term</h3>
+        <p class="method-note">Dictionary 存所有不重複的 terms（vocabulary），每個 term 記著 df（幾篇文件含有它）和它的 postings 放在哪裡。查詢時先查 dictionary：查不到就代表沒有任何文件含有這個詞，不必再讀 postings；查得到就知道要去哪裡讀、要讀多長。dictionary 只有 {{ part1.vocabulary_size|thousands }} 筆，可以整個放在記憶體。</p>
+      </article>
+      <article class="panel">
+        <h3>Postings list：含有這個 term 的文件</h3>
+        <p class="method-note">Postings list 是含有這個 term 的所有 docID，<strong>由小到大排好</strong>，每篇只記一次。排好序之後，AND 和 OR 都只要兩個指標從頭往後走一次（AND 收下兩邊都有的 docID、OR 收下任一邊的），不用拿每一篇去和另一邊逐一比對。postings 的總量比 dictionary 大得多，最終索引把它存在磁碟上的 postings.bin。</p>
+      </article>
+    </div>
+
+    <article class="panel tw-block">
+      <h3>實際的索引結構 <small>作業範例表格裡的 4 個 terms，在 {{ source.label }} 上建出來的樣子</small></h3>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th>Term（dictionary）</th><th class="tw-num">df</th><th>Postings list（docID，前 12 個）</th></tr></thead>
+        <tbody>{% for row in part1.examples %}<tr><td><strong>{{ row.term }}</strong></td><td class="tw-num">{{ row.df|thousands }}</td>
+          <td class="ix-ids">{% doc_buttons row.postings row.term %}{% if row.more %}<em>… 還有 {{ row.more|thousands }} 篇</em>{% endif %}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="method-note">Vocabulary 共 {{ part1.vocabulary_size|thousands }} 個 terms，依字母排序的前 24 個：{{ part1.vocabulary_head|join:"、" }}（排在最前面的是數字開頭、用連字號連起來的詞{% if source.key == 'reuters' %}，例如 0-billion-dlr{% endif %}：HW1 的 tokenizer 會保留連字號複合詞，裡面有英文字母所以沒有被當成純數字刪掉）。</p>
+    </article>
+
+    <form method="get" class="panel tw-search-form" action="#part1">
+      <input type="hidden" name="source" value="{{ source.key }}">
+      <div class="research-controls">
+        <label class="tw-grow"><span>Term 1</span><input name="a" value="{{ state.a }}" maxlength="40"></label>
+        <label class="tw-grow"><span>Term 2</span><input name="b" value="{{ state.b }}" maxlength="40"></label>
+        <button class="primary-button" type="submit">查詢 postings / AND / OR</button>
+      </div>
+      <div class="tw-chips">{{ source.label }} 的 5 組查詢：{% for name, a, b in queries %}<a href="?source={{ source.key }}&amp;a={{ a }}&amp;b={{ b }}#part1">{{ a }} · {{ b }}</a>{% endfor %}</div>
+      <div class="tw-chips">作業的範例查詢：{% for name, a, b in example_queries %}<a href="?source={{ source.key }}&amp;a={{ a }}&amp;b={{ b }}#part1">{{ a }} · {{ b }}</a>{% endfor %}</div>
+      {% with r=part1.result a=state.terms.0 b=state.terms.1 %}{% with both=a|add:" "|add:b %}
+      {% if not a or not b %}<p class="tw-muted">有一個查詢詞在前處理後是空的（stopword 或純數字），dictionary 裡不會有它。</p>{% endif %}
+      <div class="tw-table-wrap"><table class="data-table tw-compact ix-query">
+        <thead><tr><th>查詢</th><th class="tw-num">篇數</th><th>docID（前 20 個，點了看全文）</th></tr></thead>
+        <tbody>
+          <tr><td>single-term：<strong>{{ a }}</strong></td><td class="tw-num">{{ r.a.count|thousands }}</td><td class="ix-ids">{% doc_buttons r.a.ids a %}{% if r.a.more %}<em>…</em>{% endif %}</td></tr>
+          <tr><td>single-term：<strong>{{ b }}</strong></td><td class="tw-num">{{ r.b.count|thousands }}</td><td class="ix-ids">{% doc_buttons r.b.ids b %}{% if r.b.more %}<em>…</em>{% endif %}</td></tr>
+          <tr><td><strong>{{ a }} AND {{ b }}</strong></td><td class="tw-num">{{ r.and.count|thousands }}</td><td class="ix-ids">{% doc_buttons r.and.ids both %}{% if r.and.more %}<em>…</em>{% endif %}</td></tr>
+          <tr><td><strong>{{ a }} OR {{ b }}</strong></td><td class="tw-num">{{ r.or.count|thousands }}</td><td class="ix-ids">{% doc_buttons r.or.ids both %}{% if r.or.more %}<em>…</em>{% endif %}</td></tr>
+        </tbody>
+      </table></div>
+      {% endwith %}{% endwith %}
+      <p class="method-note">查詢詞也做同樣的前處理（例如轉小寫），才找得到 dictionary 裡的 term。這裡用的是 Part 1 的基準索引（整個放在記憶體）；第 6 段用同樣的查詢去查 BSBI 與 SPIMI 寫在磁碟上的索引。</p>
+    </form>
+  </section>
+
+  {% if results %}
+  {# ========== ③ BSBI ========== #}
+  <section id="bsbi" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">3 · PART 2 · BLOCKED SORT-BASED INDEXING</span><h2>BSBI：先產生 pairs、排序，再合併</h2></div></div>
+    <p class="method-note">記憶體上限 {{ results.limit_mb }} MB。BSBI 記憶體裡放的是 (termID, docID) pairs，每個 pair 在 Python 裡約 {{ results.pair_bytes }} bytes（tuple 56 + list 指標 8），所以一個 block 最多約 {{ bsbi.blocks.0.pairs|thousands }} 個 pairs，{{ results.dataset.documents|thousands }} 篇切成 <strong>{{ bsbi.block_count }} 個 blocks</strong>。</p>
+
+    <div class="ix-steps">
+      <article class="panel ix-wide">
+        <h3><b>1</b> Divide documents into blocks</h3>
+        <p class="method-note">依 docID 順序讀文件，pairs 用量到上限就結束這個 block（切在兩篇文件之間）。第 1 個 block 是 Doc {{ bsbi.blocks.0.first_doc }}–{{ bsbi.blocks.0.last_doc|thousands }}（{{ bsbi.blocks.0.docs|thousands }} 篇；作業範例是每 1,000 篇一個 block）。</p>
+        <details class="ix-details"><summary>全部 {{ bsbi.block_count }} 個 blocks</summary>
+          <div class="tw-table-wrap"><table class="data-table tw-compact">
+            <thead><tr><th>Block</th><th>文件範圍（docID）</th><th class="tw-num">篇數</th><th class="tw-num">pairs</th><th class="tw-num">terms</th><th class="tw-num">檔案</th></tr></thead>
+            <tbody>{% for b in bsbi.blocks %}<tr><td>{{ b.block }}</td><td>{{ b.first_doc|thousands }}–{{ b.last_doc|thousands }}</td><td class="tw-num">{{ b.docs|thousands }}</td><td class="tw-num">{{ b.pairs|thousands }}</td><td class="tw-num">{{ b.terms|thousands }}</td><td class="tw-num">{{ b.kb|floatformat:0 }} KB</td></tr>{% endfor %}</tbody>
+          </table></div></details>
+      </article>
+      <article class="panel">
+        <h3><b>2</b> Generate term-document pairs</h3>
+        <p class="method-note">每個 token 都變成一個 (termID, docID)。termID 來自<strong>全域的 term → termID 對照表</strong>：第一次看到的 term 拿下一個編號，之後每個 block 都查同一張表，所以不同 blocks 的 termID 一定一致。下面是 Doc 1 產生的前 16 個 pairs（依文字順序，同一個詞出現兩次就有兩個 pair）。</p>
+        <div class="tw-table-wrap"><table class="data-table tw-compact ix-mono">
+          <thead><tr><th class="tw-num">termID</th><th>term</th><th class="tw-num">docID</th></tr></thead>
+          <tbody>{% for p in samples.bsbi.pairs %}<tr><td class="tw-num">{{ p.0 }}</td><td>{{ p.1 }}</td><td class="tw-num">{{ p.2 }}</td></tr>{% endfor %}</tbody>
+        </table></div>
+      </article>
+      <article class="panel">
+        <h3><b>3</b> Sort term-document pairs</h3>
+        <p class="method-note">block 1 的 {{ bsbi.blocks.0.pairs|thousands }} 個 pairs 依 (termID, docID) 排序。排序後同一個 termID 的 pairs 連在一起，docID 也由小到大，下一步才能一次掃過去建 postings。下面是排序後的前 16 個：同一篇裡出現好幾次的詞，每次都是一個 pair，要到第 4 步才合併成一筆。</p>
+        <div class="tw-table-wrap"><table class="data-table tw-compact ix-mono">
+          <thead><tr><th class="tw-num">termID</th><th>term</th><th class="tw-num">docID</th></tr></thead>
+          <tbody>{% for p in samples.bsbi.sorted %}<tr><td class="tw-num">{{ p.0 }}</td><td>{{ p.1 }}</td><td class="tw-num">{{ p.2 }}</td></tr>{% endfor %}</tbody>
+        </table></div>
+      </article>
+      <article class="panel ix-wide">
+        <h3><b>4</b> Build partial inverted index</h3>
+        <p class="method-note">從頭掃排序後的 pairs：termID 一樣就把 docID 收進同一個 postings（同一篇的重複 pair 只留一個），寫到磁碟 blocks/block_001.bin。block 1 的局部索引前 10 筆：</p>
+        <div class="tw-table-wrap"><table class="data-table tw-compact ix-mono">
+          <thead><tr><th class="tw-num">termID</th><th>term</th><th class="tw-num">df</th><th>postings（前 8 個）</th></tr></thead>
+          <tbody>{% for p in samples.bsbi.partial %}<tr><td class="tw-num">{{ p.0 }}</td><td>{{ p.1 }}</td><td class="tw-num">{{ p.2 }}</td><td class="ix-ids">{% doc_buttons p.3 p.1 %}</td></tr>{% endfor %}</tbody>
+        </table></div>
+      </article>
+      <article class="panel ix-wide">
+        <h3><b>5</b> Merge partial indexes</h3>
+        <p class="method-note">{{ bsbi.block_count }} 個 block 檔同時打開，各讀第一筆放進 heap，每次取出 termID 最小的；不同 block 的同一個 termID 依 block 順序接起來（block 本來就依 docID 先後切，接起來仍然排好序）。記憶體裡只有「每個 block 目前這一筆」。下面追蹤兩個 term 在各 block 的局部 postings 與合併後的結果：</p>
+        {% for term, parts in samples.bsbi.trace.items %}
+        <div class="ix-merge">
+          <p><strong>{{ term }}</strong>（termID {% for t, tid in samples.bsbi.term_ids.items %}{% if t == term %}{{ tid }}{% endif %}{% endfor %}，每個 block 都是同一個編號）</p>
+          <ul>{% for part in parts %}<li><span class="ix-tag">block {{ part.0 }}</span>{% doc_buttons part.1 term %}</li>{% endfor %}</ul>
+          {% for m in samples.bsbi.merged %}{% if m.0 == term %}<p class="ix-result">合併 → df {{ m.2|length }}：{% doc_buttons m.2 term %}</p>{% endif %}{% endfor %}
+        </div>
+        {% endfor %}
+      </article>
+    </div>
+  </section>
+
+  {# ========== ④ SPIMI ========== #}
+  <section id="spimi" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">4 · PART 3 · SINGLE-PASS IN-MEMORY INDEXING</span><h2>SPIMI：直接在記憶體建 dictionary 與 postings</h2></div></div>
+    <p class="method-note">同樣 {{ results.limit_mb }} MB 上限。SPIMI 不產生 pairs、也不需要 termID：dictionary 直接用 term 字串當 key，新 term 約 {{ results.spimi_bytes.entry }} bytes 加上字串本身，之後每多一篇文件只多 {{ results.spimi_bytes.posting }} bytes（postings list 裡的一個指標）。同樣的記憶體能放更多文件，所以只切成 <strong>{{ spimi.block_count }} 個 blocks</strong>（BSBI 是 {{ bsbi.block_count }} 個）。</p>
+
+    <div class="ix-steps">
+      <article class="panel ix-wide">
+        <h3><b>1</b> Read documents sequentially</h3>
+        <p class="method-note">和 BSBI 一樣依 docID 順序逐篇讀取、做同一套前處理。第 1 個 block 是 Doc {{ spimi.blocks.0.first_doc }}–{{ spimi.blocks.0.last_doc|thousands }}（{{ spimi.blocks.0.docs|thousands }} 篇），是 BSBI 第 1 個 block 的 {% widthratio spimi.blocks.0.docs bsbi.blocks.0.docs 1 %} 倍左右。</p>
+      </article>
+      <article class="panel">
+        <h3><b>2</b> Build dictionary and postings lists</h3>
+        <p class="method-note">讀到 term 時：不在 dictionary → 建新 entry；已經在 → 把 docID 加到它的 postings；postings 最後一個已經是這篇就跳過（同一篇只記一次）。下面是 block 1 寫出前，dictionary 依<strong>加入順序</strong>的前 10 筆：</p>
+        <div class="tw-table-wrap"><table class="data-table tw-compact ix-mono">
+          <thead><tr><th>term</th><th class="tw-num">df</th><th>postings（前 8 個）</th></tr></thead>
+          <tbody>{% for p in samples.spimi.dictionary %}<tr><td>{{ p.0 }}</td><td class="tw-num">{{ p.1|thousands }}</td><td class="ix-ids">{% doc_buttons p.2 p.0 %}</td></tr>{% endfor %}</tbody>
+        </table></div>
+      </article>
+      <article class="panel">
+        <h3><b>3</b> Memory management</h3>
+        <p class="method-note">用量到 {{ results.limit_mb }} MB 就把 dictionary 的 terms <strong>排序</strong>後寫到 blocks/block_NNN.bin，清空記憶體，繼續讀下一篇。唯一的排序是這個 block 的詞彙（約 {{ spimi.blocks.0.terms|thousands }} 個 terms），postings 本來就照讀取順序排好了。寫出時依字母順序的前 10 筆：</p>
+        <div class="tw-table-wrap"><table class="data-table tw-compact ix-mono">
+          <thead><tr><th>term</th><th class="tw-num">df</th><th>postings（前 8 個）</th></tr></thead>
+          <tbody>{% for p in samples.spimi.sorted %}<tr><td>{{ p.0 }}</td><td class="tw-num">{{ p.1|thousands }}</td><td class="ix-ids">{% doc_buttons p.2 p.0 %}</td></tr>{% endfor %}</tbody>
+        </table></div>
+        <details class="ix-details"><summary>全部 {{ spimi.block_count }} 個 blocks</summary>
+          <div class="tw-table-wrap"><table class="data-table tw-compact">
+            <thead><tr><th>Block</th><th>文件範圍（docID）</th><th class="tw-num">篇數</th><th class="tw-num">postings</th><th class="tw-num">terms</th><th class="tw-num">估計用量</th><th class="tw-num">檔案</th></tr></thead>
+            <tbody>{% for b in spimi.blocks %}<tr><td>{{ b.block }}</td><td>{{ b.first_doc|thousands }}–{{ b.last_doc|thousands }}</td><td class="tw-num">{{ b.docs|thousands }}</td><td class="tw-num">{{ b.pairs|thousands }}</td><td class="tw-num">{{ b.terms|thousands }}</td><td class="tw-num">{{ b.memory_mb|floatformat:2 }} MB</td><td class="tw-num">{{ b.kb|floatformat:0 }} KB</td></tr>{% endfor %}</tbody>
+          </table></div></details>
+      </article>
+      <article class="panel ix-wide">
+        <h3><b>4</b> Merge partial indexes</h3>
+        <p class="method-note">和 BSBI 用同一段 k-way merge，只是 key 是 term 字串（每個 block 都依字母排好）。同樣追蹤兩個 term：</p>
+        {% for term, parts in samples.spimi.trace.items %}
+        <div class="ix-merge">
+          <p><strong>{{ term }}</strong></p>
+          <ul>{% for part in parts %}<li><span class="ix-tag">block {{ part.0 }}</span>{% doc_buttons part.1 term %}</li>{% endfor %}</ul>
+          {% for m in samples.spimi.merged %}{% if m.0 == term %}<p class="ix-result">合併 → df {{ m.1|length }}：{% doc_buttons m.1 term %}</p>{% endif %}{% endfor %}
+        </div>
+        {% endfor %}
+      </article>
+    </div>
+  </section>
+
+  {# ========== ⑤ 效能比較 ========== #}
+  <section id="compare" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">5 · BSBI vs SPIMI</span><h2>效能比較</h2></div></div>
+    <p class="method-note">完整語料 {{ results.dataset.documents|thousands }} 篇、記憶體上限 {{ results.limit_mb }} MB；時間是 {{ results.repeats }} 次的中位數（BSBI 每次 {% for s in bsbi.runs %}{{ s|floatformat:2 }}{% if not forloop.last %} / {% endif %}{% endfor %} 秒，SPIMI {% for s in spimi.runs %}{{ s|floatformat:2 }}{% if not forloop.last %} / {% endif %}{% endfor %} 秒）。</p>
+    <p class="method-note">Baseline 是 Part 1 的基本建法：同樣的文件與前處理，但<strong>不限制記憶體</strong>，整份索引放在記憶體裡建好，最後一次寫成同樣格式的最終索引；沒有 blocks、中間檔與合併，當作「記憶體夠大時」的參考。</p>
+    <div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table tw-compact ix-compare">
+      <thead><tr><th>比較項目</th>{% if baseline %}<th class="tw-num ix-base">Baseline</th>{% endif %}<th class="tw-num">BSBI</th><th class="tw-num">SPIMI</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Index construction time</strong></td>{% if baseline %}<td class="tw-num ix-base">{{ baseline.seconds|floatformat:2 }} 秒</td>{% endif %}<td class="tw-num">{{ bsbi.seconds|floatformat:2 }} 秒</td><td class="tw-num">{{ spimi.seconds|floatformat:2 }} 秒</td><td>BSBI 是 SPIMI 的 {{ results.ratios.time|floatformat:2 }} 倍</td></tr>
+        <tr class="ix-sub-row"><td>　不含前處理</td>{% if baseline %}<td class="tw-num ix-base">{{ baseline.index_seconds|floatformat:2 }} 秒</td>{% endif %}<td class="tw-num">{{ bsbi.index_seconds|floatformat:2 }} 秒</td><td class="tw-num">{{ spimi.index_seconds|floatformat:2 }} 秒</td><td>前處理三者一樣（約 {{ bsbi.times.preprocess|floatformat:1 }} 秒）；只看建索引的部分，BSBI 是 SPIMI 的 {{ results.ratios.index_time|floatformat:2 }} 倍</td></tr>
+        <tr><td><strong>Memory usage</strong></td>{% if baseline %}<td class="tw-num ix-base">{{ baseline.peak_mb|floatformat:1 }} MB</td>{% endif %}<td class="tw-num">{{ bsbi.peak_mb|floatformat:1 }} MB</td><td class="tw-num">{{ spimi.peak_mb|floatformat:1 }} MB</td><td>tracemalloc 峰值；Baseline 整份索引都在記憶體，文件越多用越多；BSBI 另外一直留著 term → termID 對照表（約 {{ bsbi.term_id_map_mb|floatformat:1 }} MB）</td></tr>
+        <tr><td><strong>Number of blocks</strong></td>{% if baseline %}<td class="tw-num ix-base">—</td>{% endif %}<td class="tw-num">{{ bsbi.block_count }}</td><td class="tw-num">{{ spimi.block_count }}</td><td>同樣 {{ results.limit_mb }} MB，SPIMI 每個 block 放得下更多文件</td></tr>
+        <tr><td><strong>Intermediate files</strong></td>{% if baseline %}<td class="tw-num ix-base">0</td>{% endif %}<td class="tw-num">{{ bsbi.intermediate_files }} 個 · {{ bsbi.intermediate_mb|floatformat:1 }} MB</td><td class="tw-num">{{ spimi.intermediate_files }} 個 · {{ spimi.intermediate_mb|floatformat:1 }} MB</td><td>每個 block 一個 partial index 檔；總大小差不多（BSBI 每筆 term 存 4 bytes 的 termID，SPIMI 存 term 字串，但 SPIMI 的 term 在比較少的 blocks 裡重複）</td></tr>
+        <tr><td><strong>Final index size</strong></td>{% if baseline %}<td class="tw-num ix-base">{{ baseline.final_mb|floatformat:2 }} MB</td>{% endif %}<td class="tw-num">{{ bsbi.final_mb|floatformat:2 }} MB</td><td class="tw-num">{{ spimi.final_mb|floatformat:2 }} MB</td><td>dictionary {{ bsbi.dictionary_kb|floatformat:0 }} KB + postings {{ bsbi.postings_mb|floatformat:2 }} MB；三者完全相同，因為最後的索引內容一樣</td></tr>
+        <tr><td><strong>Implementation complexity</strong></td>{% if baseline %}<td class="tw-num ix-base">{{ results.complexity.baseline }} 行</td>{% endif %}<td class="tw-num">{{ results.complexity.bsbi }} 行</td><td class="tw-num">{{ results.complexity.spimi }} 行</td><td>不含空行與註解；BSBI、SPIMI 共用的磁碟格式與合併程式另有 {{ results.complexity.shared }} 行。分析見下表</td></tr>
+        <tr class="ix-sub-row"><td>　記憶體裡處理的資料筆數</td>{% if baseline %}<td class="tw-num ix-base">{{ results.dataset.postings|thousands }}</td>{% endif %}<td class="tw-num">{{ bsbi.block_entries|thousands }}</td><td class="tw-num">{{ spimi.block_entries|thousands }}</td><td>BSBI 每個 token 一個 pair（含同一篇的重複）；SPIMI 與 Baseline 每個 (term, doc) 只記一次（Baseline 全部同時放在記憶體）</td></tr>
+      </tbody>
+    </table></div>
+
+    <figure class="panel tw-block tw-figure"><img src="{% url 'indexing:result_file' 'stage_times.png' %}?source={{ source.key }}" alt="Construction time by stage">
+      <figcaption class="method-note">各階段的時間（中位數那一次）。前處理三者幾乎一樣；Baseline 沒有 blocks，只在最後排序一次詞彙、寫一次最終索引，所以最快，代價是記憶體。BSBI 與 SPIMI 的差別在後面：BSBI 要排序 {{ bsbi.block_entries|thousands }} 個 pairs（{{ bsbi.times.sort|floatformat:2 }} 秒），SPIMI 只排序每個 block 的詞彙（{{ spimi.times.sort|floatformat:2 }} 秒）；BSBI 的 blocks 多、每筆還要從排序後的 pairs 重新組成 postings，寫檔和合併也比較久。</figcaption></figure>
+
+    <article class="panel tw-block">
+      <h3>Implementation complexity 分析</h3>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th></th><th>BSBI</th><th>SPIMI</th></tr></thead>
+        <tbody>
+          <tr><td>步驟</td><td>5 步：切 block → 產生 pairs → 排序 → 建局部索引 → 合併</td><td>4 步：逐篇讀 → 直接加進 dictionary → 滿了排序詞彙寫出 → 合併</td></tr>
+          <tr><td>記憶體裡的資料結構</td><td>pairs 的 list ＋ 全域 term → termID 對照表（一直留著）</td><td>term → postings list 的 dictionary（每個 block 清空）</td></tr>
+          <tr><td>排序的對象</td><td>所有 (termID, docID) pairs</td><td>每個 block 的詞彙</td></tr>
+          <tr><td>要特別處理的地方</td><td>termID 在所有 blocks 一致；排序後才能去掉同一篇的重複 pair；合併後要把 termID 換回 term</td><td>同一篇只加一次（看 postings 最後一個）；用量要邊加邊估計</td></tr>
+          <tr><td>程式行數</td><td>{{ results.complexity.bsbi }} 行</td><td>{{ results.complexity.spimi }} 行</td></tr>
+        </tbody>
+      </table></div>
+      <p class="method-note">兩者都要寫 block 檔與 k-way merge（共用 {{ results.complexity.shared }} 行）。BSBI 多了「termID 對照」與「排序 pairs」兩件事，概念上比較多步，但每一步都很單純；SPIMI 步驟少，但要自己管理 dictionary 的記憶體用量。</p>
+    </article>
+
+    <h3 class="ix-subhead">改變記憶體上限 <small>完整語料，其他設定不變</small></h3>
+    <figure class="panel tw-block tw-figure"><img src="{% url 'indexing:result_file' 'memory_sweep.png' %}?source={{ source.key }}" alt="Effect of the memory limit"></figure>
+    <div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table tw-compact">
+      <thead><tr><th>記憶體上限</th><th class="tw-num">BSBI 時間</th><th class="tw-num">SPIMI 時間</th><th class="tw-num">BSBI blocks</th><th class="tw-num">SPIMI blocks</th><th class="tw-num">BSBI 峰值</th><th class="tw-num">SPIMI 峰值</th></tr></thead>
+      <tbody>{% for p in results.sweep_pairs %}<tr{% if p.x == results.limit_mb %} class="is-active"{% endif %}><td>{{ p.x|floatformat:0 }} MB</td><td class="tw-num">{{ p.bsbi.seconds|floatformat:2 }} 秒</td><td class="tw-num">{{ p.spimi.seconds|floatformat:2 }} 秒</td><td class="tw-num">{{ p.bsbi.blocks }}</td><td class="tw-num">{{ p.spimi.blocks }}</td><td class="tw-num">{{ p.bsbi.peak_mb|floatformat:1 }} MB</td><td class="tw-num">{{ p.spimi.peak_mb|floatformat:1 }} MB</td></tr>{% endfor %}</tbody>
+    </table></div>
+
+    <h3 class="ix-subhead">改變文件數 <small>記憶體上限 {{ results.limit_mb }} MB</small></h3>
+    <figure class="panel tw-block tw-figure"><img src="{% url 'indexing:result_file' 'scaling.png' %}?source={{ source.key }}" alt="Effect of the number of documents"></figure>
+    <div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table tw-compact">
+      <thead><tr><th class="tw-num">文件數</th>{% if baseline %}<th class="tw-num ix-base">Baseline 時間</th>{% endif %}<th class="tw-num">BSBI 時間</th><th class="tw-num">SPIMI 時間</th><th class="tw-num">BSBI blocks</th><th class="tw-num">SPIMI blocks</th>{% if baseline %}<th class="tw-num ix-base">Baseline 峰值</th>{% endif %}<th class="tw-num">BSBI 峰值</th><th class="tw-num">SPIMI 峰值</th><th class="tw-num">BSBI 合併</th><th class="tw-num">SPIMI 合併</th><th class="tw-num">中間檔（BSBI / SPIMI）</th></tr></thead>
+      <tbody>{% for p in results.scaling_pairs %}<tr><td class="tw-num">{{ p.x|thousands }}{% if p.bsbi.repeated %}*{% endif %}</td>{% if baseline %}<td class="tw-num ix-base">{{ p.baseline.seconds|floatformat:1 }} 秒</td>{% endif %}<td class="tw-num">{{ p.bsbi.seconds|floatformat:1 }} 秒</td><td class="tw-num">{{ p.spimi.seconds|floatformat:1 }} 秒</td><td class="tw-num">{{ p.bsbi.blocks|thousands }}</td><td class="tw-num">{{ p.spimi.blocks|thousands }}</td>
+        {% if baseline %}<td class="tw-num ix-base">{% if p.baseline.peak_mb is not None %}{{ p.baseline.peak_mb|floatformat:1 }} MB{% else %}約 {{ p.baseline.index_memory_mb|floatformat:0 }} MB†{% endif %}</td>{% endif %}<td class="tw-num">{% if p.bsbi.peak_mb is not None %}{{ p.bsbi.peak_mb|floatformat:1 }} MB{% else %}—{% endif %}</td><td class="tw-num">{% if p.spimi.peak_mb is not None %}{{ p.spimi.peak_mb|floatformat:1 }} MB{% else %}—{% endif %}</td>
+        <td class="tw-num">{{ p.bsbi.merge_seconds|floatformat:1 }} 秒</td><td class="tw-num">{{ p.spimi.merge_seconds|floatformat:1 }} 秒</td><td class="tw-num">{{ p.bsbi.intermediate_mb|floatformat:0 }} / {{ p.spimi.intermediate_mb|floatformat:0 }} MB</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <p class="method-note">* {{ source.label }} 只有 {{ results.dataset.documents|thousands }} 篇；超過的部分是把語料再讀幾輪、docID 往後編號。重複的文件不會帶來新詞，所以詞彙量停在 {{ results.dataset.vocabulary|thousands }}，比真實的大語料少。100 萬篇沒有量記憶體峰值：tracemalloc 會讓建索引慢約 5 倍，量一次要超過 1 小時。{% if baseline %}† Baseline 在 100 萬篇改用 sys.getsizeof 加總「整份索引在記憶體裡的大小」估計（{{ results.scale.100000.baseline.documents|thousands }} 篇時估計 {{ results.scale.100000.baseline.index_memory_mb|floatformat:1 }} MB、tracemalloc 實測峰值 {{ results.scale.100000.baseline.peak_mb|floatformat:1 }} MB）。{% endif %}{% if results.heaps %}用真實子集擬合 Heaps' law（V = {{ results.heaps.k|floatformat:1 }} · T<sup>{{ results.heaps.beta|floatformat:2 }}</sup>）推估：{% for e in results.heaps.estimates %}{{ e.documents|thousands }} 篇約 {{ e.vocabulary|floatformat:0|thousands }} 個詞（BSBI 的 termID 對照表約 {{ e.term_id_map_mb|floatformat:0 }} MB）{% if not forloop.last %}、{% endif %}{% endfor %}。{% endif %}</p>
+
+    <article class="panel tw-block ix-answers">
+      <div class="ix-answers-head"><h3>作業的 6 個問題 <small>根據上面的實驗數字；點問題展開回答</small></h3><button type="button" class="secondary-button small-button" data-toggle-answers>全部展開</button></div>
+      <ol>
+        <li><details><summary>BSBI 與 SPIMI 在建立 Inverted Index 時，最大的差異是什麼？</summary><div class="ix-answer">
+          BSBI 先把每個 token 變成 (termID, docID) pair，排序後才組成 postings；SPIMI 讀到 term 就直接把 docID 加進它的 postings，不產生 pairs、也不需要 termID。結果是記憶體裡放的東西不同：BSBI 這次處理了 {{ bsbi.block_entries|thousands }} 個 pairs（含同一篇的重複），SPIMI 只有 {{ spimi.block_entries|thousands }} 筆 postings；同樣 {{ results.limit_mb }} MB，BSBI 切成 {{ bsbi.block_count }} 個 blocks、SPIMI 只要 {{ spimi.block_count }} 個。最後的索引完全相同（{{ bsbi.final_mb|floatformat:2 }} MB），差別只在建的過程。</div></details></li>
+        <li><details><summary>為什麼 BSBI 需要先產生並排序 term-document pairs？</summary><div class="ix-answer">
+          BSBI 讀文件時是依「文件」的順序拿到 terms，但倒排索引要依「term」整理。把每個 token 變成 (termID, docID) 後依 termID 排序，同一個 term 的所有 docID 才會排在一起、docID 也由小到大，一次掃過去就能組成每個 term 的 postings，並在這時去掉同一篇的重複。用 termID 而不是字串，是因為整數 pair 大小固定、比較快，代價是要一直留著 term → termID 對照表（約 {{ bsbi.term_id_map_mb|floatformat:1 }} MB），合併完再換回 term。這個排序是 BSBI 的主要成本：{{ bsbi.times.sort|floatformat:2 }} 秒，SPIMI 的排序只要 {{ spimi.times.sort|floatformat:2 }} 秒。</div></details></li>
+        <li><details><summary>SPIMI 如何避免大量 term-document pairs 的排序工作？</summary><div class="ix-answer">
+          SPIMI 用 dictionary 直接把 docID 放進該 term 的 postings list。文件依 docID 順序讀，所以每個 postings list 加進去時就已經排好序；寫出 block 時只需要排序這個 block 的詞彙（約 {{ spimi.blocks.0.terms|thousands }} 個 terms），不必排序 {{ bsbi.blocks.0.pairs|thousands }} 個 pairs。同一篇文件的重複 term 在加入時就跳過，不會進到記憶體。</div></details></li>
+        <li><details><summary>在記憶體有限的情況下，兩種方法如何處理大型文件集合？</summary><div class="ix-answer">
+          兩者都是「記憶體滿了就把目前的局部索引寫到磁碟、清空，最後再合併」：建 block 時用的記憶體受上限控制，合併時每個 block 只讀目前這一筆。實測把上限從 64 MB 降到 1 MB，BSBI 的 blocks 從 {{ results.limit.64.bsbi.blocks }} 變成 {{ results.limit.1.bsbi.blocks }} 個、SPIMI 從 {{ results.limit.64.spimi.blocks }} 變成 {{ results.limit.1.spimi.blocks }} 個，峰值記憶體大致跟著下降（BSBI {{ results.limit.64.bsbi.peak_mb|floatformat:1 }} → {{ results.limit.2.bsbi.peak_mb|floatformat:1 }} MB（2 MB 上限）、SPIMI {{ results.limit.64.spimi.peak_mb|floatformat:1 }} → {{ results.limit.2.spimi.peak_mb|floatformat:1 }} MB），代價是更多中間檔與更久的合併（BSBI 合併 {{ results.limit.64.bsbi.merge_seconds|floatformat:2 }} → {{ results.limit.1.bsbi.merge_seconds|floatformat:2 }} 秒）。
+          但上限不是越小越好：降到 1 MB 時 BSBI 有 {{ results.limit.1.bsbi.blocks }} 個 blocks，合併要同時打開 {{ results.limit.1.bsbi.blocks }} 個檔、每個檔都要一個讀取緩衝區（64 KB），峰值反而升到 {{ results.limit.1.bsbi.peak_mb|floatformat:1 }} MB（SPIMI 也從 {{ results.limit.2.spimi.peak_mb|floatformat:1 }} 升到 {{ results.limit.1.spimi.peak_mb|floatformat:1 }} MB）。
+          另外 BSBI 的峰值在每個上限都比上限高，因為 term → termID 對照表（約 {{ bsbi.term_id_map_mb|floatformat:1 }} MB）不能寫出去，必須一直留在記憶體；SPIMI 沒有這張表，每寫出一個 block 就把 dictionary 整個清空{% if results.spimi_one_block %}，上限 {{ results.spimi_one_block.x|floatformat:0 }} MB 以上整份索引一次放得下（1 個 block，{{ results.spimi_one_block.spimi.peak_mb|floatformat:1 }} MB）{% endif %}。</div></details></li>
+        <li><details><summary>哪一種方法在你的實驗中具有較好的執行效率？可能的原因是什麼？</summary><div class="ix-answer">
+          SPIMI。完整語料 {{ spimi.seconds|floatformat:2 }} 秒 vs BSBI {{ bsbi.seconds|floatformat:2 }} 秒；扣掉兩邊相同的前處理，建索引的部分 BSBI 是 SPIMI 的 {{ results.ratios.index_time|floatformat:1 }} 倍；記憶體峰值 {{ spimi.peak_mb|floatformat:1 }} vs {{ bsbi.peak_mb|floatformat:1 }} MB。原因：(1) BSBI 要排序 {{ bsbi.block_entries|thousands }} 個 pairs，SPIMI 只排序詞彙；(2) BSBI 每個 token 都佔一個 pair（{{ results.pair_bytes }} bytes），SPIMI 每篇文件每個 term 只多 {{ results.spimi_bytes.posting }} bytes，同樣記憶體放得下約 {% widthratio spimi.blocks.0.docs bsbi.blocks.0.docs 1 %} 倍的文件，blocks 少、寫檔與合併的次數也少；(3) 這是 Python 實作，每個 pair 都是一個 tuple 物件，開銷特別大；用 C 寫的 BSBI 每個 pair 只要 8 bytes，兩者的差距應該會比這裡小（推測，沒有實作 C 版本驗證）。</div></details></li>
+        <li><details><summary>如果文件數量從 10,000 增加到 100,000，甚至 1,000,000，兩種方法可能會面臨哪些效能問題？</summary><div class="ix-answer">
+          實測（4 MB 上限）：10,000 → 100,000 → 1,000,000 篇，BSBI {{ results.scale.10000.bsbi.seconds|floatformat:1 }} → {{ results.scale.100000.bsbi.seconds|floatformat:1 }} → {{ results.scale.1000000.bsbi.seconds|floatformat:0 }} 秒、SPIMI {{ results.scale.10000.spimi.seconds|floatformat:1 }} → {{ results.scale.100000.spimi.seconds|floatformat:1 }} → {{ results.scale.1000000.spimi.seconds|floatformat:0 }} 秒，時間大致和文件數成正比；但 blocks 也等比例變多（BSBI {{ results.scale.10000.bsbi.blocks }} → {{ results.scale.100000.bsbi.blocks }} → {{ results.scale.1000000.bsbi.blocks|thousands }} 個，SPIMI {{ results.scale.10000.spimi.blocks }} → {{ results.scale.100000.spimi.blocks }} → {{ results.scale.1000000.spimi.blocks }} 個），會遇到：
+          (1) <strong>合併變重</strong>：要同時打開上千個 block 檔，每個檔都要一個讀取緩衝區，BSBI 100,000 篇的峰值已經從 {{ results.scale.full.bsbi.peak_mb|floatformat:1 }} 升到 {{ results.scale.100000.bsbi.peak_mb|floatformat:1 }} MB（SPIMI 維持 {{ results.scale.100000.spimi.peak_mb|floatformat:1 }} MB）。合併時間也比文件數長得快：100,000 → 1,000,000 篇，文件多 10 倍，BSBI 的合併從 {{ results.scale.100000.bsbi.merge_seconds|floatformat:1 }} 變成 {{ results.scale.1000000.bsbi.merge_seconds|floatformat:1 }} 秒，SPIMI 從 {{ results.scale.100000.spimi.merge_seconds|floatformat:1 }} 變成 {{ results.scale.1000000.spimi.merge_seconds|floatformat:1 }} 秒（一般的解釋是 heap 裡的 blocks 越多，每取出一筆要比較的次數也越多）；實務上要分多輪合併或加大記憶體上限。
+          (2) <strong>中間檔與磁碟 I/O</strong>：1,000,000 篇的中間檔約 {{ results.scale.1000000.bsbi.intermediate_mb|floatformat:0 }} MB（BSBI）/ {{ results.scale.1000000.spimi.intermediate_mb|floatformat:0 }} MB（SPIMI），要寫一次再讀一次。
+          (3) <strong>BSBI 的 termID 對照表</strong>：這張表不能寫出去，會隨詞彙量一直變大；重複讀的語料不會有新詞，看不出來，用 Heaps' law 推估 1,000,000 篇約 {% for e in results.heaps.estimates %}{% if e.documents == 1000000 %}{{ e.vocabulary|floatformat:0|thousands }} 個詞、對照表約 {{ e.term_id_map_mb|floatformat:0 }} MB{% endif %}{% endfor %}，會吃掉越來越多原本給 pairs 的記憶體。SPIMI 沒有這張表，每個 block 的 dictionary 寫出後就清空。
+          (4) 前處理（tokenize）佔一半以上的時間，而且和文件數成正比，兩種方法都一樣，可以平行處理。</div></details></li>
+      </ol>
+    </article>
+  </section>
+
+  {# ========== ⑥ 檢索測試 ========== #}
+  <section id="retrieval" class="tw-section">
+    <div class="section-heading-row"><div><span class="section-kicker">6 · RETRIEVAL TEST</span><h2>同樣的查詢，兩個索引的結果是否一致？</h2></div></div>
+    <p class="method-note">{% if source.key == 'pubmed' %}5 組符合 GLP-1 文獻內容（藥物、療效、副作用）的查詢{% else %}5 組符合 Reuters（1987 年財經新聞）內容的查詢{% endif %}，每組做兩個 single-term、AND、OR，分別讀 BSBI 與 SPIMI 寫在磁碟上的最終索引。作業列的範例查詢（information retrieval 等）放在表格下面對照。{% if results.retrieval_ok %}<strong class="ix-ok">全部 {{ results.retrieval|length }} 個查詢的結果完全相同</strong>{% else %}<strong class="ix-bad">有查詢結果不一致</strong>{% endif %}；另外把兩個索引和 Part 1 的基準索引逐一比對：{{ results.equivalence.vocabulary|thousands }} 個 terms 的詞彙{% if results.equivalence.bsbi.same_vocabulary and results.equivalence.spimi.same_vocabulary %}完全相同{% else %}不同{% endif %}，postings 不同的 term 數：BSBI {{ results.equivalence.bsbi.different_postings }}、SPIMI {{ results.equivalence.spimi.different_postings }}。</p>
+    {% include 'indexing/_retrieval_table.html' with groups=results.queries %}
+    {% if results.example_queries %}
+    <details class="ix-details ix-examples"><summary>作業的 5 組範例查詢（information retrieval、artificial intelligence、financial market、medical research、computer science）</summary>
+      <p class="method-note">這 5 組的 AND 在 {{ source.label }} 裡分別命中 {% for q in results.example_queries %}{{ q.rows.2.bsbi_hits|thousands }}{% if not forloop.last %}、{% endif %}{% endfor %} 篇{% if source.key == 'reuters' %}：除了 financial market，兩個詞很少同時出現，所以主要的檢索測試改用上面 5 組{% endif %}。兩個索引的檢索結果同樣逐一比對。</p>
+      {% include 'indexing/_retrieval_table.html' with groups=results.example_queries %}
+    </details>
+    {% endif %}
+    <p class="method-note">兩個索引一樣是預期的結果：同一批文件、同一套前處理、同樣「同一篇只記一次」的規則，兩種方法只是建的順序不同。BSBI 依 termID 合併、SPIMI 依 term 字串合併，所以最終檔案裡 terms 的排列順序不同，但每個 term 的 df 與 postings 都一樣，索引大小也一樣。</p>
+    {% if check %}
+    <article class="panel tw-block">
+      <h3>自訂查詢 <small>用第 2 段輸入的兩個 terms：{{ state.terms.0 }} · {{ state.terms.1 }}</small></h3>
+      <div class="tw-table-wrap"><table class="data-table tw-compact">
+        <thead><tr><th>類型</th><th>運算式</th><th class="tw-num">BSBI</th><th class="tw-num">SPIMI</th><th>一致</th><th>docID（前 10 個）</th></tr></thead>
+        <tbody>{% for r in check %}<tr><td>{{ r.type }}</td><td>{{ r.expression }}</td><td class="tw-num">{{ r.bsbi|thousands }}</td><td class="tw-num">{{ r.spimi|thousands }}</td><td>{% if r.identical %}<span class="ix-ok">✓ 相同</span>{% else %}<span class="ix-bad">✗</span>{% endif %}</td><td class="ix-ids">{% doc_buttons r.head r.terms %}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    </article>
+    {% endif %}
+  </section>
+  {% endif %}
+</main>
+
+{# 點 docID 開的彈出視窗：內容由 indexing.js 向 /indexing/doc/<docID>/ 取得；Esc、點外面或「關閉」都可以關掉 #}
+<dialog class="ix-dialog" id="ix-doc-dialog" data-base="{% url 'indexing:document' 0 %}" data-source="{{ source.key }}" aria-labelledby="ix-doc-title">
+  <div class="ix-dialog-inner">
+    <div class="ix-dialog-head">
+      <div><span class="ix-dialog-meta" data-field="meta"></span><h3 id="ix-doc-title" data-field="title"></h3></div>
+      <button type="button" class="ix-dialog-x" data-close aria-label="關閉">×</button>
+    </div>
+    <p class="ix-dialog-terms" data-field="terms"></p>
+    <div class="ix-dialog-body" data-field="body"></div>
+    <div class="ix-dialog-foot"><a data-field="link" href="#" target="_blank" rel="noopener">在新聞頁開啟 ↗</a><button type="button" class="primary-button small-button" data-close>關閉</button></div>
+  </div>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{% static 'weighting/section_nav.js' %}?v=p5-1" defer></script><script src="{% static 'indexing/indexing.js' %}?v=p5-6" defer></script>{% endblock %}

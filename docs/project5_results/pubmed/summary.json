@@ -1,0 +1,2964 @@
+{
+ "source": "pubmed",
+ "source_label": "PubMed GLP-1",
+ "dataset": {
+  "documents": 20000,
+  "tokens": 3432072,
+  "vocabulary": 73298,
+  "postings": 2287515,
+  "empty": 0,
+  "baseline_seconds": 5.980347900999959
+ },
+ "limit_mb": 4,
+ "repeats": 5,
+ "equivalence": {
+  "vocabulary": 73298,
+  "postings": 2287515,
+  "baseline": {
+   "same_vocabulary": true,
+   "different_postings": 0
+  },
+  "bsbi": {
+   "same_vocabulary": true,
+   "different_postings": 0
+  },
+  "spimi": {
+   "same_vocabulary": true,
+   "different_postings": 0
+  }
+ },
+ "methods": {
+  "baseline": {
+   "method": "baseline",
+   "seconds": 5.978154745999973,
+   "times": {
+    "preprocess": 5.010018883986959,
+    "pairs": 0.7214237139939996,
+    "sort": 0.047405382000079044,
+    "write": 0.17524918300000536,
+    "merge": 0.0
+   },
+   "blocks": [],
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "term_id_map_bytes": 0,
+   "index_memory": 30758538,
+   "limit": 4194304,
+   "block_count": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "index_bytes": {
+    "dictionary": 1471592,
+    "postings": 9150060
+   },
+   "final_bytes": 10621652,
+   "block_entries": 0,
+   "peak": 31739373,
+   "runs": [
+    5.978154745999973,
+    6.030836924999903,
+    6.454349428999876,
+    5.929477798999869,
+    5.691506345000107
+   ],
+   "stdev": 0.24762112242386025
+  },
+  "bsbi": {
+   "method": "bsbi",
+   "seconds": 8.196884841999918,
+   "times": {
+    "preprocess": 4.718961024999317,
+    "pairs": 0.6074911199789312,
+    "sort": 1.1541961100001572,
+    "write": 0.7400524359991323,
+    "merge": 0.7799063620000197
+   },
+   "blocks": [
+    {
+     "block": 1,
+     "first_doc": 1,
+     "last_doc": 400,
+     "pairs": 65671,
+     "terms": 8332,
+     "bytes": 233656,
+     "memory": 4202944
+    },
+    {
+     "block": 2,
+     "first_doc": 401,
+     "last_doc": 797,
+     "pairs": 65611,
+     "terms": 8361,
+     "bytes": 235484,
+     "memory": 4199104
+    },
+    {
+     "block": 3,
+     "first_doc": 798,
+     "last_doc": 1185,
+     "pairs": 65606,
+     "terms": 8778,
+     "bytes": 240084,
+     "memory": 4198784
+    },
+    {
+     "block": 4,
+     "first_doc": 1186,
+     "last_doc": 1584,
+     "pairs": 65594,
+     "terms": 8235,
+     "bytes": 234568,
+     "memory": 4198016
+    },
+    {
+     "block": 5,
+     "first_doc": 1585,
+     "last_doc": 1988,
+     "pairs": 65549,
+     "terms": 8465,
+     "bytes": 238012,
+     "memory": 4195136
+    },
+    {
+     "block": 6,
+     "first_doc": 1989,
+     "last_doc": 2389,
+     "pairs": 65578,
+     "terms": 8458,
+     "bytes": 236772,
+     "memory": 4196992
+    },
+    {
+     "block": 7,
+     "first_doc": 2390,
+     "last_doc": 2789,
+     "pairs": 65557,
+     "terms": 8395,
+     "bytes": 236640,
+     "memory": 4195648
+    },
+    {
+     "block": 8,
+     "first_doc": 2790,
+     "last_doc": 3199,
+     "pairs": 65620,
+     "terms": 8665,
+     "bytes": 242440,
+     "memory": 4199680
+    },
+    {
+     "block": 9,
+     "first_doc": 3200,
+     "last_doc": 3597,
+     "pairs": 65599,
+     "terms": 8541,
+     "bytes": 238692,
+     "memory": 4198336
+    },
+    {
+     "block": 10,
+     "first_doc": 3598,
+     "last_doc": 4003,
+     "pairs": 65536,
+     "terms": 8463,
+     "bytes": 237156,
+     "memory": 4194304
+    },
+    {
+     "block": 11,
+     "first_doc": 4004,
+     "last_doc": 4403,
+     "pairs": 65558,
+     "terms": 8547,
+     "bytes": 238580,
+     "memory": 4195712
+    },
+    {
+     "block": 12,
+     "first_doc": 4404,
+     "last_doc": 4797,
+     "pairs": 65628,
+     "terms": 8482,
+     "bytes": 237472,
+     "memory": 4200192
+    },
+    {
+     "block": 13,
+     "first_doc": 4798,
+     "last_doc": 5190,
+     "pairs": 65795,
+     "terms": 8469,
+     "bytes": 238320,
+     "memory": 4210880
+    },
+    {
+     "block": 14,
+     "first_doc": 5191,
+     "last_doc": 5585,
+     "pairs": 65594,
+     "terms": 8458,
+     "bytes": 238616,
+     "memory": 4198016
+    },
+    {
+     "block": 15,
+     "first_doc": 5586,
+     "last_doc": 5977,
+     "pairs": 65652,
+     "terms": 8414,
+     "bytes": 235744,
+     "memory": 4201728
+    },
+    {
+     "block": 16,
+     "first_doc": 5978,
+     "last_doc": 6367,
+     "pairs": 65630,
+     "terms": 8443,
+     "bytes": 238764,
+     "memory": 4200320
+    },
+    {
+     "block": 17,
+     "first_doc": 6368,
+     "last_doc": 6757,
+     "pairs": 65590,
+     "terms": 8320,
+     "bytes": 236712,
+     "memory": 4197760
+    },
+    {
+     "block": 18,
+     "first_doc": 6758,
+     "last_doc": 7152,
+     "pairs": 65699,
+     "terms": 8639,
+     "bytes": 241356,
+     "memory": 4204736
+    },
+    {
+     "block": 19,
+     "first_doc": 7153,
+     "last_doc": 7548,
+     "pairs": 65633,
+     "terms": 8497,
+     "bytes": 240228,
+     "memory": 4200512
+    },
+    {
+     "block": 20,
+     "first_doc": 7549,
+     "last_doc": 7938,
+     "pairs": 65628,
+     "terms": 8368,
+     "bytes": 238320,
+     "memory": 4200192
+    },
+    {
+     "block": 21,
+     "first_doc": 7939,
+     "last_doc": 8328,
+     "pairs": 65556,
+     "terms": 8146,
+     "bytes": 235588,
+     "memory": 4195584
+    },
+    {
+     "block": 22,
+     "first_doc": 8329,
+     "last_doc": 8716,
+     "pairs": 65538,
+     "terms": 8335,
+     "bytes": 238968,
+     "memory": 4194432
+    },
+    {
+     "block": 23,
+     "first_doc": 8717,
+     "last_doc": 9109,
+     "pairs": 65643,
+     "terms": 8223,
+     "bytes": 239400,
+     "memory": 4201152
+    },
+    {
+     "block": 24,
+     "first_doc": 9110,
+     "last_doc": 9489,
+     "pairs": 65615,
+     "terms": 8389,
+     "bytes": 239316,
+     "memory": 4199360
+    },
+    {
+     "block": 25,
+     "first_doc": 9490,
+     "last_doc": 9885,
+     "pairs": 65537,
+     "terms": 8169,
+     "bytes": 238904,
+     "memory": 4194368
+    },
+    {
+     "block": 26,
+     "first_doc": 9886,
+     "last_doc": 10283,
+     "pairs": 65814,
+     "terms": 8418,
+     "bytes": 242288,
+     "memory": 4212096
+    },
+    {
+     "block": 27,
+     "first_doc": 10284,
+     "last_doc": 10662,
+     "pairs": 65618,
+     "terms": 8178,
+     "bytes": 237108,
+     "memory": 4199552
+    },
+    {
+     "block": 28,
+     "first_doc": 10663,
+     "last_doc": 11041,
+     "pairs": 65630,
+     "terms": 8340,
+     "bytes": 240624,
+     "memory": 4200320
+    },
+    {
+     "block": 29,
+     "first_doc": 11042,
+     "last_doc": 11432,
+     "pairs": 65628,
+     "terms": 8236,
+     "bytes": 240060,
+     "memory": 4200192
+    },
+    {
+     "block": 30,
+     "first_doc": 11433,
+     "last_doc": 11813,
+     "pairs": 65711,
+     "terms": 8596,
+     "bytes": 244616,
+     "memory": 4205504
+    },
+    {
+     "block": 31,
+     "first_doc": 11814,
+     "last_doc": 12192,
+     "pairs": 65656,
+     "terms": 8105,
+     "bytes": 239400,
+     "memory": 4201984
+    },
+    {
+     "block": 32,
+     "first_doc": 12193,
+     "last_doc": 12571,
+     "pairs": 65602,
+     "terms": 8381,
+     "bytes": 243328,
+     "memory": 4198528
+    },
+    {
+     "block": 33,
+     "first_doc": 12572,
+     "last_doc": 12959,
+     "pairs": 65660,
+     "terms": 8361,
+     "bytes": 244924,
+     "memory": 4202240
+    },
+    {
+     "block": 34,
+     "first_doc": 12960,
+     "last_doc": 13337,
+     "pairs": 65627,
+     "terms": 8305,
+     "bytes": 245136,
+     "memory": 4200128
+    },
+    {
+     "block": 35,
+     "first_doc": 13338,
+     "last_doc": 13700,
+     "pairs": 65813,
+     "terms": 7958,
+     "bytes": 240700,
+     "memory": 4212032
+    },
+    {
+     "block": 36,
+     "first_doc": 13701,
+     "last_doc": 14073,
+     "pairs": 65580,
+     "terms": 8340,
+     "bytes": 245196,
+     "memory": 4197120
+    },
+    {
+     "block": 37,
+     "first_doc": 14074,
+     "last_doc": 14454,
+     "pairs": 65680,
+     "terms": 8415,
+     "bytes": 250120,
+     "memory": 4203520
+    },
+    {
+     "block": 38,
+     "first_doc": 14455,
+     "last_doc": 14829,
+     "pairs": 65570,
+     "terms": 8442,
+     "bytes": 249008,
+     "memory": 4196480
+    },
+    {
+     "block": 39,
+     "first_doc": 14830,
+     "last_doc": 15199,
+     "pairs": 65546,
+     "terms": 8511,
+     "bytes": 249996,
+     "memory": 4194944
+    },
+    {
+     "block": 40,
+     "first_doc": 15200,
+     "last_doc": 15577,
+     "pairs": 65539,
+     "terms": 8336,
+     "bytes": 247356,
+     "memory": 4194496
+    },
+    {
+     "block": 41,
+     "first_doc": 15578,
+     "last_doc": 15949,
+     "pairs": 65641,
+     "terms": 8471,
+     "bytes": 249688,
+     "memory": 4201024
+    },
+    {
+     "block": 42,
+     "first_doc": 15950,
+     "last_doc": 16319,
+     "pairs": 65603,
+     "terms": 8761,
+     "bytes": 251648,
+     "memory": 4198592
+    },
+    {
+     "block": 43,
+     "first_doc": 16320,
+     "last_doc": 16687,
+     "pairs": 65559,
+     "terms": 8906,
+     "bytes": 251652,
+     "memory": 4195776
+    },
+    {
+     "block": 44,
+     "first_doc": 16688,
+     "last_doc": 17049,
+     "pairs": 65690,
+     "terms": 8340,
+     "bytes": 244756,
+     "memory": 4204160
+    },
+    {
+     "block": 45,
+     "first_doc": 17050,
+     "last_doc": 17403,
+     "pairs": 65542,
+     "terms": 8790,
+     "bytes": 250456,
+     "memory": 4194688
+    },
+    {
+     "block": 46,
+     "first_doc": 17404,
+     "last_doc": 17764,
+     "pairs": 65574,
+     "terms": 8532,
+     "bytes": 245980,
+     "memory": 4196736
+    },
+    {
+     "block": 47,
+     "first_doc": 17765,
+     "last_doc": 18126,
+     "pairs": 65664,
+     "terms": 8906,
+     "bytes": 252048,
+     "memory": 4202496
+    },
+    {
+     "block": 48,
+     "first_doc": 18127,
+     "last_doc": 18475,
+     "pairs": 65818,
+     "terms": 8879,
+     "bytes": 253464,
+     "memory": 4212352
+    },
+    {
+     "block": 49,
+     "first_doc": 18476,
+     "last_doc": 18834,
+     "pairs": 65703,
+     "terms": 8724,
+     "bytes": 253028,
+     "memory": 4204992
+    },
+    {
+     "block": 50,
+     "first_doc": 18835,
+     "last_doc": 19190,
+     "pairs": 65708,
+     "terms": 8619,
+     "bytes": 251456,
+     "memory": 4205312
+    },
+    {
+     "block": 51,
+     "first_doc": 19191,
+     "last_doc": 19539,
+     "pairs": 65635,
+     "terms": 8553,
+     "bytes": 247816,
+     "memory": 4200640
+    },
+    {
+     "block": 52,
+     "first_doc": 19540,
+     "last_doc": 19896,
+     "pairs": 65583,
+     "terms": 9088,
+     "bytes": 254204,
+     "memory": 4197312
+    },
+    {
+     "block": 53,
+     "first_doc": 19897,
+     "last_doc": 20000,
+     "pairs": 19461,
+     "terms": 4577,
+     "bytes": 91492,
+     "memory": 1245504
+    }
+   ],
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "term_id_map_bytes": 5707402,
+   "limit": 4194304,
+   "block_count": 53,
+   "intermediate_files": 53,
+   "intermediate_bytes": 12707340,
+   "index_bytes": {
+    "dictionary": 1471592,
+    "postings": 9150060
+   },
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak": 12420278,
+   "runs": [
+    8.196884841999918,
+    8.451971294000032,
+    8.28434543100002,
+    8.14669873999992,
+    8.160075002999974
+   ],
+   "stdev": 0.11272159399257722
+  },
+  "spimi": {
+   "method": "spimi",
+   "seconds": 6.438902098999733,
+   "times": {
+    "preprocess": 4.952863842010174,
+    "pairs": 0.6759747109913405,
+    "sort": 0.06350553399943237,
+    "write": 0.25198631899957036,
+    "merge": 0.4538390910001908
+   },
+   "blocks": [
+    {
+     "block": 1,
+     "first_doc": 1,
+     "last_doc": 1811,
+     "pairs": 192960,
+     "terms": 19155,
+     "bytes": 1059778,
+     "memory": 4195642
+    },
+    {
+     "block": 2,
+     "first_doc": 1812,
+     "last_doc": 3630,
+     "pairs": 192330,
+     "terms": 19190,
+     "bytes": 1058354,
+     "memory": 4194879
+    },
+    {
+     "block": 3,
+     "first_doc": 3631,
+     "last_doc": 5424,
+     "pairs": 192170,
+     "terms": 19206,
+     "bytes": 1057190,
+     "memory": 4195678
+    },
+    {
+     "block": 4,
+     "first_doc": 5425,
+     "last_doc": 7204,
+     "pairs": 193026,
+     "terms": 19168,
+     "bytes": 1059853,
+     "memory": 4195769
+    },
+    {
+     "block": 5,
+     "first_doc": 7205,
+     "last_doc": 9014,
+     "pairs": 198627,
+     "terms": 18846,
+     "bytes": 1077823,
+     "memory": 4195595
+    },
+    {
+     "block": 6,
+     "first_doc": 9015,
+     "last_doc": 10802,
+     "pairs": 199990,
+     "terms": 18765,
+     "bytes": 1081753,
+     "memory": 4195692
+    },
+    {
+     "block": 7,
+     "first_doc": 10803,
+     "last_doc": 12556,
+     "pairs": 200724,
+     "terms": 18722,
+     "bytes": 1084272,
+     "memory": 4195216
+    },
+    {
+     "block": 8,
+     "first_doc": 12557,
+     "last_doc": 14275,
+     "pairs": 204609,
+     "terms": 18471,
+     "bytes": 1099621,
+     "memory": 4195706
+    },
+    {
+     "block": 9,
+     "first_doc": 14276,
+     "last_doc": 15956,
+     "pairs": 203491,
+     "terms": 18518,
+     "bytes": 1097764,
+     "memory": 4194887
+    },
+    {
+     "block": 10,
+     "first_doc": 15957,
+     "last_doc": 17526,
+     "pairs": 194076,
+     "terms": 19037,
+     "bytes": 1070604,
+     "memory": 4194811
+    },
+    {
+     "block": 11,
+     "first_doc": 17527,
+     "last_doc": 19036,
+     "pairs": 192580,
+     "terms": 19103,
+     "bytes": 1068658,
+     "memory": 4195285
+    },
+    {
+     "block": 12,
+     "first_doc": 19037,
+     "last_doc": 20000,
+     "pairs": 122932,
+     "terms": 14964,
+     "bytes": 724012,
+     "memory": 3059404
+    }
+   ],
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "term_id_map_bytes": 0,
+   "limit": 4194304,
+   "block_count": 12,
+   "intermediate_files": 12,
+   "intermediate_bytes": 12539682,
+   "index_bytes": {
+    "dictionary": 1471592,
+    "postings": 9150060
+   },
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak": 4700491,
+   "runs": [
+    6.445733776999987,
+    6.438902098999733,
+    6.441152216000319,
+    6.402792274999683,
+    6.274576587999945
+   ],
+   "stdev": 0.06486184140377421
+  }
+ },
+ "samples": {
+  "baseline": null,
+  "bsbi": {
+   "pairs": [
+    [
+     0,
+     "metabolic",
+     1
+    ],
+    [
+     1,
+     "features",
+     1
+    ],
+    [
+     2,
+     "changes",
+     1
+    ],
+    [
+     3,
+     "glucose-induced",
+     1
+    ],
+    [
+     4,
+     "serum",
+     1
+    ],
+    [
+     5,
+     "glucagon-like",
+     1
+    ],
+    [
+     6,
+     "peptide-1",
+     1
+    ],
+    [
+     7,
+     "levels",
+     1
+    ],
+    [
+     8,
+     "children",
+     1
+    ],
+    [
+     9,
+     "hypothalamic",
+     1
+    ],
+    [
+     10,
+     "obesity",
+     1
+    ],
+    [
+     11,
+     "background",
+     1
+    ],
+    [
+     9,
+     "hypothalamic",
+     1
+    ],
+    [
+     12,
+     "damage",
+     1
+    ],
+    [
+     13,
+     "alter",
+     1
+    ],
+    [
+     5,
+     "glucagon-like",
+     1
+    ]
+   ],
+   "sorted": [
+    [
+     0,
+     "metabolic",
+     1
+    ],
+    [
+     0,
+     "metabolic",
+     1
+    ],
+    [
+     0,
+     "metabolic",
+     1
+    ],
+    [
+     0,
+     "metabolic",
+     1
+    ],
+    [
+     0,
+     "metabolic",
+     1
+    ],
+    [
+     0,
+     "metabolic",
+     8
+    ],
+    [
+     0,
+     "metabolic",
+     8
+    ],
+    [
+     0,
+     "metabolic",
+     14
+    ],
+    [
+     0,
+     "metabolic",
+     32
+    ],
+    [
+     0,
+     "metabolic",
+     37
+    ],
+    [
+     0,
+     "metabolic",
+     42
+    ],
+    [
+     0,
+     "metabolic",
+     44
+    ],
+    [
+     0,
+     "metabolic",
+     46
+    ],
+    [
+     0,
+     "metabolic",
+     46
+    ],
+    [
+     0,
+     "metabolic",
+     46
+    ],
+    [
+     0,
+     "metabolic",
+     46
+    ]
+   ],
+   "partial": [
+    [
+     0,
+     "metabolic",
+     62,
+     [
+      1,
+      8,
+      14,
+      32,
+      37,
+      42,
+      44,
+      46
+     ]
+    ],
+    [
+     1,
+     "features",
+     14,
+     [
+      1,
+      67,
+      117,
+      140,
+      162,
+      172,
+      192,
+      198
+     ]
+    ],
+    [
+     2,
+     "changes",
+     68,
+     [
+      1,
+      2,
+      11,
+      22,
+      31,
+      42,
+      49,
+      56
+     ]
+    ],
+    [
+     3,
+     "glucose-induced",
+     8,
+     [
+      1,
+      24,
+      34,
+      60,
+      170,
+      225,
+      344,
+      345
+     ]
+    ],
+    [
+     4,
+     "serum",
+     35,
+     [
+      1,
+      20,
+      23,
+      42,
+      47,
+      99,
+      120,
+      122
+     ]
+    ],
+    [
+     5,
+     "glucagon-like",
+     263,
+     [
+      1,
+      3,
+      5,
+      6,
+      7,
+      9,
+      12,
+      13
+     ]
+    ],
+    [
+     6,
+     "peptide-1",
+     206,
+     [
+      1,
+      3,
+      5,
+      6,
+      7,
+      9,
+      12,
+      16
+     ]
+    ],
+    [
+     7,
+     "levels",
+     114,
+     [
+      1,
+      3,
+      9,
+      21,
+      23,
+      24,
+      30,
+      31
+     ]
+    ],
+    [
+     8,
+     "children",
+     3,
+     [
+      1,
+      43,
+      153
+     ]
+    ],
+    [
+     9,
+     "hypothalamic",
+     8,
+     [
+      1,
+      14,
+      20,
+      130,
+      133,
+      155,
+      323,
+      346
+     ]
+    ]
+   ],
+   "trace": {
+    "retrieval": [
+     [
+      1,
+      [
+       27
+      ]
+     ],
+     [
+      4,
+      [
+       1241
+      ]
+     ],
+     [
+      5,
+      [
+       1757,
+       1951
+      ]
+     ],
+     [
+      11,
+      [
+       4403
+      ]
+     ],
+     [
+      13,
+      [
+       4961
+      ]
+     ],
+     [
+      15,
+      [
+       5862
+      ]
+     ],
+     [
+      20,
+      [
+       7557,
+       7904
+      ]
+     ],
+     [
+      21,
+      [
+       8242
+      ]
+     ],
+     [
+      26,
+      [
+       10083
+      ]
+     ],
+     [
+      28,
+      [
+       10815
+      ]
+     ],
+     [
+      34,
+      [
+       13144
+      ]
+     ],
+     [
+      36,
+      [
+       13977
+      ]
+     ],
+     [
+      37,
+      [
+       14243,
+       14397
+      ]
+     ],
+     [
+      41,
+      [
+       15831
+      ]
+     ],
+     [
+      42,
+      [
+       16228
+      ]
+     ],
+     [
+      44,
+      [
+       17023
+      ]
+     ],
+     [
+      45,
+      [
+       17249
+      ]
+     ],
+     [
+      48,
+      [
+       18266
+      ]
+     ],
+     [
+      52,
+      [
+       19813
+      ]
+     ]
+    ],
+    "parkinson": [
+     [
+      2,
+      [
+       723
+      ]
+     ],
+     [
+      5,
+      [
+       1742
+      ]
+     ],
+     [
+      6,
+      [
+       2164
+      ]
+     ],
+     [
+      7,
+      [
+       2617
+      ]
+     ],
+     [
+      8,
+      [
+       3121
+      ]
+     ],
+     [
+      10,
+      [
+       3667,
+       3783
+      ]
+     ],
+     [
+      12,
+      [
+       4699
+      ]
+     ],
+     [
+      14,
+      [
+       5557
+      ]
+     ],
+     [
+      22,
+      [
+       8468
+      ]
+     ],
+     [
+      23,
+      [
+       9092
+      ]
+     ],
+     [
+      28,
+      [
+       10848
+      ]
+     ],
+     [
+      29,
+      [
+       11346
+      ]
+     ],
+     [
+      32,
+      [
+       12261
+      ]
+     ],
+     [
+      39,
+      [
+       15157
+      ]
+     ],
+     [
+      41,
+      [
+       15717
+      ]
+     ],
+     [
+      43,
+      [
+       16622
+      ]
+     ],
+     [
+      44,
+      [
+       17035
+      ]
+     ],
+     [
+      46,
+      [
+       17735
+      ]
+     ],
+     [
+      47,
+      [
+       17926
+      ]
+     ],
+     [
+      50,
+      [
+       19104
+      ]
+     ]
+    ]
+   },
+   "merged": [
+    [
+     "retrieval",
+     1528,
+     [
+      27,
+      1241,
+      1757,
+      1951,
+      4403,
+      4961,
+      5862,
+      7557,
+      7904,
+      8242,
+      10083,
+      10815,
+      13144,
+      13977,
+      14243,
+      14397,
+      15831,
+      16228,
+      17023,
+      17249,
+      18266,
+      19813
+     ]
+    ],
+    [
+     "parkinson",
+     11600,
+     [
+      723,
+      1742,
+      2164,
+      2617,
+      3121,
+      3667,
+      3783,
+      4699,
+      5557,
+      8468,
+      9092,
+      10848,
+      11346,
+      12261,
+      15157,
+      15717,
+      16622,
+      17035,
+      17735,
+      17926,
+      19104
+     ]
+    ]
+   ],
+   "term_ids": {
+    "retrieval": 1528,
+    "parkinson": 11600
+   }
+  },
+  "spimi": {
+   "dictionary": [
+    [
+     "metabolic",
+     303,
+     [
+      1,
+      8,
+      14,
+      32,
+      37,
+      42,
+      44,
+      46
+     ]
+    ],
+    [
+     "features",
+     44,
+     [
+      1,
+      67,
+      117,
+      140,
+      162,
+      172,
+      192,
+      198
+     ]
+    ],
+    [
+     "changes",
+     286,
+     [
+      1,
+      2,
+      11,
+      22,
+      31,
+      42,
+      49,
+      56
+     ]
+    ],
+    [
+     "glucose-induced",
+     22,
+     [
+      1,
+      24,
+      34,
+      60,
+      170,
+      225,
+      344,
+      345
+     ]
+    ],
+    [
+     "serum",
+     156,
+     [
+      1,
+      20,
+      23,
+      42,
+      47,
+      99,
+      120,
+      122
+     ]
+    ],
+    [
+     "glucagon-like",
+     1251,
+     [
+      1,
+      3,
+      5,
+      6,
+      7,
+      9,
+      12,
+      13
+     ]
+    ],
+    [
+     "peptide-1",
+     954,
+     [
+      1,
+      3,
+      5,
+      6,
+      7,
+      9,
+      12,
+      16
+     ]
+    ],
+    [
+     "levels",
+     479,
+     [
+      1,
+      3,
+      9,
+      21,
+      23,
+      24,
+      30,
+      31
+     ]
+    ],
+    [
+     "children",
+     14,
+     [
+      1,
+      43,
+      153,
+      620,
+      713,
+      953,
+      978,
+      1101
+     ]
+    ],
+    [
+     "hypothalamic",
+     20,
+     [
+      1,
+      14,
+      20,
+      130,
+      133,
+      155,
+      323,
+      346
+     ]
+    ]
+   ],
+   "sorted": [
+    [
+     "0-mg",
+     1,
+     [
+      1234
+     ]
+    ],
+    [
+     "05-p",
+     2,
+     [
+      308,
+      603
+     ]
+    ],
+    [
+     "0mg",
+     1,
+     [
+      196
+     ]
+    ],
+    [
+     "0μg",
+     1,
+     [
+      787
+     ]
+    ],
+    [
+     "1-dependent",
+     2,
+     [
+      310,
+      832
+     ]
+    ],
+    [
+     "1-dimethylbiguanide",
+     1,
+     [
+      124
+     ]
+    ],
+    [
+     "1-dimethylethyl",
+     1,
+     [
+      1122
+     ]
+    ],
+    [
+     "1-ethyl-3",
+     1,
+     [
+      1289
+     ]
+    ],
+    [
+     "1-fold",
+     1,
+     [
+      1800
+     ]
+    ],
+    [
+     "1-gcg",
+     2,
+     [
+      266,
+      873
+     ]
+    ]
+   ],
+   "trace": {
+    "retrieval": [
+     [
+      1,
+      [
+       27,
+       1241,
+       1757
+      ]
+     ],
+     [
+      2,
+      [
+       1951
+      ]
+     ],
+     [
+      3,
+      [
+       4403,
+       4961
+      ]
+     ],
+     [
+      4,
+      [
+       5862
+      ]
+     ],
+     [
+      5,
+      [
+       7557,
+       7904,
+       8242
+      ]
+     ],
+     [
+      6,
+      [
+       10083
+      ]
+     ],
+     [
+      7,
+      [
+       10815
+      ]
+     ],
+     [
+      8,
+      [
+       13144,
+       13977,
+       14243
+      ]
+     ],
+     [
+      9,
+      [
+       14397,
+       15831
+      ]
+     ],
+     [
+      10,
+      [
+       16228,
+       17023,
+       17249
+      ]
+     ],
+     [
+      11,
+      [
+       18266
+      ]
+     ],
+     [
+      12,
+      [
+       19813
+      ]
+     ]
+    ],
+    "parkinson": [
+     [
+      1,
+      [
+       723,
+       1742
+      ]
+     ],
+     [
+      2,
+      [
+       2164,
+       2617,
+       3121
+      ]
+     ],
+     [
+      3,
+      [
+       3667,
+       3783,
+       4699
+      ]
+     ],
+     [
+      4,
+      [
+       5557
+      ]
+     ],
+     [
+      5,
+      [
+       8468
+      ]
+     ],
+     [
+      6,
+      [
+       9092
+      ]
+     ],
+     [
+      7,
+      [
+       10848,
+       11346,
+       12261
+      ]
+     ],
+     [
+      9,
+      [
+       15157,
+       15717
+      ]
+     ],
+     [
+      10,
+      [
+       16622,
+       17035
+      ]
+     ],
+     [
+      11,
+      [
+       17735,
+       17926
+      ]
+     ],
+     [
+      12,
+      [
+       19104
+      ]
+     ]
+    ]
+   },
+   "merged": [
+    [
+     "parkinson",
+     [
+      723,
+      1742,
+      2164,
+      2617,
+      3121,
+      3667,
+      3783,
+      4699,
+      5557,
+      8468,
+      9092,
+      10848,
+      11346,
+      12261,
+      15157,
+      15717,
+      16622,
+      17035,
+      17735,
+      17926,
+      19104
+     ]
+    ],
+    [
+     "retrieval",
+     [
+      27,
+      1241,
+      1757,
+      1951,
+      4403,
+      4961,
+      5862,
+      7557,
+      7904,
+      8242,
+      10083,
+      10815,
+      13144,
+      13977,
+      14243,
+      14397,
+      15831,
+      16228,
+      17023,
+      17249,
+      18266,
+      19813
+     ]
+    ]
+   ]
+  }
+ },
+ "retrieval": [
+  {
+   "query": "Query 1",
+   "type": "single",
+   "expression": "semaglutide",
+   "bsbi_hits": 3523,
+   "spimi_hits": 3523,
+   "baseline_hits": 3523,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "110 118 142 186 187 196 197 238 240 244"
+  },
+  {
+   "query": "Query 1",
+   "type": "single",
+   "expression": "weight",
+   "bsbi_hits": 7355,
+   "spimi_hits": 7355,
+   "baseline_hits": 7355,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "9 10 11 14 19 22 24 25 26 31"
+  },
+  {
+   "query": "Query 1",
+   "type": "AND",
+   "expression": "semaglutide AND weight",
+   "bsbi_hits": 2034,
+   "spimi_hits": 2034,
+   "baseline_hits": 2034,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "118 186 187 196 238 240 244 279 289 396"
+  },
+  {
+   "query": "Query 1",
+   "type": "OR",
+   "expression": "semaglutide OR weight",
+   "bsbi_hits": 8844,
+   "spimi_hits": 8844,
+   "baseline_hits": 8844,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "9 10 11 14 19 22 24 25 26 31"
+  },
+  {
+   "query": "Query 2",
+   "type": "single",
+   "expression": "liraglutide",
+   "bsbi_hits": 2566,
+   "spimi_hits": 2566,
+   "baseline_hits": 2566,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 11 22 25 31 32 53 56 57"
+  },
+  {
+   "query": "Query 2",
+   "type": "single",
+   "expression": "obesity",
+   "bsbi_hits": 6718,
+   "spimi_hits": 6718,
+   "baseline_hits": 6718,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 3 11 14 31 36 42 55 58 61"
+  },
+  {
+   "query": "Query 2",
+   "type": "AND",
+   "expression": "liraglutide AND obesity",
+   "bsbi_hits": 948,
+   "spimi_hits": 948,
+   "baseline_hits": 948,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "11 31 90 130 153 199 235 243 300 303"
+  },
+  {
+   "query": "Query 2",
+   "type": "OR",
+   "expression": "liraglutide OR obesity",
+   "bsbi_hits": 8336,
+   "spimi_hits": 8336,
+   "baseline_hits": 8336,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 2 3 4 11 14 22 25 31 32"
+  },
+  {
+   "query": "Query 3",
+   "type": "single",
+   "expression": "insulin",
+   "bsbi_hits": 5536,
+   "spimi_hits": 5536,
+   "baseline_hits": 5536,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 2 3 6 7 8 14 16 20 21"
+  },
+  {
+   "query": "Query 3",
+   "type": "single",
+   "expression": "secretion",
+   "bsbi_hits": 2307,
+   "spimi_hits": 2307,
+   "baseline_hits": 2307,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 3 28 34 36 37 40 51 58 60"
+  },
+  {
+   "query": "Query 3",
+   "type": "AND",
+   "expression": "insulin AND secretion",
+   "bsbi_hits": 1557,
+   "spimi_hits": 1557,
+   "baseline_hits": 1557,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 3 28 36 37 40 51 60 69 70"
+  },
+  {
+   "query": "Query 3",
+   "type": "OR",
+   "expression": "insulin OR secretion",
+   "bsbi_hits": 6286,
+   "spimi_hits": 6286,
+   "baseline_hits": 6286,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 2 3 6 7 8 14 16 20 21"
+  },
+  {
+   "query": "Query 4",
+   "type": "single",
+   "expression": "cardiovascular",
+   "bsbi_hits": 4426,
+   "spimi_hits": 4426,
+   "baseline_hits": 4426,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 9 12 13 19 22 32 35 50 57"
+  },
+  {
+   "query": "Query 4",
+   "type": "single",
+   "expression": "outcomes",
+   "bsbi_hits": 5696,
+   "spimi_hits": 5696,
+   "baseline_hits": 5696,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "12 35 42 50 56 73 74 78 81 90"
+  },
+  {
+   "query": "Query 4",
+   "type": "AND",
+   "expression": "cardiovascular AND outcomes",
+   "bsbi_hits": 2165,
+   "spimi_hits": 2165,
+   "baseline_hits": 2165,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "12 35 50 73 78 90 92 101 110 119"
+  },
+  {
+   "query": "Query 4",
+   "type": "OR",
+   "expression": "cardiovascular OR outcomes",
+   "bsbi_hits": 7957,
+   "spimi_hits": 7957,
+   "baseline_hits": 7957,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 9 12 13 19 22 32 35 42 50"
+  },
+  {
+   "query": "Query 5",
+   "type": "single",
+   "expression": "gastrointestinal",
+   "bsbi_hits": 2042,
+   "spimi_hits": 2042,
+   "baseline_hits": 2042,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "3 20 25 26 27 40 43 48 51 52"
+  },
+  {
+   "query": "Query 5",
+   "type": "single",
+   "expression": "adverse",
+   "bsbi_hits": 3400,
+   "spimi_hits": 3400,
+   "baseline_hits": 3400,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 9 13 17 22 25 26 42 56"
+  },
+  {
+   "query": "Query 5",
+   "type": "AND",
+   "expression": "gastrointestinal AND adverse",
+   "bsbi_hits": 988,
+   "spimi_hits": 988,
+   "baseline_hits": 988,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "25 26 89 96 186 196 197 238 244 279"
+  },
+  {
+   "query": "Query 5",
+   "type": "OR",
+   "expression": "gastrointestinal OR adverse",
+   "bsbi_hits": 4454,
+   "spimi_hits": 4454,
+   "baseline_hits": 4454,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 3 4 9 13 17 20 22 25 26"
+  },
+  {
+   "query": "Example 1",
+   "type": "single",
+   "expression": "information",
+   "bsbi_hits": 612,
+   "spimi_hits": 612,
+   "baseline_hits": 612,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "5 108 159 169 193 297 309 367 376 401"
+  },
+  {
+   "query": "Example 1",
+   "type": "single",
+   "expression": "retrieval",
+   "bsbi_hits": 22,
+   "spimi_hits": 22,
+   "baseline_hits": 22,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "27 1241 1757 1951 4403 4961 5862 7557 7904 8242"
+  },
+  {
+   "query": "Example 1",
+   "type": "AND",
+   "expression": "information AND retrieval",
+   "bsbi_hits": 2,
+   "spimi_hits": 2,
+   "baseline_hits": 2,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "7904 13977"
+  },
+  {
+   "query": "Example 1",
+   "type": "OR",
+   "expression": "information OR retrieval",
+   "bsbi_hits": 632,
+   "spimi_hits": 632,
+   "baseline_hits": 632,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "5 27 108 159 169 193 297 309 367 376"
+  },
+  {
+   "query": "Example 2",
+   "type": "single",
+   "expression": "artificial",
+   "bsbi_hits": 118,
+   "spimi_hits": 118,
+   "baseline_hits": 118,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "349 844 1150 1754 3223 3619 3948 4824 5359 5494"
+  },
+  {
+   "query": "Example 2",
+   "type": "single",
+   "expression": "intelligence",
+   "bsbi_hits": 86,
+   "spimi_hits": 86,
+   "baseline_hits": 86,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "5359 7484 7544 7566 7974 9012 9173 9317 9425 9475"
+  },
+  {
+   "query": "Example 2",
+   "type": "AND",
+   "expression": "artificial AND intelligence",
+   "bsbi_hits": 85,
+   "spimi_hits": 85,
+   "baseline_hits": 85,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "5359 7544 7566 7974 9012 9173 9317 9425 9475 9867"
+  },
+  {
+   "query": "Example 2",
+   "type": "OR",
+   "expression": "artificial OR intelligence",
+   "bsbi_hits": 119,
+   "spimi_hits": 119,
+   "baseline_hits": 119,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "349 844 1150 1754 3223 3619 3948 4824 5359 5494"
+  },
+  {
+   "query": "Example 3",
+   "type": "single",
+   "expression": "financial",
+   "bsbi_hits": 94,
+   "spimi_hits": 94,
+   "baseline_hits": 94,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "138 1628 2637 2869 3144 4123 5154 5163 5622 5697"
+  },
+  {
+   "query": "Example 3",
+   "type": "single",
+   "expression": "market",
+   "bsbi_hits": 152,
+   "spimi_hits": 152,
+   "baseline_hits": 152,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "36 61 142 158 320 460 589 864 1136 1364"
+  },
+  {
+   "query": "Example 3",
+   "type": "AND",
+   "expression": "financial AND market",
+   "bsbi_hits": 5,
+   "spimi_hits": 5,
+   "baseline_hits": 5,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "7112 9205 13103 14324 18059"
+  },
+  {
+   "query": "Example 3",
+   "type": "OR",
+   "expression": "financial OR market",
+   "bsbi_hits": 241,
+   "spimi_hits": 241,
+   "baseline_hits": 241,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "36 61 138 142 158 320 460 589 864 1136"
+  },
+  {
+   "query": "Example 4",
+   "type": "single",
+   "expression": "medical",
+   "bsbi_hits": 1289,
+   "spimi_hits": 1289,
+   "baseline_hits": 1289,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "6 8 31 92 98 142 147 169 173 197"
+  },
+  {
+   "query": "Example 4",
+   "type": "single",
+   "expression": "research",
+   "bsbi_hits": 3119,
+   "spimi_hits": 3119,
+   "baseline_hits": 3119,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "7 24 30 31 33 40 52 63 66 82"
+  },
+  {
+   "query": "Example 4",
+   "type": "AND",
+   "expression": "medical AND research",
+   "bsbi_hits": 254,
+   "spimi_hits": 254,
+   "baseline_hits": 254,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "31 92 439 445 654 786 1089 1103 1196 1438"
+  },
+  {
+   "query": "Example 4",
+   "type": "OR",
+   "expression": "medical OR research",
+   "bsbi_hits": 4154,
+   "spimi_hits": 4154,
+   "baseline_hits": 4154,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "6 7 8 24 30 31 33 40 52 63"
+  },
+  {
+   "query": "Example 5",
+   "type": "single",
+   "expression": "computer",
+   "bsbi_hits": 10,
+   "spimi_hits": 10,
+   "baseline_hits": 10,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2197 4727 5470 7698 8668 9188 9342 12376 12767 15023"
+  },
+  {
+   "query": "Example 5",
+   "type": "single",
+   "expression": "science",
+   "bsbi_hits": 814,
+   "spimi_hits": 814,
+   "baseline_hits": 814,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 82 108 131 221 230 248 337 440 515"
+  },
+  {
+   "query": "Example 5",
+   "type": "AND",
+   "expression": "computer AND science",
+   "bsbi_hits": 1,
+   "spimi_hits": 1,
+   "baseline_hits": 1,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "7698"
+  },
+  {
+   "query": "Example 5",
+   "type": "OR",
+   "expression": "computer OR science",
+   "bsbi_hits": 823,
+   "spimi_hits": 823,
+   "baseline_hits": 823,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 82 108 131 221 230 248 337 440 515"
+  }
+ ],
+ "sweep": [
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 1.0,
+   "seconds": 9.107071988999905,
+   "index_seconds": 4.257268674009538,
+   "preprocess_seconds": 4.849803314990368,
+   "pairs_seconds": 0.7200654450443835,
+   "sort_seconds": 1.0290124790026312,
+   "write_seconds": 0.9567140939971068,
+   "merge_seconds": 1.3905269780002527,
+   "blocks": 209,
+   "intermediate_files": 209,
+   "intermediate_bytes": 15587108,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 22981502,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 1.0,
+   "seconds": 7.37011736400018,
+   "index_seconds": 2.5586488409849153,
+   "preprocess_seconds": 4.8114685230152645,
+   "pairs_seconds": 0.7519440679989202,
+   "sort_seconds": 0.1360599590034326,
+   "write_seconds": 0.5647922230023141,
+   "merge_seconds": 1.0518317310002203,
+   "blocks": 93,
+   "intermediate_files": 93,
+   "intermediate_bytes": 17541232,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 6642826,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 2.0,
+   "seconds": 8.14133869699981,
+   "index_seconds": 3.45906855898329,
+   "preprocess_seconds": 4.68227013801652,
+   "pairs_seconds": 0.6042885019996902,
+   "sort_seconds": 1.0372990450000543,
+   "write_seconds": 0.7538662930032842,
+   "merge_seconds": 0.916785833999711,
+   "blocks": 105,
+   "intermediate_files": 105,
+   "intermediate_bytes": 13973940,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 15944779,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 2.0,
+   "seconds": 6.809190140999817,
+   "index_seconds": 1.9211193569926763,
+   "preprocess_seconds": 4.888070784007141,
+   "pairs_seconds": 0.7231337389716828,
+   "sort_seconds": 0.09994347299880246,
+   "write_seconds": 0.37011243099959756,
+   "merge_seconds": 0.6826605789997302,
+   "blocks": 33,
+   "intermediate_files": 33,
+   "intermediate_bytes": 14438390,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 2623271,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 7.961287777000052,
+   "index_seconds": 3.282138898973244,
+   "preprocess_seconds": 4.679148878026808,
+   "pairs_seconds": 0.5798839850076547,
+   "sort_seconds": 1.109943211999962,
+   "write_seconds": 0.6917384520006635,
+   "merge_seconds": 0.7177484939998067,
+   "blocks": 53,
+   "intermediate_files": 53,
+   "intermediate_bytes": 12707340,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 12423143,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 6.351072459000079,
+   "index_seconds": 1.4392088030012928,
+   "preprocess_seconds": 4.911863655998786,
+   "pairs_seconds": 0.6489394799773436,
+   "sort_seconds": 0.061535087999345706,
+   "write_seconds": 0.2380925999991632,
+   "merge_seconds": 0.45107076200019947,
+   "blocks": 12,
+   "intermediate_files": 12,
+   "intermediate_bytes": 12539682,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 4704204,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 8.0,
+   "seconds": 7.892120585000157,
+   "index_seconds": 3.2548985749799613,
+   "preprocess_seconds": 4.637222010020196,
+   "pairs_seconds": 0.5604087839924432,
+   "sort_seconds": 1.2225995559992953,
+   "write_seconds": 0.6964133269993908,
+   "merge_seconds": 0.5270018800001708,
+   "blocks": 27,
+   "intermediate_files": 27,
+   "intermediate_bytes": 11748236,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 16787072,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 8.0,
+   "seconds": 6.112327114999971,
+   "index_seconds": 1.3426363920161748,
+   "preprocess_seconds": 4.769690722983796,
+   "pairs_seconds": 0.7221971040048629,
+   "sort_seconds": 0.044193261000600614,
+   "write_seconds": 0.21237854100036202,
+   "merge_seconds": 0.32703726499994445,
+   "blocks": 5,
+   "intermediate_files": 5,
+   "intermediate_bytes": 11429251,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 9591189,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 16.0,
+   "seconds": 7.961819132999608,
+   "index_seconds": 3.311880150964498,
+   "preprocess_seconds": 4.64993898203511,
+   "pairs_seconds": 0.5578594189737487,
+   "sort_seconds": 1.2913769269985096,
+   "write_seconds": 0.731962671999554,
+   "merge_seconds": 0.41982769900005223,
+   "blocks": 14,
+   "intermediate_files": 14,
+   "intermediate_bytes": 11037564,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 25826026,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 16.0,
+   "seconds": 6.0846994610001275,
+   "index_seconds": 1.193301906032957,
+   "preprocess_seconds": 4.89139755496717,
+   "pairs_seconds": 0.7206615039635835,
+   "sort_seconds": 0.032319070999619726,
+   "write_seconds": 0.15352013700021416,
+   "merge_seconds": 0.24886526599993886,
+   "blocks": 2,
+   "intermediate_files": 2,
+   "intermediate_bytes": 10696590,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 19323456,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 32.0,
+   "seconds": 7.946679823000068,
+   "index_seconds": 3.302037994004422,
+   "preprocess_seconds": 4.6446418289956455,
+   "pairs_seconds": 0.5720627339801467,
+   "sort_seconds": 1.3565762959992753,
+   "write_seconds": 0.6922482420000051,
+   "merge_seconds": 0.32444117100021685,
+   "blocks": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 10532652,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 43661323,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 32.0,
+   "seconds": 6.1192556659998445,
+   "index_seconds": 1.2053691129717663,
+   "preprocess_seconds": 4.913886553028078,
+   "pairs_seconds": 0.8206387109980824,
+   "sort_seconds": 0.026787033999880805,
+   "write_seconds": 0.11915063100013867,
+   "merge_seconds": 0.20137922399999297,
+   "blocks": 1,
+   "intermediate_files": 1,
+   "intermediate_bytes": 10328460,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 31741498,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 64.0,
+   "seconds": 8.481957055000294,
+   "index_seconds": 3.55613910298689,
+   "preprocess_seconds": 4.9258179520134036,
+   "pairs_seconds": 0.7255816429646984,
+   "sort_seconds": 1.463975868000034,
+   "write_seconds": 0.6874953730002744,
+   "merge_seconds": 0.2931931079997412,
+   "blocks": 4,
+   "intermediate_files": 4,
+   "intermediate_bytes": 10194108,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 78927037,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 64.0,
+   "seconds": 6.160636709999835,
+   "index_seconds": 1.2049651589836685,
+   "preprocess_seconds": 4.955671551016167,
+   "pairs_seconds": 0.8272917840213267,
+   "sort_seconds": 0.02725025799963987,
+   "write_seconds": 0.1117732799998521,
+   "merge_seconds": 0.201673490000303,
+   "blocks": 1,
+   "intermediate_files": 1,
+   "intermediate_bytes": 10328460,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 31740229,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  }
+ ],
+ "scaling": [
+  {
+   "method": "baseline",
+   "documents": 2500,
+   "tokens": 412446,
+   "vocabulary": 22769,
+   "limit_mb": 4.0,
+   "seconds": 0.7263580959997853,
+   "index_seconds": 0.1260407750082777,
+   "preprocess_seconds": 0.6003173209915076,
+   "pairs_seconds": 0.06338372700474793,
+   "sort_seconds": 0.013032544999987294,
+   "write_seconds": 0.047190259999752016,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 1496522,
+   "block_entries": 0,
+   "peak_bytes": 6360939,
+   "term_id_map_bytes": 0,
+   "index_memory": 6020646
+  },
+  {
+   "method": "bsbi",
+   "documents": 2500,
+   "tokens": 412446,
+   "vocabulary": 22769,
+   "limit_mb": 4.0,
+   "seconds": 1.0489008919998923,
+   "index_seconds": 0.44093565799221324,
+   "preprocess_seconds": 0.6079652340076791,
+   "pairs_seconds": 0.0769484070060571,
+   "sort_seconds": 0.1423651919999429,
+   "write_seconds": 0.09410941099986303,
+   "merge_seconds": 0.1029723759997978,
+   "blocks": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 1499356,
+   "final_bytes": 1496522,
+   "block_entries": 412446,
+   "peak_bytes": 7214383,
+   "term_id_map_bytes": 2111878,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 2500,
+   "tokens": 412446,
+   "vocabulary": 22769,
+   "limit_mb": 4.0,
+   "seconds": 0.7724346039999546,
+   "index_seconds": 0.1941204589938934,
+   "preprocess_seconds": 0.5783141450060612,
+   "pairs_seconds": 0.07463297798904023,
+   "sort_seconds": 0.008002440999916871,
+   "write_seconds": 0.033059021000099165,
+   "merge_seconds": 0.07358585499969195,
+   "blocks": 2,
+   "intermediate_files": 2,
+   "intermediate_bytes": 1517918,
+   "final_bytes": 1496522,
+   "block_entries": 265391,
+   "peak_bytes": 4647570,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 5000,
+   "tokens": 820285,
+   "vocabulary": 33017,
+   "limit_mb": 4.0,
+   "seconds": 1.3583822470000086,
+   "index_seconds": 0.18851478300211966,
+   "preprocess_seconds": 1.169867463997889,
+   "pairs_seconds": 0.12606344100549904,
+   "sort_seconds": 0.010010950999912893,
+   "write_seconds": 0.047507116999895516,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 2761455,
+   "block_entries": 0,
+   "peak_bytes": 10026500,
+   "term_id_map_bytes": 0,
+   "index_memory": 9576207
+  },
+  {
+   "method": "bsbi",
+   "documents": 5000,
+   "tokens": 820285,
+   "vocabulary": 33017,
+   "limit_mb": 4.0,
+   "seconds": 1.9023795410003004,
+   "index_seconds": 0.7747945659816651,
+   "preprocess_seconds": 1.1275849750186353,
+   "pairs_seconds": 0.12852556800635284,
+   "sort_seconds": 0.2516750740005591,
+   "write_seconds": 0.17316265699946598,
+   "merge_seconds": 0.1831474559999151,
+   "blocks": 13,
+   "intermediate_files": 13,
+   "intermediate_bytes": 2982572,
+   "final_bytes": 2761455,
+   "block_entries": 820285,
+   "peak_bytes": 8034080,
+   "term_id_map_bytes": 2639463,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 5000,
+   "tokens": 820285,
+   "vocabulary": 33017,
+   "limit_mb": 4.0,
+   "seconds": 1.5018561500000942,
+   "index_seconds": 0.36023129302111556,
+   "preprocess_seconds": 1.1416248569789786,
+   "pairs_seconds": 0.14625090700383225,
+   "sort_seconds": 0.015266147000147612,
+   "write_seconds": 0.06108049399972515,
+   "merge_seconds": 0.12830422899969562,
+   "blocks": 3,
+   "intermediate_files": 3,
+   "intermediate_bytes": 2948559,
+   "final_bytes": 2761455,
+   "block_entries": 530657,
+   "peak_bytes": 4663273,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 10000,
+   "tokens": 1658693,
+   "vocabulary": 48095,
+   "limit_mb": 4.0,
+   "seconds": 2.8672351150003124,
+   "index_seconds": 0.4142185920122756,
+   "preprocess_seconds": 2.4530165229880367,
+   "pairs_seconds": 0.3106741870287806,
+   "sort_seconds": 0.015829673999633087,
+   "write_seconds": 0.07669023700009348,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 5254552,
+   "block_entries": 0,
+   "peak_bytes": 17797019,
+   "term_id_map_bytes": 0,
+   "index_memory": 17164622
+  },
+  {
+   "method": "bsbi",
+   "documents": 10000,
+   "tokens": 1658693,
+   "vocabulary": 48095,
+   "limit_mb": 4.0,
+   "seconds": 3.8133772020000833,
+   "index_seconds": 1.5369166320115255,
+   "preprocess_seconds": 2.276460569988558,
+   "pairs_seconds": 0.27027979100921584,
+   "sort_seconds": 0.5208788980003192,
+   "write_seconds": 0.32745402900036424,
+   "merge_seconds": 0.3368806550001864,
+   "blocks": 26,
+   "intermediate_files": 26,
+   "intermediate_bytes": 6031928,
+   "final_bytes": 5254552,
+   "block_entries": 1658693,
+   "peak_bytes": 10229448,
+   "term_id_map_bytes": 4377350,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 10000,
+   "tokens": 1658693,
+   "vocabulary": 48095,
+   "limit_mb": 4.0,
+   "seconds": 3.318579581999984,
+   "index_seconds": 0.8216749659904963,
+   "preprocess_seconds": 2.4969046160094877,
+   "pairs_seconds": 0.35314500497952395,
+   "sort_seconds": 0.031745237999984965,
+   "write_seconds": 0.12543535100076042,
+   "merge_seconds": 0.2903480340000897,
+   "blocks": 6,
+   "intermediate_files": 6,
+   "intermediate_bytes": 5953992,
+   "final_bytes": 5254552,
+   "block_entries": 1078598,
+   "peak_bytes": 4686640,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 5.491505941000014,
+   "index_seconds": 0.7249664479968487,
+   "preprocess_seconds": 4.766539493003165,
+   "pairs_seconds": 0.5504989019891582,
+   "sort_seconds": 0.026187935000052676,
+   "write_seconds": 0.12821339499987516,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 10621652,
+   "block_entries": 0,
+   "peak_bytes": 31737493,
+   "term_id_map_bytes": 0,
+   "index_memory": 30758538
+  },
+  {
+   "method": "bsbi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 8.150171505999879,
+   "index_seconds": 3.4444213610236147,
+   "preprocess_seconds": 4.705750144976264,
+   "pairs_seconds": 0.6011505579872392,
+   "sort_seconds": 1.1416057380015445,
+   "write_seconds": 0.7970448259993645,
+   "merge_seconds": 0.7094361969998317,
+   "blocks": 53,
+   "intermediate_files": 53,
+   "intermediate_bytes": 12707340,
+   "final_bytes": 10621652,
+   "block_entries": 3432072,
+   "peak_bytes": 12422626,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 20000,
+   "tokens": 3432072,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 6.496338317999744,
+   "index_seconds": 1.5295386380166747,
+   "preprocess_seconds": 4.966799679983069,
+   "pairs_seconds": 0.6659754340466861,
+   "sort_seconds": 0.06472989800022333,
+   "write_seconds": 0.27507770900047035,
+   "merge_seconds": 0.4834389019997616,
+   "blocks": 12,
+   "intermediate_files": 12,
+   "intermediate_bytes": 12539682,
+   "final_bytes": 10621652,
+   "block_entries": 2287515,
+   "peak_bytes": 4703753,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 100000,
+   "tokens": 17160360,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 27.554754976000368,
+   "index_seconds": 3.4926059110616734,
+   "preprocess_seconds": 24.062149064938694,
+   "pairs_seconds": 3.0803601879979396,
+   "sort_seconds": 0.027387234999878274,
+   "write_seconds": 0.2718482549998953,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 47221892,
+   "block_entries": 0,
+   "peak_bytes": 112818850,
+   "term_id_map_bytes": 0,
+   "index_memory": 111124666
+  },
+  {
+   "method": "bsbi",
+   "documents": 100000,
+   "tokens": 17160360,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 40.85617824600013,
+   "index_seconds": 17.341740707092868,
+   "preprocess_seconds": 23.51443753890726,
+   "pairs_seconds": 3.035846025020419,
+   "sort_seconds": 5.756889688002502,
+   "write_seconds": 3.9866234009937216,
+   "merge_seconds": 3.500953673999902,
+   "blocks": 262,
+   "intermediate_files": 262,
+   "intermediate_bytes": 63484468,
+   "final_bytes": 47221892,
+   "block_entries": 17160360,
+   "peak_bytes": 27456690,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 100000,
+   "tokens": 17160360,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 31.77308385499964,
+   "index_seconds": 7.608545367933402,
+   "preprocess_seconds": 24.16453848706624,
+   "pairs_seconds": 3.8712473720261187,
+   "sort_seconds": 0.3120094270034315,
+   "write_seconds": 1.2702190789987071,
+   "merge_seconds": 1.950669292999919,
+   "blocks": 59,
+   "intermediate_files": 59,
+   "intermediate_bytes": 62598188,
+   "final_bytes": 47221892,
+   "block_entries": 11437575,
+   "peak_bytes": 5026265,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 1000000,
+   "tokens": 171603600,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 284.41405079299966,
+   "index_seconds": 44.64298674967449,
+   "preprocess_seconds": 239.77106404332517,
+   "pairs_seconds": 37.48741341137247,
+   "sort_seconds": 0.026753152000310365,
+   "write_seconds": 5.949550880000061,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 458974592,
+   "block_entries": 0,
+   "peak_bytes": null,
+   "term_id_map_bytes": 0,
+   "index_memory": 1009894330
+  },
+  {
+   "method": "bsbi",
+   "documents": 1000000,
+   "tokens": 171603600,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 434.5427034059994,
+   "index_seconds": 198.45617786011826,
+   "preprocess_seconds": 236.08652554588116,
+   "pairs_seconds": 30.622178705325496,
+   "sort_seconds": 58.5153145600043,
+   "write_seconds": 40.687580756026364,
+   "merge_seconds": 57.53208852700027,
+   "blocks": 2615,
+   "intermediate_files": 2615,
+   "intermediate_bytes": 634742360,
+   "final_bytes": 458974592,
+   "block_entries": 171603600,
+   "peak_bytes": null,
+   "term_id_map_bytes": 5707402,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 1000000,
+   "tokens": 171603600,
+   "vocabulary": 73298,
+   "limit_mb": 4.0,
+   "seconds": 350.9149262330002,
+   "index_seconds": 100.26866960214647,
+   "preprocess_seconds": 250.6462566308537,
+   "pairs_seconds": 45.77525255364253,
+   "sort_seconds": 3.4421484310005326,
+   "write_seconds": 17.323812772995552,
+   "merge_seconds": 31.217999115000566,
+   "blocks": 583,
+   "intermediate_files": 583,
+   "intermediate_bytes": 625434820,
+   "final_bytes": 458974592,
+   "block_entries": 114375750,
+   "peak_bytes": null,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  }
+ ],
+ "heaps": {
+  "k": 18.44038877447425,
+  "beta": 0.5501496204701481,
+  "estimates": [
+   {
+    "documents": 100000,
+    "tokens": 17160360.0,
+    "vocabulary": 176133.52351442474,
+    "term_id_map_bytes": 13714764.719000174
+   },
+   {
+    "documents": 1000000,
+    "tokens": 171603600.0,
+    "vocabulary": 625160.6637782146,
+    "term_id_map_bytes": 48678589.08522892
+   }
+  ]
+ },
+ "complexity": {
+  "baseline": 44,
+  "bsbi": 102,
+  "spimi": 84,
+  "shared": 85
+ },
+ "pair_bytes": 64,
+ "spimi_bytes": {
+  "entry": 96,
+  "posting": 8
+ },
+ "seconds": 3619.0855651680004
+}

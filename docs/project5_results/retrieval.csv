@@ -1,0 +1,41 @@
+﻿query,type,expression,bsbi_hits,spimi_hits,baseline_hits,identical,baseline_identical,first_docs
+Query 1,single,oil,1430,1430,1430,True,True,2 6 8 26 68 127 137 140 144 145
+Query 1,single,price,1871,1871,1871,True,True,4 5 10 15 16 22 45 97 104 115
+Query 1,AND,oil AND price,334,334,334,True,True,127 144 191 194 213 236 246 263 357 471
+Query 1,OR,oil OR price,2967,2967,2967,True,True,2 4 5 6 8 10 15 16 22 26
+Query 2,single,wheat,427,427,427,True,True,5 6 19 97 180 235 241 253 254 258
+Query 2,single,export,827,827,827,True,True,1 6 19 32 42 55 176 180 200 227
+Query 2,AND,wheat AND export,143,143,143,True,True,6 19 180 235 501 694 742 856 1257 1295
+Query 2,OR,wheat OR export,1111,1111,1111,True,True,1 5 6 19 32 42 55 97 176 180
+Query 3,single,crude,415,415,415,True,True,127 189 191 194 235 236 273 274 277 349
+Query 3,single,petroleum,484,484,484,True,True,2 140 144 156 176 194 211 237 246 273
+Query 3,AND,crude AND petroleum,134,134,134,True,True,194 273 349 918 1306 1343 1387 1616 1856 1878
+Query 3,OR,crude OR petroleum,765,765,765,True,True,2 127 140 144 156 176 189 191 194 211
+Query 4,single,interest,1840,1840,1840,True,True,2 4 16 20 26 40 60 79 115 137
+Query 4,single,rate,1621,1621,1621,True,True,4 16 26 29 35 45 47 82 113 137
+Query 4,AND,interest AND rate,530,530,530,True,True,4 16 26 137 200 225 270 317 322 364
+Query 4,OR,interest OR rate,2931,2931,2931,True,True,2 4 16 20 26 29 35 40 45 47
+Query 5,single,trade,1931,1931,1931,True,True,1 47 121 175 180 190 208 209 237 263
+Query 5,single,deficit,634,634,634,True,True,109 208 209 227 238 246 292 307 312 319
+Query 5,AND,trade AND deficit,335,335,335,True,True,208 209 335 340 342 356 717 843 880 890
+Query 5,OR,trade OR deficit,2230,2230,2230,True,True,1 47 109 121 175 180 190 208 209 227
+Example 1,single,information,383,383,383,True,True,20 208 276 328 340 463 493 496 570 623
+Example 1,single,retrieval,10,10,10,True,True,400 424 706 709 733 1041 1584 3027 9568 21133
+Example 1,AND,information AND retrieval,2,2,2,True,True,1041 3027
+Example 1,OR,information OR retrieval,391,391,391,True,True,20 208 276 328 340 400 424 463 493 496
+Example 2,single,artificial,23,23,23,True,True,90 1041 2072 2129 4052 4127 4160 4470 5850 6565
+Example 2,single,intelligence,51,51,51,True,True,28 90 386 801 869 1041 1236 1413 1617 1829
+Example 2,AND,artificial AND intelligence,11,11,11,True,True,90 1041 2129 4160 6565 6728 9395 13886 18026 19840
+Example 2,OR,artificial OR intelligence,63,63,63,True,True,28 90 386 801 869 1041 1236 1413 1617 1829
+Example 3,single,financial,1575,1575,1575,True,True,2 4 16 20 63 74 88 110 119 120
+Example 3,single,market,2921,2921,2921,True,True,2 4 10 16 21 30 58 79 97 104
+Example 3,AND,financial AND market,453,453,453,True,True,2 4 16 110 179 220 225 247 276 295
+Example 3,OR,financial OR market,4043,4043,4043,True,True,2 4 10 16 20 21 30 58 63 74
+Example 4,single,medical,175,175,175,True,True,155 213 435 454 477 545 696 748 809 1344
+Example 4,single,research,395,395,395,True,True,37 56 144 149 155 223 234 279 317 333
+Example 4,AND,medical AND research,16,16,16,True,True,155 1386 3172 4274 6141 6229 7144 7163 7753 8923
+Example 4,OR,medical OR research,554,554,554,True,True,37 56 144 149 155 213 223 234 279 317
+Example 5,single,computer,451,451,451,True,True,10 37 54 67 90 238 276 331 339 342
+Example 5,single,science,31,31,31,True,True,367 1489 2126 2350 3691 3782 5496 5800 6419 6900
+Example 5,AND,computer AND science,3,3,3,True,True,367 9051 9440
+Example 5,OR,computer OR science,479,479,479,True,True,10 37 54 67 90 238 276 331 339 342

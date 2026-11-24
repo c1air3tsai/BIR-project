@@ -1,0 +1,2582 @@
+{
+ "dataset": {
+  "documents": 21578,
+  "tokens": 1730348,
+  "vocabulary": 51470,
+  "postings": 1169501,
+  "empty": 737,
+  "baseline_seconds": 3.3059367700479925
+ },
+ "limit_mb": 4,
+ "repeats": 5,
+ "equivalence": {
+  "vocabulary": 51470,
+  "postings": 1169501,
+  "baseline": {
+   "same_vocabulary": true,
+   "different_postings": 0
+  },
+  "bsbi": {
+   "same_vocabulary": true,
+   "different_postings": 0
+  },
+  "spimi": {
+   "same_vocabulary": true,
+   "different_postings": 0
+  }
+ },
+ "methods": {
+  "baseline": {
+   "method": "baseline",
+   "seconds": 3.178140755975619,
+   "times": {
+    "preprocess": 2.5253125426825136,
+    "pairs": 0.4132079978007823,
+    "sort": 0.014074505073949695,
+    "write": 0.20455531310290098,
+    "merge": 0.0
+   },
+   "blocks": [],
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "term_id_map_bytes": 0,
+   "index_memory": 18653975,
+   "limit": 4194304,
+   "block_count": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "index_bytes": {
+    "dictionary": 909798,
+    "postings": 4678004
+   },
+   "final_bytes": 5587802,
+   "block_entries": 0,
+   "peak": 19397888,
+   "runs": [
+    3.2543631880544126,
+    2.913081048987806,
+    3.178140755975619,
+    3.007966870907694,
+    3.3539429851807654
+   ],
+   "stdev": 0.1607600571722794
+  },
+  "bsbi": {
+   "method": "bsbi",
+   "seconds": 4.128814665833488,
+   "times": {
+    "preprocess": 2.3310674829408526,
+    "pairs": 0.3187364225741476,
+    "sort": 0.5867297505028546,
+    "write": 0.38413486373610795,
+    "merge": 0.3938834990840405
+   },
+   "blocks": [
+    {
+     "block": 1,
+     "first_doc": 1,
+     "last_doc": 798,
+     "pairs": 65583,
+     "terms": 9148,
+     "bytes": 248948,
+     "memory": 4197312
+    },
+    {
+     "block": 2,
+     "first_doc": 799,
+     "last_doc": 1649,
+     "pairs": 65572,
+     "terms": 8778,
+     "bytes": 245952,
+     "memory": 4196608
+    },
+    {
+     "block": 3,
+     "first_doc": 1650,
+     "last_doc": 2472,
+     "pairs": 65555,
+     "terms": 9080,
+     "bytes": 250400,
+     "memory": 4195520
+    },
+    {
+     "block": 4,
+     "first_doc": 2473,
+     "last_doc": 3284,
+     "pairs": 65555,
+     "terms": 9226,
+     "bytes": 252004,
+     "memory": 4195520
+    },
+    {
+     "block": 5,
+     "first_doc": 3285,
+     "last_doc": 4052,
+     "pairs": 65558,
+     "terms": 9126,
+     "bytes": 249320,
+     "memory": 4195712
+    },
+    {
+     "block": 6,
+     "first_doc": 4053,
+     "last_doc": 4860,
+     "pairs": 65722,
+     "terms": 8933,
+     "bytes": 248212,
+     "memory": 4206208
+    },
+    {
+     "block": 7,
+     "first_doc": 4861,
+     "last_doc": 5525,
+     "pairs": 65570,
+     "terms": 8936,
+     "bytes": 246752,
+     "memory": 4196480
+    },
+    {
+     "block": 8,
+     "first_doc": 5526,
+     "last_doc": 6340,
+     "pairs": 65586,
+     "terms": 9154,
+     "bytes": 249668,
+     "memory": 4197504
+    },
+    {
+     "block": 9,
+     "first_doc": 6341,
+     "last_doc": 7140,
+     "pairs": 65542,
+     "terms": 8897,
+     "bytes": 246936,
+     "memory": 4194688
+    },
+    {
+     "block": 10,
+     "first_doc": 7141,
+     "last_doc": 7996,
+     "pairs": 65627,
+     "terms": 9267,
+     "bytes": 252460,
+     "memory": 4200128
+    },
+    {
+     "block": 11,
+     "first_doc": 7997,
+     "last_doc": 8669,
+     "pairs": 65639,
+     "terms": 8966,
+     "bytes": 249476,
+     "memory": 4200896
+    },
+    {
+     "block": 12,
+     "first_doc": 8670,
+     "last_doc": 9466,
+     "pairs": 65556,
+     "terms": 8931,
+     "bytes": 247288,
+     "memory": 4195584
+    },
+    {
+     "block": 13,
+     "first_doc": 9467,
+     "last_doc": 10200,
+     "pairs": 65536,
+     "terms": 8896,
+     "bytes": 247024,
+     "memory": 4194304
+    },
+    {
+     "block": 14,
+     "first_doc": 10201,
+     "last_doc": 10905,
+     "pairs": 65562,
+     "terms": 8846,
+     "bytes": 248316,
+     "memory": 4195968
+    },
+    {
+     "block": 15,
+     "first_doc": 10906,
+     "last_doc": 11706,
+     "pairs": 65593,
+     "terms": 9177,
+     "bytes": 250536,
+     "memory": 4197952
+    },
+    {
+     "block": 16,
+     "first_doc": 11707,
+     "last_doc": 12482,
+     "pairs": 65559,
+     "terms": 8940,
+     "bytes": 246676,
+     "memory": 4195776
+    },
+    {
+     "block": 17,
+     "first_doc": 12483,
+     "last_doc": 13256,
+     "pairs": 65738,
+     "terms": 9116,
+     "bytes": 250720,
+     "memory": 4207232
+    },
+    {
+     "block": 18,
+     "first_doc": 13257,
+     "last_doc": 14700,
+     "pairs": 65564,
+     "terms": 8515,
+     "bytes": 252336,
+     "memory": 4196096
+    },
+    {
+     "block": 19,
+     "first_doc": 14701,
+     "last_doc": 15488,
+     "pairs": 65901,
+     "terms": 9160,
+     "bytes": 254992,
+     "memory": 4217664
+    },
+    {
+     "block": 20,
+     "first_doc": 15489,
+     "last_doc": 16278,
+     "pairs": 65669,
+     "terms": 8891,
+     "bytes": 244032,
+     "memory": 4202816
+    },
+    {
+     "block": 21,
+     "first_doc": 16279,
+     "last_doc": 17101,
+     "pairs": 65573,
+     "terms": 8823,
+     "bytes": 247216,
+     "memory": 4196672
+    },
+    {
+     "block": 22,
+     "first_doc": 17102,
+     "last_doc": 17680,
+     "pairs": 65809,
+     "terms": 8889,
+     "bytes": 247456,
+     "memory": 4211776
+    },
+    {
+     "block": 23,
+     "first_doc": 17681,
+     "last_doc": 18422,
+     "pairs": 65602,
+     "terms": 9564,
+     "bytes": 255884,
+     "memory": 4198528
+    },
+    {
+     "block": 24,
+     "first_doc": 18423,
+     "last_doc": 19261,
+     "pairs": 65596,
+     "terms": 9083,
+     "bytes": 254124,
+     "memory": 4198144
+    },
+    {
+     "block": 25,
+     "first_doc": 19262,
+     "last_doc": 20087,
+     "pairs": 65590,
+     "terms": 9899,
+     "bytes": 260348,
+     "memory": 4197760
+    },
+    {
+     "block": 26,
+     "first_doc": 20088,
+     "last_doc": 21222,
+     "pairs": 65550,
+     "terms": 8533,
+     "bytes": 244720,
+     "memory": 4195200
+    },
+    {
+     "block": 27,
+     "first_doc": 21223,
+     "last_doc": 21578,
+     "pairs": 24441,
+     "terms": 4935,
+     "bytes": 103880,
+     "memory": 1564224
+    }
+   ],
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "term_id_map_bytes": 4427863,
+   "limit": 4194304,
+   "block_count": 27,
+   "intermediate_files": 27,
+   "intermediate_bytes": 6595676,
+   "index_bytes": {
+    "dictionary": 909798,
+    "postings": 4678004
+   },
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak": 10386603,
+   "runs": [
+    4.185813819989562,
+    4.131088142981753,
+    4.086178897181526,
+    4.109176279976964,
+    4.128814665833488
+   ],
+   "stdev": 0.033032545806025694
+  },
+  "spimi": {
+   "method": "spimi",
+   "seconds": 3.3205166859552264,
+   "times": {
+    "preprocess": 2.417123089544475,
+    "pairs": 0.43702347856014967,
+    "sort": 0.027328099124133587,
+    "write": 0.14474118291400373,
+    "merge": 0.2633998589590192
+   },
+   "blocks": [
+    {
+     "block": 1,
+     "first_doc": 1,
+     "last_doc": 3442,
+     "pairs": 185602,
+     "terms": 19867,
+     "bytes": 1009487,
+     "memory": 4195536
+    },
+    {
+     "block": 2,
+     "first_doc": 3443,
+     "last_doc": 6740,
+     "pairs": 189622,
+     "terms": 19621,
+     "bytes": 1022629,
+     "memory": 4194500
+    },
+    {
+     "block": 3,
+     "first_doc": 6741,
+     "last_doc": 10017,
+     "pairs": 188993,
+     "terms": 19666,
+     "bytes": 1021277,
+     "memory": 4196167
+    },
+    {
+     "block": 4,
+     "first_doc": 10018,
+     "last_doc": 13258,
+     "pairs": 186835,
+     "terms": 19787,
+     "bytes": 1013946,
+     "memory": 4195087
+    },
+    {
+     "block": 5,
+     "first_doc": 13259,
+     "last_doc": 17276,
+     "pairs": 192790,
+     "terms": 19442,
+     "bytes": 1031793,
+     "memory": 4194319
+    },
+    {
+     "block": 6,
+     "first_doc": 17277,
+     "last_doc": 20548,
+     "pairs": 181402,
+     "terms": 20102,
+     "bytes": 996438,
+     "memory": 4194607
+    },
+    {
+     "block": 7,
+     "first_doc": 20549,
+     "last_doc": 21578,
+     "pairs": 44257,
+     "terms": 8919,
+     "bytes": 294957,
+     "memory": 1569022
+    }
+   ],
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "term_id_map_bytes": 0,
+   "limit": 4194304,
+   "block_count": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 6390527,
+   "index_bytes": {
+    "dictionary": 909798,
+    "postings": 4678004
+   },
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak": 4773017,
+   "runs": [
+    3.226355548016727,
+    3.3205166859552264,
+    3.2499288248363882,
+    3.398614216828719,
+    3.392905255081132
+   ],
+   "stdev": 0.07091912188673831
+  }
+ },
+ "samples": {
+  "baseline": null,
+  "bsbi": {
+   "pairs": [
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     2,
+     "review",
+     1
+    ],
+    [
+     3,
+     "showers",
+     1
+    ],
+    [
+     4,
+     "continued",
+     1
+    ],
+    [
+     5,
+     "throughout",
+     1
+    ],
+    [
+     6,
+     "week",
+     1
+    ],
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     7,
+     "zone",
+     1
+    ],
+    [
+     8,
+     "alleviating",
+     1
+    ],
+    [
+     9,
+     "drought",
+     1
+    ],
+    [
+     10,
+     "since",
+     1
+    ],
+    [
+     11,
+     "early",
+     1
+    ],
+    [
+     12,
+     "january",
+     1
+    ],
+    [
+     13,
+     "improving",
+     1
+    ]
+   ],
+   "sorted": [
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     0,
+     "bahia",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     1
+    ],
+    [
+     1,
+     "cocoa",
+     275
+    ],
+    [
+     1,
+     "cocoa",
+     275
+    ],
+    [
+     1,
+     "cocoa",
+     275
+    ],
+    [
+     1,
+     "cocoa",
+     275
+    ]
+   ],
+   "partial": [
+    [
+     0,
+     "bahia",
+     1,
+     [
+      1
+     ]
+    ],
+    [
+     1,
+     "cocoa",
+     2,
+     [
+      1,
+      275
+     ]
+    ],
+    [
+     2,
+     "review",
+     21,
+     [
+      1,
+      180,
+      205,
+      236,
+      238,
+      247,
+      248,
+      295
+     ]
+    ],
+    [
+     3,
+     "showers",
+     1,
+     [
+      1
+     ]
+    ],
+    [
+     4,
+     "continued",
+     17,
+     [
+      1,
+      23,
+      28,
+      178,
+      227,
+      249,
+      252,
+      273
+     ]
+    ],
+    [
+     5,
+     "throughout",
+     3,
+     [
+      1,
+      295,
+      408
+     ]
+    ],
+    [
+     6,
+     "week",
+     77,
+     [
+      1,
+      4,
+      16,
+      28,
+      30,
+      44,
+      46,
+      58
+     ]
+    ],
+    [
+     7,
+     "zone",
+     4,
+     [
+      1,
+      273,
+      626,
+      630
+     ]
+    ],
+    [
+     8,
+     "alleviating",
+     1,
+     [
+      1
+     ]
+    ],
+    [
+     9,
+     "drought",
+     3,
+     [
+      1,
+      232,
+      249
+     ]
+    ]
+   ],
+   "trace": {
+    "retrieval": [
+     [
+      1,
+      [
+       400,
+       424,
+       706,
+       709,
+       733
+      ]
+     ],
+     [
+      2,
+      [
+       1041,
+       1584
+      ]
+     ],
+     [
+      4,
+      [
+       3027
+      ]
+     ],
+     [
+      13,
+      [
+       9568
+      ]
+     ],
+     [
+      26,
+      [
+       21133
+      ]
+     ]
+    ],
+    "intelligence": [
+     [
+      1,
+      [
+       28,
+       90,
+       386
+      ]
+     ],
+     [
+      2,
+      [
+       801,
+       869,
+       1041,
+       1236,
+       1413,
+       1617
+      ]
+     ],
+     [
+      3,
+      [
+       1829,
+       1895,
+       2129
+      ]
+     ],
+     [
+      4,
+      [
+       2796,
+       3019,
+       3065
+      ]
+     ],
+     [
+      5,
+      [
+       3998
+      ]
+     ],
+     [
+      6,
+      [
+       4055,
+       4158,
+       4160,
+       4171,
+       4203,
+       4328
+      ]
+     ],
+     [
+      7,
+      [
+       5154
+      ]
+     ],
+     [
+      8,
+      [
+       6060
+      ]
+     ],
+     [
+      9,
+      [
+       6391,
+       6565,
+       6728
+      ]
+     ],
+     [
+      11,
+      [
+       8197
+      ]
+     ],
+     [
+      12,
+      [
+       9395
+      ]
+     ],
+     [
+      13,
+      [
+       9473
+      ]
+     ],
+     [
+      14,
+      [
+       10230,
+       10391,
+       10803
+      ]
+     ],
+     [
+      15,
+      [
+       11250
+      ]
+     ],
+     [
+      16,
+      [
+       12270
+      ]
+     ],
+     [
+      17,
+      [
+       13246,
+       13247
+      ]
+     ],
+     [
+      18,
+      [
+       13886
+      ]
+     ],
+     [
+      21,
+      [
+       16688
+      ]
+     ],
+     [
+      22,
+      [
+       17403,
+       17492,
+       17519
+      ]
+     ],
+     [
+      23,
+      [
+       18026,
+       18330
+      ]
+     ],
+     [
+      24,
+      [
+       18571
+      ]
+     ],
+     [
+      25,
+      [
+       19432,
+       19437,
+       19840,
+       20058
+      ]
+     ],
+     [
+      26,
+      [
+       21147
+      ]
+     ],
+     [
+      27,
+      [
+       21526
+      ]
+     ]
+    ]
+   },
+   "merged": [
+    [
+     "intelligence",
+     1090,
+     [
+      28,
+      90,
+      386,
+      801,
+      869,
+      1041,
+      1236,
+      1413,
+      1617,
+      1829,
+      1895,
+      2129,
+      2796,
+      3019,
+      3065,
+      3998,
+      4055,
+      4158,
+      4160,
+      4171,
+      4203,
+      4328,
+      5154,
+      6060,
+      6391,
+      6565,
+      6728,
+      8197,
+      9395,
+      9473,
+      10230,
+      10391,
+      10803,
+      11250,
+      12270,
+      13246,
+      13247,
+      13886,
+      16688,
+      17403,
+      17492,
+      17519,
+      18026,
+      18330,
+      18571,
+      19432,
+      19437,
+      19840,
+      20058,
+      21147,
+      21526
+     ]
+    ],
+    [
+     "retrieval",
+     6950,
+     [
+      400,
+      424,
+      706,
+      709,
+      733,
+      1041,
+      1584,
+      3027,
+      9568,
+      21133
+     ]
+    ]
+   ],
+   "term_ids": {
+    "retrieval": 6950,
+    "intelligence": 1090
+   }
+  },
+  "spimi": {
+   "dictionary": [
+    [
+     "bahia",
+     1,
+     [
+      1
+     ]
+    ],
+    [
+     "cocoa",
+     7,
+     [
+      1,
+      275,
+      1889,
+      2521,
+      3190,
+      3225,
+      3310
+     ]
+    ],
+    [
+     "review",
+     65,
+     [
+      1,
+      180,
+      205,
+      236,
+      238,
+      247,
+      248,
+      295
+     ]
+    ],
+    [
+     "showers",
+     1,
+     [
+      1
+     ]
+    ],
+    [
+     "continued",
+     83,
+     [
+      1,
+      23,
+      28,
+      178,
+      227,
+      249,
+      252,
+      273
+     ]
+    ],
+    [
+     "throughout",
+     13,
+     [
+      1,
+      295,
+      408,
+      1468,
+      1513,
+      1582,
+      2269,
+      2605
+     ]
+    ],
+    [
+     "week",
+     266,
+     [
+      1,
+      4,
+      16,
+      28,
+      30,
+      44,
+      46,
+      58
+     ]
+    ],
+    [
+     "zone",
+     10,
+     [
+      1,
+      273,
+      626,
+      630,
+      1323,
+      1990,
+      2264,
+      2411
+     ]
+    ],
+    [
+     "alleviating",
+     1,
+     [
+      1
+     ]
+    ],
+    [
+     "drought",
+     12,
+     [
+      1,
+      232,
+      249,
+      842,
+      875,
+      1212,
+      1312,
+      1842
+     ]
+    ]
+   ],
+   "sorted": [
+    [
+     "0-mln-dlr",
+     1,
+     [
+      847
+     ]
+    ],
+    [
+     "000-cc-engine",
+     1,
+     [
+      287
+     ]
+    ],
+    [
+     "000-dlr",
+     3,
+     [
+      847,
+      1288,
+      2429
+     ]
+    ],
+    [
+     "000-dlrs",
+     1,
+     [
+      847
+     ]
+    ],
+    [
+     "000-hectare",
+     1,
+     [
+      951
+     ]
+    ],
+    [
+     "000-strong",
+     1,
+     [
+      2310
+     ]
+    ],
+    [
+     "000-tonne",
+     2,
+     [
+      908,
+      2976
+     ]
+    ],
+    [
+     "1's",
+     1,
+     [
+      2463
+     ]
+    ],
+    [
+     "1-may",
+     1,
+     [
+      2003
+     ]
+    ],
+    [
+     "10-day",
+     1,
+     [
+      2247
+     ]
+    ]
+   ],
+   "trace": {
+    "retrieval": [
+     [
+      1,
+      [
+       400,
+       424,
+       706,
+       709,
+       733,
+       1041,
+       1584,
+       3027
+      ]
+     ],
+     [
+      3,
+      [
+       9568
+      ]
+     ],
+     [
+      7,
+      [
+       21133
+      ]
+     ]
+    ],
+    "intelligence": [
+     [
+      1,
+      [
+       28,
+       90,
+       386,
+       801,
+       869,
+       1041,
+       1236,
+       1413,
+       1617,
+       1829,
+       1895,
+       2129,
+       2796,
+       3019,
+       3065
+      ]
+     ],
+     [
+      2,
+      [
+       3998,
+       4055,
+       4158,
+       4160,
+       4171,
+       4203,
+       4328,
+       5154,
+       6060,
+       6391,
+       6565,
+       6728
+      ]
+     ],
+     [
+      3,
+      [
+       8197,
+       9395,
+       9473
+      ]
+     ],
+     [
+      4,
+      [
+       10230,
+       10391,
+       10803,
+       11250,
+       12270,
+       13246,
+       13247
+      ]
+     ],
+     [
+      5,
+      [
+       13886,
+       16688
+      ]
+     ],
+     [
+      6,
+      [
+       17403,
+       17492,
+       17519,
+       18026,
+       18330,
+       18571,
+       19432,
+       19437,
+       19840,
+       20058
+      ]
+     ],
+     [
+      7,
+      [
+       21147,
+       21526
+      ]
+     ]
+    ]
+   },
+   "merged": [
+    [
+     "intelligence",
+     [
+      28,
+      90,
+      386,
+      801,
+      869,
+      1041,
+      1236,
+      1413,
+      1617,
+      1829,
+      1895,
+      2129,
+      2796,
+      3019,
+      3065,
+      3998,
+      4055,
+      4158,
+      4160,
+      4171,
+      4203,
+      4328,
+      5154,
+      6060,
+      6391,
+      6565,
+      6728,
+      8197,
+      9395,
+      9473,
+      10230,
+      10391,
+      10803,
+      11250,
+      12270,
+      13246,
+      13247,
+      13886,
+      16688,
+      17403,
+      17492,
+      17519,
+      18026,
+      18330,
+      18571,
+      19432,
+      19437,
+      19840,
+      20058,
+      21147,
+      21526
+     ]
+    ],
+    [
+     "retrieval",
+     [
+      400,
+      424,
+      706,
+      709,
+      733,
+      1041,
+      1584,
+      3027,
+      9568,
+      21133
+     ]
+    ]
+   ]
+  }
+ },
+ "retrieval": [
+  {
+   "query": "Query 1",
+   "type": "single",
+   "expression": "oil",
+   "bsbi_hits": 1430,
+   "spimi_hits": 1430,
+   "baseline_hits": 1430,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 6 8 26 68 127 137 140 144 145"
+  },
+  {
+   "query": "Query 1",
+   "type": "single",
+   "expression": "price",
+   "bsbi_hits": 1871,
+   "spimi_hits": 1871,
+   "baseline_hits": 1871,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 5 10 15 16 22 45 97 104 115"
+  },
+  {
+   "query": "Query 1",
+   "type": "AND",
+   "expression": "oil AND price",
+   "bsbi_hits": 334,
+   "spimi_hits": 334,
+   "baseline_hits": 334,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "127 144 191 194 213 236 246 263 357 471"
+  },
+  {
+   "query": "Query 1",
+   "type": "OR",
+   "expression": "oil OR price",
+   "bsbi_hits": 2967,
+   "spimi_hits": 2967,
+   "baseline_hits": 2967,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 5 6 8 10 15 16 22 26"
+  },
+  {
+   "query": "Query 2",
+   "type": "single",
+   "expression": "wheat",
+   "bsbi_hits": 427,
+   "spimi_hits": 427,
+   "baseline_hits": 427,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "5 6 19 97 180 235 241 253 254 258"
+  },
+  {
+   "query": "Query 2",
+   "type": "single",
+   "expression": "export",
+   "bsbi_hits": 827,
+   "spimi_hits": 827,
+   "baseline_hits": 827,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 6 19 32 42 55 176 180 200 227"
+  },
+  {
+   "query": "Query 2",
+   "type": "AND",
+   "expression": "wheat AND export",
+   "bsbi_hits": 143,
+   "spimi_hits": 143,
+   "baseline_hits": 143,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "6 19 180 235 501 694 742 856 1257 1295"
+  },
+  {
+   "query": "Query 2",
+   "type": "OR",
+   "expression": "wheat OR export",
+   "bsbi_hits": 1111,
+   "spimi_hits": 1111,
+   "baseline_hits": 1111,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 5 6 19 32 42 55 97 176 180"
+  },
+  {
+   "query": "Query 3",
+   "type": "single",
+   "expression": "crude",
+   "bsbi_hits": 415,
+   "spimi_hits": 415,
+   "baseline_hits": 415,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "127 189 191 194 235 236 273 274 277 349"
+  },
+  {
+   "query": "Query 3",
+   "type": "single",
+   "expression": "petroleum",
+   "bsbi_hits": 484,
+   "spimi_hits": 484,
+   "baseline_hits": 484,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 140 144 156 176 194 211 237 246 273"
+  },
+  {
+   "query": "Query 3",
+   "type": "AND",
+   "expression": "crude AND petroleum",
+   "bsbi_hits": 134,
+   "spimi_hits": 134,
+   "baseline_hits": 134,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "194 273 349 918 1306 1343 1387 1616 1856 1878"
+  },
+  {
+   "query": "Query 3",
+   "type": "OR",
+   "expression": "crude OR petroleum",
+   "bsbi_hits": 765,
+   "spimi_hits": 765,
+   "baseline_hits": 765,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 127 140 144 156 176 189 191 194 211"
+  },
+  {
+   "query": "Query 4",
+   "type": "single",
+   "expression": "interest",
+   "bsbi_hits": 1840,
+   "spimi_hits": 1840,
+   "baseline_hits": 1840,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 16 20 26 40 60 79 115 137"
+  },
+  {
+   "query": "Query 4",
+   "type": "single",
+   "expression": "rate",
+   "bsbi_hits": 1621,
+   "spimi_hits": 1621,
+   "baseline_hits": 1621,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 16 26 29 35 45 47 82 113 137"
+  },
+  {
+   "query": "Query 4",
+   "type": "AND",
+   "expression": "interest AND rate",
+   "bsbi_hits": 530,
+   "spimi_hits": 530,
+   "baseline_hits": 530,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "4 16 26 137 200 225 270 317 322 364"
+  },
+  {
+   "query": "Query 4",
+   "type": "OR",
+   "expression": "interest OR rate",
+   "bsbi_hits": 2931,
+   "spimi_hits": 2931,
+   "baseline_hits": 2931,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 16 20 26 29 35 40 45 47"
+  },
+  {
+   "query": "Query 5",
+   "type": "single",
+   "expression": "trade",
+   "bsbi_hits": 1931,
+   "spimi_hits": 1931,
+   "baseline_hits": 1931,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 47 121 175 180 190 208 209 237 263"
+  },
+  {
+   "query": "Query 5",
+   "type": "single",
+   "expression": "deficit",
+   "bsbi_hits": 634,
+   "spimi_hits": 634,
+   "baseline_hits": 634,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "109 208 209 227 238 246 292 307 312 319"
+  },
+  {
+   "query": "Query 5",
+   "type": "AND",
+   "expression": "trade AND deficit",
+   "bsbi_hits": 335,
+   "spimi_hits": 335,
+   "baseline_hits": 335,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "208 209 335 340 342 356 717 843 880 890"
+  },
+  {
+   "query": "Query 5",
+   "type": "OR",
+   "expression": "trade OR deficit",
+   "bsbi_hits": 2230,
+   "spimi_hits": 2230,
+   "baseline_hits": 2230,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1 47 109 121 175 180 190 208 209 227"
+  },
+  {
+   "query": "Example 1",
+   "type": "single",
+   "expression": "information",
+   "bsbi_hits": 383,
+   "spimi_hits": 383,
+   "baseline_hits": 383,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "20 208 276 328 340 463 493 496 570 623"
+  },
+  {
+   "query": "Example 1",
+   "type": "single",
+   "expression": "retrieval",
+   "bsbi_hits": 10,
+   "spimi_hits": 10,
+   "baseline_hits": 10,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "400 424 706 709 733 1041 1584 3027 9568 21133"
+  },
+  {
+   "query": "Example 1",
+   "type": "AND",
+   "expression": "information AND retrieval",
+   "bsbi_hits": 2,
+   "spimi_hits": 2,
+   "baseline_hits": 2,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "1041 3027"
+  },
+  {
+   "query": "Example 1",
+   "type": "OR",
+   "expression": "information OR retrieval",
+   "bsbi_hits": 391,
+   "spimi_hits": 391,
+   "baseline_hits": 391,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "20 208 276 328 340 400 424 463 493 496"
+  },
+  {
+   "query": "Example 2",
+   "type": "single",
+   "expression": "artificial",
+   "bsbi_hits": 23,
+   "spimi_hits": 23,
+   "baseline_hits": 23,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "90 1041 2072 2129 4052 4127 4160 4470 5850 6565"
+  },
+  {
+   "query": "Example 2",
+   "type": "single",
+   "expression": "intelligence",
+   "bsbi_hits": 51,
+   "spimi_hits": 51,
+   "baseline_hits": 51,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "28 90 386 801 869 1041 1236 1413 1617 1829"
+  },
+  {
+   "query": "Example 2",
+   "type": "AND",
+   "expression": "artificial AND intelligence",
+   "bsbi_hits": 11,
+   "spimi_hits": 11,
+   "baseline_hits": 11,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "90 1041 2129 4160 6565 6728 9395 13886 18026 19840"
+  },
+  {
+   "query": "Example 2",
+   "type": "OR",
+   "expression": "artificial OR intelligence",
+   "bsbi_hits": 63,
+   "spimi_hits": 63,
+   "baseline_hits": 63,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "28 90 386 801 869 1041 1236 1413 1617 1829"
+  },
+  {
+   "query": "Example 3",
+   "type": "single",
+   "expression": "financial",
+   "bsbi_hits": 1575,
+   "spimi_hits": 1575,
+   "baseline_hits": 1575,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 16 20 63 74 88 110 119 120"
+  },
+  {
+   "query": "Example 3",
+   "type": "single",
+   "expression": "market",
+   "bsbi_hits": 2921,
+   "spimi_hits": 2921,
+   "baseline_hits": 2921,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 10 16 21 30 58 79 97 104"
+  },
+  {
+   "query": "Example 3",
+   "type": "AND",
+   "expression": "financial AND market",
+   "bsbi_hits": 453,
+   "spimi_hits": 453,
+   "baseline_hits": 453,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 16 110 179 220 225 247 276 295"
+  },
+  {
+   "query": "Example 3",
+   "type": "OR",
+   "expression": "financial OR market",
+   "bsbi_hits": 4043,
+   "spimi_hits": 4043,
+   "baseline_hits": 4043,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "2 4 10 16 20 21 30 58 63 74"
+  },
+  {
+   "query": "Example 4",
+   "type": "single",
+   "expression": "medical",
+   "bsbi_hits": 175,
+   "spimi_hits": 175,
+   "baseline_hits": 175,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "155 213 435 454 477 545 696 748 809 1344"
+  },
+  {
+   "query": "Example 4",
+   "type": "single",
+   "expression": "research",
+   "bsbi_hits": 395,
+   "spimi_hits": 395,
+   "baseline_hits": 395,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "37 56 144 149 155 223 234 279 317 333"
+  },
+  {
+   "query": "Example 4",
+   "type": "AND",
+   "expression": "medical AND research",
+   "bsbi_hits": 16,
+   "spimi_hits": 16,
+   "baseline_hits": 16,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "155 1386 3172 4274 6141 6229 7144 7163 7753 8923"
+  },
+  {
+   "query": "Example 4",
+   "type": "OR",
+   "expression": "medical OR research",
+   "bsbi_hits": 554,
+   "spimi_hits": 554,
+   "baseline_hits": 554,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "37 56 144 149 155 213 223 234 279 317"
+  },
+  {
+   "query": "Example 5",
+   "type": "single",
+   "expression": "computer",
+   "bsbi_hits": 451,
+   "spimi_hits": 451,
+   "baseline_hits": 451,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "10 37 54 67 90 238 276 331 339 342"
+  },
+  {
+   "query": "Example 5",
+   "type": "single",
+   "expression": "science",
+   "bsbi_hits": 31,
+   "spimi_hits": 31,
+   "baseline_hits": 31,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "367 1489 2126 2350 3691 3782 5496 5800 6419 6900"
+  },
+  {
+   "query": "Example 5",
+   "type": "AND",
+   "expression": "computer AND science",
+   "bsbi_hits": 3,
+   "spimi_hits": 3,
+   "baseline_hits": 3,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "367 9051 9440"
+  },
+  {
+   "query": "Example 5",
+   "type": "OR",
+   "expression": "computer OR science",
+   "bsbi_hits": 479,
+   "spimi_hits": 479,
+   "baseline_hits": 479,
+   "identical": true,
+   "baseline_identical": true,
+   "first_docs": "10 37 54 67 90 238 276 331 339 342"
+  }
+ ],
+ "sweep": [
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 1.0,
+   "seconds": 4.929249822860584,
+   "index_seconds": 2.448726002126932,
+   "preprocess_seconds": 2.4805238207336515,
+   "pairs_seconds": 0.44235821813344955,
+   "sort_seconds": 0.5343130209948868,
+   "write_seconds": 0.5422687286045402,
+   "merge_seconds": 0.7414785139262676,
+   "blocks": 106,
+   "intermediate_files": 106,
+   "intermediate_bytes": 8067700,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 13912472,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 1.0,
+   "seconds": 3.8499403330497444,
+   "index_seconds": 1.484342336654663,
+   "preprocess_seconds": 2.3655979963950813,
+   "pairs_seconds": 0.4303858687635511,
+   "sort_seconds": 0.055743546690791845,
+   "write_seconds": 0.31923806201666594,
+   "merge_seconds": 0.6410826018545777,
+   "blocks": 50,
+   "intermediate_files": 50,
+   "intermediate_bytes": 8830860,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 3747904,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 2.0,
+   "seconds": 4.204741752939299,
+   "index_seconds": 1.888251808239147,
+   "preprocess_seconds": 2.3164899447001517,
+   "pairs_seconds": 0.32280589011497796,
+   "sort_seconds": 0.5304631607141346,
+   "write_seconds": 0.425113893346861,
+   "merge_seconds": 0.5230215850751847,
+   "blocks": 53,
+   "intermediate_files": 53,
+   "intermediate_bytes": 7251132,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 10327669,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 2.0,
+   "seconds": 3.5185477579943836,
+   "index_seconds": 1.0932325881440192,
+   "preprocess_seconds": 2.4253151698503643,
+   "pairs_seconds": 0.4270666481461376,
+   "sort_seconds": 0.03715028939768672,
+   "write_seconds": 0.20343388221226633,
+   "merge_seconds": 0.3943390869535506,
+   "blocks": 18,
+   "intermediate_files": 18,
+   "intermediate_bytes": 7338552,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 2621511,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 4.125945172039792,
+   "index_seconds": 1.78754153707996,
+   "preprocess_seconds": 2.338403634959832,
+   "pairs_seconds": 0.3284964277409017,
+   "sort_seconds": 0.5834540943615139,
+   "write_seconds": 0.38769034040160477,
+   "merge_seconds": 0.38249324611388147,
+   "blocks": 27,
+   "intermediate_files": 27,
+   "intermediate_bytes": 6595676,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 10390974,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 3.2507196408696473,
+   "index_seconds": 0.8862924894783646,
+   "preprocess_seconds": 2.3644271513912827,
+   "pairs_seconds": 0.4222495825961232,
+   "sort_seconds": 0.025201514130458236,
+   "write_seconds": 0.1398778548464179,
+   "merge_seconds": 0.27082593785598874,
+   "blocks": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 6390527,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 4772500,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 8.0,
+   "seconds": 4.051324052037671,
+   "index_seconds": 1.7547900455538183,
+   "preprocess_seconds": 2.296534006483853,
+   "pairs_seconds": 0.31162786041386425,
+   "sort_seconds": 0.6201829945202917,
+   "write_seconds": 0.3827718074899167,
+   "merge_seconds": 0.29369272384792566,
+   "blocks": 14,
+   "intermediate_files": 14,
+   "intermediate_bytes": 6093252,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 14916610,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 8.0,
+   "seconds": 3.7489285920746624,
+   "index_seconds": 0.9518789905123413,
+   "preprocess_seconds": 2.797049601562321,
+   "pairs_seconds": 0.5801377303432673,
+   "sort_seconds": 0.019661185331642628,
+   "write_seconds": 0.11379317776300013,
+   "merge_seconds": 0.20629499200731516,
+   "blocks": 3,
+   "intermediate_files": 3,
+   "intermediate_bytes": 5837025,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 9770026,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 16.0,
+   "seconds": 4.131453857058659,
+   "index_seconds": 1.7980512715876102,
+   "preprocess_seconds": 2.333402585471049,
+   "pairs_seconds": 0.3234180617146194,
+   "sort_seconds": 0.683701638597995,
+   "write_seconds": 0.37082002335228026,
+   "merge_seconds": 0.24103832407854497,
+   "blocks": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 5715060,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 23780370,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 16.0,
+   "seconds": 3.4405387660954148,
+   "index_seconds": 0.8426221462432295,
+   "preprocess_seconds": 2.5979166198521852,
+   "pairs_seconds": 0.5626595576759428,
+   "sort_seconds": 0.014810920925810933,
+   "write_seconds": 0.086964723886922,
+   "merge_seconds": 0.14534816285595298,
+   "blocks": 1,
+   "intermediate_files": 1,
+   "intermediate_bytes": 5381922,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 19353598,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 32.0,
+   "seconds": 4.639509925851598,
+   "index_seconds": 2.1499137091450393,
+   "preprocess_seconds": 2.489596216706559,
+   "pairs_seconds": 0.4258360129315406,
+   "sort_seconds": 0.8017688416875899,
+   "write_seconds": 0.44368457794189453,
+   "merge_seconds": 0.22701003612019122,
+   "blocks": 4,
+   "intermediate_files": 4,
+   "intermediate_bytes": 5460140,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 41962215,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 32.0,
+   "seconds": 3.376916511915624,
+   "index_seconds": 0.8227695429231972,
+   "preprocess_seconds": 2.554146968992427,
+   "pairs_seconds": 0.5331822221633047,
+   "sort_seconds": 0.014984585111960769,
+   "write_seconds": 0.08850892586633563,
+   "merge_seconds": 0.15349046397022903,
+   "blocks": 1,
+   "intermediate_files": 1,
+   "intermediate_bytes": 5381922,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 19357264,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 64.0,
+   "seconds": 4.470212445827201,
+   "index_seconds": 2.0224862389732152,
+   "preprocess_seconds": 2.447726206853986,
+   "pairs_seconds": 0.414258218370378,
+   "sort_seconds": 0.7993444399908185,
+   "write_seconds": 0.3955828519538045,
+   "merge_seconds": 0.1716114159207791,
+   "blocks": 2,
+   "intermediate_files": 2,
+   "intermediate_bytes": 5251396,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 75588790,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 64.0,
+   "seconds": 3.347752656089142,
+   "index_seconds": 0.8079422153532505,
+   "preprocess_seconds": 2.5398104407358915,
+   "pairs_seconds": 0.5267442441545427,
+   "sort_seconds": 0.013753119856119156,
+   "write_seconds": 0.08804674912244081,
+   "merge_seconds": 0.14703206392005086,
+   "blocks": 1,
+   "intermediate_files": 1,
+   "intermediate_bytes": 5381922,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 19351013,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  }
+ ],
+ "scaling": [
+  {
+   "method": "baseline",
+   "documents": 2500,
+   "tokens": 198751,
+   "vocabulary": 16545,
+   "limit_mb": 4.0,
+   "seconds": 0.36315334192477167,
+   "index_seconds": 0.07148378994315863,
+   "preprocess_seconds": 0.29166955198161304,
+   "pairs_seconds": 0.04014284862205386,
+   "sort_seconds": 0.003955331863835454,
+   "write_seconds": 0.025125776883214712,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 822820,
+   "block_entries": 0,
+   "peak_bytes": 3892300,
+   "term_id_map_bytes": 0,
+   "index_memory": 3601351
+  },
+  {
+   "method": "bsbi",
+   "documents": 2500,
+   "tokens": 198751,
+   "vocabulary": 16545,
+   "limit_mb": 4.0,
+   "seconds": 0.4996748650446534,
+   "index_seconds": 0.22665123199112713,
+   "preprocess_seconds": 0.2730236330535263,
+   "pairs_seconds": 0.03512946516275406,
+   "sort_seconds": 0.07482069684192538,
+   "write_seconds": 0.047998320776969194,
+   "merge_seconds": 0.05667603085748851,
+   "blocks": 4,
+   "intermediate_files": 4,
+   "intermediate_bytes": 758636,
+   "final_bytes": 822820,
+   "block_entries": 198751,
+   "peak_bytes": 6182352,
+   "term_id_map_bytes": 1216007,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 2500,
+   "tokens": 198751,
+   "vocabulary": 16545,
+   "limit_mb": 4.0,
+   "seconds": 0.39140968187712133,
+   "index_seconds": 0.11581999366171658,
+   "preprocess_seconds": 0.27558968821540475,
+   "pairs_seconds": 0.04357248032465577,
+   "sort_seconds": 0.003517810022458434,
+   "write_seconds": 0.020091595128178596,
+   "merge_seconds": 0.044874068815261126,
+   "blocks": 1,
+   "intermediate_files": 1,
+   "intermediate_bytes": 756640,
+   "final_bytes": 822820,
+   "block_entries": 133715,
+   "peak_bytes": 3840306,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 5000,
+   "tokens": 406915,
+   "vocabulary": 24255,
+   "limit_mb": 4.0,
+   "seconds": 0.7456636540591717,
+   "index_seconds": 0.14884485537186265,
+   "preprocess_seconds": 0.596818798687309,
+   "pairs_seconds": 0.09594281855970621,
+   "sort_seconds": 0.005825747037306428,
+   "write_seconds": 0.04219601000659168,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 1520009,
+   "block_entries": 0,
+   "peak_bytes": 6715523,
+   "term_id_map_bytes": 0,
+   "index_memory": 6338294
+  },
+  {
+   "method": "bsbi",
+   "documents": 5000,
+   "tokens": 406915,
+   "vocabulary": 24255,
+   "limit_mb": 4.0,
+   "seconds": 1.0525237289257348,
+   "index_seconds": 0.4770949014928192,
+   "preprocess_seconds": 0.5754288274329156,
+   "pairs_seconds": 0.09066690295003355,
+   "sort_seconds": 0.140820151893422,
+   "write_seconds": 0.10348923783749342,
+   "merge_seconds": 0.1125366750638932,
+   "blocks": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 1558396,
+   "final_bytes": 1520009,
+   "block_entries": 406915,
+   "peak_bytes": 7331581,
+   "term_id_map_bytes": 2137566,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 5000,
+   "tokens": 406915,
+   "vocabulary": 24255,
+   "limit_mb": 4.0,
+   "seconds": 0.8568867230787873,
+   "index_seconds": 0.25667577516287565,
+   "preprocess_seconds": 0.6002109479159117,
+   "pairs_seconds": 0.1123411008156836,
+   "sort_seconds": 0.007016902090981603,
+   "write_seconds": 0.04287215298973024,
+   "merge_seconds": 0.08635064004920423,
+   "blocks": 2,
+   "intermediate_files": 2,
+   "intermediate_bytes": 1537162,
+   "final_bytes": 1520009,
+   "block_entries": 273907,
+   "peak_bytes": 4735725,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 10000,
+   "tokens": 836495,
+   "vocabulary": 35004,
+   "limit_mb": 4.0,
+   "seconds": 1.542935507139191,
+   "index_seconds": 0.2915612431243062,
+   "preprocess_seconds": 1.2513742640148848,
+   "pairs_seconds": 0.2092289759311825,
+   "sort_seconds": 0.009609942091628909,
+   "write_seconds": 0.06220365106128156,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 2867695,
+   "block_entries": 0,
+   "peak_bytes": 10751849,
+   "term_id_map_bytes": 0,
+   "index_memory": 10230843
+  },
+  {
+   "method": "bsbi",
+   "documents": 10000,
+   "tokens": 836495,
+   "vocabulary": 35004,
+   "limit_mb": 4.0,
+   "seconds": 2.2674654701258987,
+   "index_seconds": 1.0758010339923203,
+   "preprocess_seconds": 1.1916644361335784,
+   "pairs_seconds": 0.1924013691022992,
+   "sort_seconds": 0.306100195273757,
+   "write_seconds": 0.23925415892153978,
+   "merge_seconds": 0.2709683740977198,
+   "blocks": 13,
+   "intermediate_files": 13,
+   "intermediate_bytes": 3180344,
+   "final_bytes": 2867695,
+   "block_entries": 836495,
+   "peak_bytes": 8095171,
+   "term_id_map_bytes": 2661851,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 10000,
+   "tokens": 836495,
+   "vocabulary": 35004,
+   "limit_mb": 4.0,
+   "seconds": 1.718445047037676,
+   "index_seconds": 0.48750466224737465,
+   "preprocess_seconds": 1.2309403847903013,
+   "pairs_seconds": 0.232572999317199,
+   "sort_seconds": 0.013646123697981238,
+   "write_seconds": 0.08087532292120159,
+   "merge_seconds": 0.1424222330097109,
+   "blocks": 3,
+   "intermediate_files": 3,
+   "intermediate_bytes": 3047552,
+   "final_bytes": 2867695,
+   "block_entries": 563062,
+   "peak_bytes": 4753172,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 3.211687671020627,
+   "index_seconds": 0.5900922825094312,
+   "preprocess_seconds": 2.621595388511196,
+   "pairs_seconds": 0.4539019896183163,
+   "sort_seconds": 0.014966038055717945,
+   "write_seconds": 0.09896856197156012,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 5587802,
+   "block_entries": 0,
+   "peak_bytes": 19401018,
+   "term_id_map_bytes": 0,
+   "index_memory": 18653975
+  },
+  {
+   "method": "bsbi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 4.53799484600313,
+   "index_seconds": 2.076294439844787,
+   "preprocess_seconds": 2.461700406158343,
+   "pairs_seconds": 0.41872781538404524,
+   "sort_seconds": 0.6640119489748031,
+   "write_seconds": 0.4404230173677206,
+   "merge_seconds": 0.40927121695131063,
+   "blocks": 27,
+   "intermediate_files": 27,
+   "intermediate_bytes": 6595676,
+   "final_bytes": 5587802,
+   "block_entries": 1730348,
+   "peak_bytes": 10385870,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 21578,
+   "tokens": 1730348,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 3.5923546799458563,
+   "index_seconds": 1.0837959984783083,
+   "preprocess_seconds": 2.508558681467548,
+   "pairs_seconds": 0.5365813868120313,
+   "sort_seconds": 0.03193812561221421,
+   "write_seconds": 0.19250601320527494,
+   "merge_seconds": 0.28639686410315335,
+   "blocks": 7,
+   "intermediate_files": 7,
+   "intermediate_bytes": 6390527,
+   "final_bytes": 5587802,
+   "block_entries": 1169501,
+   "peak_bytes": 4774728,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 100000,
+   "tokens": 8059669,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 14.312002352904528,
+   "index_seconds": 2.5282532123383135,
+   "preprocess_seconds": 11.783749140566215,
+   "pairs_seconds": 2.208071713335812,
+   "sort_seconds": 0.014125103829428554,
+   "write_seconds": 0.1978985769674182,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 22689910,
+   "block_entries": 0,
+   "peak_bytes": 59005932,
+   "term_id_map_bytes": 0,
+   "index_memory": 57572647
+  },
+  {
+   "method": "bsbi",
+   "documents": 100000,
+   "tokens": 8059669,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 21.343462596880272,
+   "index_seconds": 9.90552684199065,
+   "preprocess_seconds": 11.437935754889622,
+   "pairs_seconds": 1.9478826941922307,
+   "sort_seconds": 3.073577437084168,
+   "write_seconds": 2.3910683125723153,
+   "merge_seconds": 1.7912657849956304,
+   "blocks": 123,
+   "intermediate_files": 123,
+   "intermediate_bytes": 30669544,
+   "final_bytes": 22689910,
+   "block_entries": 8059669,
+   "peak_bytes": 15769166,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 100000,
+   "tokens": 8059669,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 16.87642839504406,
+   "index_seconds": 4.856149147031829,
+   "preprocess_seconds": 12.02027924801223,
+   "pairs_seconds": 2.5923656565137208,
+   "sort_seconds": 0.14049257501028478,
+   "write_seconds": 0.7727601986844093,
+   "merge_seconds": 1.1580819950904697,
+   "blocks": 30,
+   "intermediate_files": 30,
+   "intermediate_bytes": 29550454,
+   "final_bytes": 22689910,
+   "block_entries": 5445028,
+   "peak_bytes": 4800123,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  },
+  {
+   "method": "baseline",
+   "documents": 1000000,
+   "tokens": 80207037,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 141.84362932713702,
+   "index_seconds": 27.140755182364956,
+   "preprocess_seconds": 114.70287414477207,
+   "pairs_seconds": 23.524054393172264,
+   "sort_seconds": 0.015297597041353583,
+   "write_seconds": 2.5212922650389373,
+   "merge_seconds": 0.0,
+   "blocks": 0,
+   "intermediate_files": 0,
+   "intermediate_bytes": 0,
+   "final_bytes": 217742090,
+   "block_entries": 0,
+   "peak_bytes": null,
+   "term_id_map_bytes": 0,
+   "index_memory": 496483911
+  },
+  {
+   "method": "bsbi",
+   "documents": 1000000,
+   "tokens": 80207037,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 215.7863751470577,
+   "index_seconds": 102.71567939920351,
+   "preprocess_seconds": 113.07069574785419,
+   "pairs_seconds": 18.29908150830306,
+   "sort_seconds": 30.111110436031595,
+   "write_seconds": 22.799447511089966,
+   "merge_seconds": 24.915174551075324,
+   "blocks": 1223,
+   "intermediate_files": 1223,
+   "intermediate_bytes": 305292788,
+   "final_bytes": 217742090,
+   "block_entries": 80207037,
+   "peak_bytes": null,
+   "term_id_map_bytes": 4427863,
+   "index_memory": null
+  },
+  {
+   "method": "spimi",
+   "documents": 1000000,
+   "tokens": 80207037,
+   "vocabulary": 51470,
+   "limit_mb": 4.0,
+   "seconds": 171.0986955219414,
+   "index_seconds": 50.36726857814938,
+   "preprocess_seconds": 120.73142694379203,
+   "pairs_seconds": 26.734681675676256,
+   "sort_seconds": 1.417726542800665,
+   "write_seconds": 8.699174004374072,
+   "merge_seconds": 11.61892831302248,
+   "blocks": 290,
+   "intermediate_files": 290,
+   "intermediate_bytes": 293933682,
+   "final_bytes": 217742090,
+   "block_entries": 54208073,
+   "peak_bytes": null,
+   "term_id_map_bytes": 0,
+   "index_memory": null
+  }
+ ],
+ "heaps": {
+  "k": 28.12663275983675,
+  "beta": 0.522908558215753,
+  "estimates": [
+   {
+    "documents": 100000,
+    "tokens": 8019037.908981371,
+    "vocabulary": 114641.63279871689,
+    "term_id_map_bytes": 9862394.484729454
+   },
+   {
+    "documents": 1000000,
+    "tokens": 80190379.08981371,
+    "vocabulary": 382165.0095081616,
+    "term_id_map_bytes": 32876905.0999774
+   }
+  ]
+ },
+ "complexity": {
+  "baseline": 44,
+  "bsbi": 102,
+  "spimi": 84,
+  "shared": 85
+ },
+ "pair_bytes": 64,
+ "spimi_bytes": {
+  "entry": 96,
+  "posting": 8
+ },
+ "seconds": 1962.8465718990192
+}

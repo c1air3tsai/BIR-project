@@ -8,6 +8,7 @@
 | Project 2 | Zipf 分析（A–D 前處理）、比較領域、Word2Vec、文字比對 | 分析 → Zipf / 比較領域 / Word2Vec / 文字比對 |
 | Project 3 | Term Weighting、向量空間檢索、對照實驗、評估 | 分析 → 詞項權重（`/analysis/term-weighting/`） |
 | **Project 4** | **Reuters-21578：TF-IDF vs Word2Vec 新聞檢索** | **主選單 → Reuters**（`/reuters/`） |
+| **Project 5** | **Inverted Index 建構：BSBI vs SPIMI** | **主選單 → Indexing**（`/indexing/`） |
 
 ---
 
@@ -82,6 +83,25 @@ docker compose exec web python manage.py test reuters
 - 新聞列表 `/reuters/news/`：資料集名稱 Reuters-21578，依 TOPICS 主題（earn、acq、crude…）瀏覽全部 21,578 篇；「文章」頁上方也有入口
 - 新聞內頁 `/reuters/news/<NEWID>/`：全文、主題、所屬切分、查詢詞高亮、這篇在各方法的排名
 
+## 2c. Project 5：Inverted Index 建構（BSBI vs SPIMI）
+
+打開上方主選單的「Indexing」（網址 `/indexing/`）。頁面上方可以切換資料來源，一次顯示一個來源的結果：Reuters-21578（全部 21,578 篇新聞）或 PubMed GLP-1（20,000 篇摘要，作業建議的「疾病名稱，例如 GLP-1」）。由上到下：① 資料與前處理（前處理和 Project 4 相同）② Part 1 Inverted Index（Dictionary 與 Postings List、single-term / AND / OR 即時查詢）③ BSBI 的 5 個步驟與中間結果 ④ SPIMI 的 4 個步驟與中間結果 ⑤ 效能比較（時間、記憶體、blocks、中間檔、索引大小、實作複雜度，改變記憶體上限與文件數，作業的 6 個問題）⑥ 檢索測試（每個來源 5 組符合內容的查詢，例如 Reuters 的 oil price、PubMed 的 semaglutide weight，加上作業的 5 組範例查詢，BSBI 與 SPIMI 結果是否一致）。頁面上的 docID 都可以點，會跳出那篇文件的全文，查詢詞用螢光筆標出來。
+
+```powershell
+# 一鍵重跑全部實驗（約 25 分鐘，其中 1,000,000 篇的規模實驗約占一半）；加 --redraw 只重畫圖
+docker compose exec web python manage.py run_indexing_experiments
+# 只跑到 100,000 篇（約 15 分鐘）
+docker compose exec web python manage.py run_indexing_experiments --max-docs 100000
+# PubMed GLP-1：先下載 20,000 篇摘要（data/indexing/pubmed/，不進 git），再跑同一套實驗
+docker compose exec web python manage.py fetch_pubmed_glp1
+docker compose exec web python manage.py run_indexing_experiments --source pubmed
+docker compose exec web python manage.py test indexing
+```
+
+- 程式：[indexing/](indexing/)（Part 1 [inverted_index.py](indexing/inverted_index.py)、Part 2 [bsbi.py](indexing/bsbi.py)、Part 3 [spimi.py](indexing/spimi.py)、磁碟格式與合併 [storage.py](indexing/storage.py)）
+- 兩種方法用同一批文件、同一套前處理、同一個記憶體上限（預設 4 MB）、同樣的磁碟格式與合併程式
+- 實驗輸出：`docs/project5_results/`（CSV、PNG、summary.json；PubMed 在 `docs/project5_results/pubmed/`）；網頁即時查詢用的最終索引在 `data/indexing/full/`（PubMed 在 `data/indexing/pubmed/full/`，不進 git）
+
 ## 3. 專案結構
 
 ```
@@ -137,6 +157,20 @@ bir_main_project/
 │  ├─ management/commands/run_reuters_experiments.py
 │  └─ tests.py
 │
+├─ indexing/                  ★ Project 5（Inverted Index：BSBI vs SPIMI）全部在這裡
+│  ├─ sources.py              兩個資料來源（Reuters-21578、PubMed GLP-1）與結果存放位置
+│  ├─ collection.py           要建索引的文件（依來源讀取，沿用 Project 4 的前處理）
+│  ├─ inverted_index.py       Part 1 基準索引、讀磁碟上的最終索引、AND / OR
+│  ├─ bsbi.py                 Part 2 BSBI
+│  ├─ spimi.py                Part 3 SPIMI
+│  ├─ storage.py              block 檔與最終索引的格式、k-way merge（兩種方法共用）
+│  ├─ queries.py              檢索測試的查詢（每個來源 5 組 + 作業的 5 組範例）
+│  ├─ experiments.py          效能比較、檢索測試，輸出 CSV / PNG / JSON
+│  ├─ views.py / urls.py / templates/ / static/ / templatetags/
+│  ├─ management/commands/run_indexing_experiments.py
+│  ├─ management/commands/fetch_pubmed_glp1.py   下載 PubMed GLP-1 摘要
+│  └─ tests.py
+│
 ├─ docs/                      文件
 │  ├─ project3_report.md      Project 3 報告
 │  ├─ project3_demo.md        Project 3 Demo 腳本
@@ -144,6 +178,7 @@ bir_main_project/
 │  ├─ project4_results/       Project 4 實驗輸出（CSV、PNG、互動圖座標 projection.json）
 │  ├─ project4_page_guide.md  Project 4 頁面完整說明
 │  ├─ project4_progress_speech.md  Project 4 一分鐘進度報告
+│  ├─ project5_results/       Project 5 實驗輸出（CSV、PNG、summary.json）
 │  ├─ project2_checklist.md   Project 2 需求對照
 │  ├─ algorithm_rules.md      HW1 / Project 2 演算法規則（tokenizer、句子切分、Zipf…）
 │  ├─ import_guide.md         匯入文章使用說明（中文）

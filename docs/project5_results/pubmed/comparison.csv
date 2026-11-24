@@ -1,0 +1,9 @@
+﻿metric,baseline,bsbi,spimi
+"Index construction time (s, median)",5.978155,8.196885,6.438902
+  without preprocessing (s),0.968136,3.477924,1.486038
+"Memory usage (peak MB, tracemalloc)",30.269025,11.8449,4.482738
+Number of blocks,0,53,12
+Intermediate files,0,53,12
+Intermediate files size (MB),0.0,12.118664,11.958773
+Final index size (MB),10.129597,10.129597,10.129597
+Entries held in blocks,0,3432072,2287515

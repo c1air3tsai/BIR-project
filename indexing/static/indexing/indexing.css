@@ -1,0 +1,94 @@
+/* =============================================================================
+   indexing/static/indexing/indexing.css
+   Project 5 Indexing 頁面專用的少量樣式；其餘沿用 weighting/static/weighting/term_weighting.css（tw-*）
+   ============================================================================= */
+.ix-list { margin: 8px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.75; }
+.ix-subhead { margin: 30px 0 8px; }
+.ix-subhead small, .ix-page h3 small { font-size: 13px; font-weight: 400; color: var(--muted); }
+.ix-sub { margin: 14px 0 4px; font-size: 13.5px; color: var(--muted); }
+
+/* docID 小方塊 */
+.ix-ids { line-height: 1.9; }
+.ix-ids span, .ix-id { display: inline-block; min-width: 2.6em; margin: 1px 4px 1px 0; padding: 0 6px; border-radius: 6px; background: #f2f6f9; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; text-align: center; }
+.ix-ids em { font-style: normal; font-size: 12.5px; color: var(--muted); margin-left: 4px; }
+.ix-mono td { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+
+
+/* BSBI / SPIMI 的步驟卡片：兩欄；內容很少或很寬的步驟（ix-wide）佔滿整列，卡片高度不互相拉長 */
+.ix-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 16px; align-items: start; }
+.ix-steps > * { min-width: 0; }
+.ix-steps h3 { display: flex; align-items: center; gap: 8px; }
+.ix-steps h3 b { display: inline-grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--deep); color: #fff; font-size: 13px; }
+.ix-steps .ix-wide { grid-column: 1 / -1; }
+.ix-details { margin-top: 10px; }
+.ix-details summary { cursor: pointer; font-size: 13.5px; color: var(--blue); }
+
+/* 合併的追蹤：各 block 的局部 postings → 合併後 */
+.ix-merge { margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fbfdfe; }
+.ix-merge p { margin: 0 0 6px; font-size: 13.5px; }
+.ix-merge ul { margin: 0; padding: 0; list-style: none; }
+.ix-merge li { padding: 2px 0; }
+.ix-tag { display: inline-block; min-width: 5.6em; margin-right: 6px; font-size: 12px; color: var(--muted); }
+.ix-result { margin-top: 8px !important; padding-top: 8px; border-top: 1px dashed var(--line); }
+
+/* 比較表與檢索測試 */
+.ix-compare td:last-child { white-space: normal; color: var(--muted); font-size: 13px; min-width: 260px; }
+.ix-sub-row td { color: var(--muted); font-size: 13px; }
+.ix-group td { border-top: 2px solid var(--line); }
+.ix-ok { color: #007A5A; font-weight: 700; }
+.ix-bad { color: #C04F00; font-weight: 700; }
+.ix-answers ol { margin: 8px 0 0; padding-left: 22px; font-size: 14px; line-height: 1.8; }
+.ix-answers li { margin-bottom: 14px; }
+.ix-answers li strong:first-child { color: var(--ink); }
+
+@media (max-width: 860px) {
+  .ix-steps { grid-template-columns: minmax(0, 1fr); }
+}
+.ix-compare td.tw-num { white-space: nowrap; }
+/* 效能比較表的 Baseline 欄（不限制記憶體的參考）用淡灰底區分 */
+.ix-base { background: #f6f8fa; color: var(--muted); }
+
+/* 可以點的 docID（點了開彈出視窗看全文）：外觀和 docID 小方塊一樣，滑過去變色 */
+.ix-doc { display: inline-block; min-width: 2.6em; margin: 1px 4px 1px 0; padding: 0 6px; border: 0; border-radius: 6px; background: #f2f6f9; color: inherit; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; line-height: inherit; text-align: center; cursor: pointer; }
+.ix-doc:hover, .ix-doc:focus-visible { background: #dceaf5; color: var(--blue); outline: none; box-shadow: inset 0 -2px 0 var(--blue); }
+.ix-examples { margin: 4px 0 18px; }
+.ix-examples > .method-note { margin: 10px 0 0; }
+
+/* 作業的 6 個問題：每題是一個預設收起來的 toggle */
+.ix-answers-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ix-answers-head h3 { margin: 0; }
+.ix-answers details summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+.ix-answers details summary:hover { color: var(--blue); }
+.ix-answers details[open] summary { margin-bottom: 6px; }
+.ix-answer { padding: 4px 0 2px 14px; border-left: 3px solid var(--line); }
+.ix-answers li { margin-bottom: 10px; }
+
+/* docID 的彈出視窗：新聞全文，查詢詞用螢光筆標出來 */
+body:has(.ix-dialog[open]) { overflow: hidden; }
+.ix-dialog { width: min(760px, calc(100vw - 32px)); max-height: min(82vh, 900px); padding: 0; border: 0; border-radius: 14px; box-shadow: 0 18px 50px #1b385133; color: var(--ink); }
+.ix-dialog::backdrop { background: #182b3966; }
+.ix-dialog-inner { display: flex; flex-direction: column; max-height: min(82vh, 900px); }
+.ix-dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 24px 8px; }
+.ix-dialog-head h3 { margin: 4px 0 0; font-size: 20px; line-height: 1.35; }
+.ix-dialog-meta { font-size: 12.5px; color: var(--muted); font-family: ui-monospace, Consolas, monospace; }
+.ix-dialog-x { flex: none; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #f2f6f9; font-size: 22px; line-height: 1; cursor: pointer; color: var(--muted); }
+.ix-dialog-x:hover { background: #dceaf5; color: var(--ink); }
+.ix-dialog-terms { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0 24px 10px; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.ix-dialog-terms:empty { display: none; }
+.ix-dialog-terms .is-missing { opacity: .6; }
+.ix-dialog-body { overflow-y: auto; padding: 12px 24px; font-size: 15px; line-height: 1.75; }
+.ix-dialog-body p { margin: 0 0 12px; }
+.ix-dialog mark { background: #fff0a6; box-shadow: inset 0 -2px 0 #efd261; color: inherit; padding: 0 2px; border-radius: 2px; }
+.ix-dialog-empty { color: var(--muted); }
+.ix-dialog-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px 18px; border-top: 1px solid var(--line); font-size: 13.5px; }
+@media (max-width: 600px) {
+  .ix-dialog-head, .ix-dialog-terms, .ix-dialog-body, .ix-dialog-foot { padding-left: 16px; padding-right: 16px; }
+}
+
+/* 資料來源切換（Reuters-21578 / PubMed GLP-1）：一次顯示一個來源的結果 */
+.ix-sources { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 14px; }
+.ix-sources > span:first-child { color: var(--muted); margin-right: 4px; }
+.ix-sources a, .ix-sources .is-disabled { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); text-decoration: none; }
+.ix-sources a:hover { border-color: var(--blue); color: var(--blue); }
+.ix-sources a.is-active { background: var(--deep); border-color: var(--deep); color: #fff; }
+.ix-sources .is-disabled { opacity: .5; cursor: not-allowed; }

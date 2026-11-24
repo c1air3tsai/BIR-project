@@ -1,0 +1,41 @@
+﻿query,type,expression,bsbi_hits,spimi_hits,baseline_hits,identical,baseline_identical,first_docs
+Query 1,single,semaglutide,3523,3523,3523,True,True,110 118 142 186 187 196 197 238 240 244
+Query 1,single,weight,7355,7355,7355,True,True,9 10 11 14 19 22 24 25 26 31
+Query 1,AND,semaglutide AND weight,2034,2034,2034,True,True,118 186 187 196 238 240 244 279 289 396
+Query 1,OR,semaglutide OR weight,8844,8844,8844,True,True,9 10 11 14 19 22 24 25 26 31
+Query 2,single,liraglutide,2566,2566,2566,True,True,2 4 11 22 25 31 32 53 56 57
+Query 2,single,obesity,6718,6718,6718,True,True,1 3 11 14 31 36 42 55 58 61
+Query 2,AND,liraglutide AND obesity,948,948,948,True,True,11 31 90 130 153 199 235 243 300 303
+Query 2,OR,liraglutide OR obesity,8336,8336,8336,True,True,1 2 3 4 11 14 22 25 31 32
+Query 3,single,insulin,5536,5536,5536,True,True,1 2 3 6 7 8 14 16 20 21
+Query 3,single,secretion,2307,2307,2307,True,True,1 3 28 34 36 37 40 51 58 60
+Query 3,AND,insulin AND secretion,1557,1557,1557,True,True,1 3 28 36 37 40 51 60 69 70
+Query 3,OR,insulin OR secretion,6286,6286,6286,True,True,1 2 3 6 7 8 14 16 20 21
+Query 4,single,cardiovascular,4426,4426,4426,True,True,4 9 12 13 19 22 32 35 50 57
+Query 4,single,outcomes,5696,5696,5696,True,True,12 35 42 50 56 73 74 78 81 90
+Query 4,AND,cardiovascular AND outcomes,2165,2165,2165,True,True,12 35 50 73 78 90 92 101 110 119
+Query 4,OR,cardiovascular OR outcomes,7957,7957,7957,True,True,4 9 12 13 19 22 32 35 42 50
+Query 5,single,gastrointestinal,2042,2042,2042,True,True,3 20 25 26 27 40 43 48 51 52
+Query 5,single,adverse,3400,3400,3400,True,True,2 4 9 13 17 22 25 26 42 56
+Query 5,AND,gastrointestinal AND adverse,988,988,988,True,True,25 26 89 96 186 196 197 238 244 279
+Query 5,OR,gastrointestinal OR adverse,4454,4454,4454,True,True,2 3 4 9 13 17 20 22 25 26
+Example 1,single,information,612,612,612,True,True,5 108 159 169 193 297 309 367 376 401
+Example 1,single,retrieval,22,22,22,True,True,27 1241 1757 1951 4403 4961 5862 7557 7904 8242
+Example 1,AND,information AND retrieval,2,2,2,True,True,7904 13977
+Example 1,OR,information OR retrieval,632,632,632,True,True,5 27 108 159 169 193 297 309 367 376
+Example 2,single,artificial,118,118,118,True,True,349 844 1150 1754 3223 3619 3948 4824 5359 5494
+Example 2,single,intelligence,86,86,86,True,True,5359 7484 7544 7566 7974 9012 9173 9317 9425 9475
+Example 2,AND,artificial AND intelligence,85,85,85,True,True,5359 7544 7566 7974 9012 9173 9317 9425 9475 9867
+Example 2,OR,artificial OR intelligence,119,119,119,True,True,349 844 1150 1754 3223 3619 3948 4824 5359 5494
+Example 3,single,financial,94,94,94,True,True,138 1628 2637 2869 3144 4123 5154 5163 5622 5697
+Example 3,single,market,152,152,152,True,True,36 61 142 158 320 460 589 864 1136 1364
+Example 3,AND,financial AND market,5,5,5,True,True,7112 9205 13103 14324 18059
+Example 3,OR,financial OR market,241,241,241,True,True,36 61 138 142 158 320 460 589 864 1136
+Example 4,single,medical,1289,1289,1289,True,True,6 8 31 92 98 142 147 169 173 197
+Example 4,single,research,3119,3119,3119,True,True,7 24 30 31 33 40 52 63 66 82
+Example 4,AND,medical AND research,254,254,254,True,True,31 92 439 445 654 786 1089 1103 1196 1438
+Example 4,OR,medical OR research,4154,4154,4154,True,True,6 7 8 24 30 31 33 40 52 63
+Example 5,single,computer,10,10,10,True,True,2197 4727 5470 7698 8668 9188 9342 12376 12767 15023
+Example 5,single,science,814,814,814,True,True,4 82 108 131 221 230 248 337 440 515
+Example 5,AND,computer AND science,1,1,1,True,True,7698
+Example 5,OR,computer OR science,823,823,823,True,True,4 82 108 131 221 230 248 337 440 515

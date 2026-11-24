@@ -1,0 +1,8 @@
+{% load reuters_ui indexing_ui %}{% comment %}
+  ⑥ 檢索測試的表格（indexing.html 用 include 放兩次：主要的 5 組查詢、作業的 5 組範例查詢）
+  groups：views._query_groups() 的結果，每組 4 列（兩個 single-term、AND、OR）；docID 點了開彈出視窗看全文
+{% endcomment %}<div class="tw-table-wrap panel tw-flush tw-block"><table class="data-table tw-compact">
+  <thead><tr><th>查詢</th><th>類型</th><th>運算式</th><th class="tw-num">BSBI</th><th class="tw-num">SPIMI</th><th>一致</th><th>docID（前 10 個，點了看全文）</th></tr></thead>
+  <tbody>{% for q in groups %}{% for r in q.rows %}<tr{% if forloop.first %} class="ix-group"{% endif %}>{% if forloop.first %}<td rowspan="{{ q.rows|length }}"><a href="?source={{ source.key }}&amp;a={{ q.a }}&amp;b={{ q.b }}#retrieval">{{ q.name }}</a><br><small>{{ q.a }} {{ q.b }}</small></td>{% endif %}
+    <td>{{ r.type }}</td><td>{{ r.expression }}</td><td class="tw-num">{{ r.bsbi_hits|thousands }}</td><td class="tw-num">{{ r.spimi_hits|thousands }}</td><td>{% if r.identical %}<span class="ix-ok">✓ 相同</span>{% else %}<span class="ix-bad">✗</span>{% endif %}</td><td class="ix-ids">{% doc_buttons r.first_docs r.terms %}</td></tr>{% endfor %}{% endfor %}</tbody>
+</table></div>

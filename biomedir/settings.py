@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'search',
     'weighting',
     'reuters',
+    'indexing',
 ]
 
 MIDDLEWARE = [

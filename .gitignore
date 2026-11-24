@@ -28,3 +28,6 @@ data/backup*/
 
 # Project 4：從 UCI 下載的 Reuters-21578 原始資料與處理後的快取
 data/reuters/
+
+# Project 5：BSBI / SPIMI 建出來的索引（網頁即時查詢用，可由 run_indexing_experiments 重建）
+data/indexing/

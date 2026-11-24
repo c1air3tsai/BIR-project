@@ -22,6 +22,7 @@
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-index" viewBox="0 0 24 24"><path d="M4 5h4M4 12h4M4 19h4M11 5h9M11 12h9M11 19h9"/></symbol>
   </svg>
   <header class="site-header">
     <div class="site-shell header-row">
@@ -31,6 +32,7 @@
         <a {% if request.resolver_match.url_name == 'articles' or request.resolver_match.url_name == 'document_detail' %}class="active" aria-current="page"{% endif %} href="{% url 'search:articles' %}{% topic_query %}"><svg class="icon"><use href="#i-book"/></svg>Articles</a>
         <a {% if request.resolver_match.url_name == 'zipf' or analysis_tab %}class="active" aria-current="page"{% endif %} href="{% url 'search:zipf' %}{% topic_query %}"><svg class="icon"><use href="#i-chart"/></svg><span class="nav-label-long">Analysis</span><span class="nav-label-short">Analysis</span></a>
         <a {% if request.resolver_match.namespace == 'reuters' %}class="active" aria-current="page"{% endif %} href="{% url 'reuters:page' %}"><svg class="icon"><use href="#i-news"/></svg>Reuters</a>
+        <a {% if request.resolver_match.namespace == 'indexing' %}class="active" aria-current="page"{% endif %} href="{% url 'indexing:page' %}"><svg class="icon"><use href="#i-index"/></svg>Indexing</a>
       </nav>
       <a class="primary-button nav-upload {% if request.resolver_match.url_name == 'import' %}current{% endif %}" href="{% url 'search:import' %}"><svg class="icon"><use href="#i-plus"/></svg>Upload</a>
     </div>
